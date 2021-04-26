@@ -11,11 +11,19 @@ class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Team7 - Main")
+        l_style = """QLabel {
+            font-size: 16px;
+        }"""
+        label = QtWidgets.QLabel(self)
+        label.setStyleSheet(l_style)
+        label.setText("出席")
+
 
 app = QtWidgets.QApplication()
 window = MainWindow()
 window.show()
 app.exec_()
+
 
 # app = QApplication([])
 # window = Qwidget()
