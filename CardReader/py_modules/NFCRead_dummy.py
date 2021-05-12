@@ -1,5 +1,6 @@
 """
     NFC Reader(仮)
+    author: Team7
 """
 import binascii
 # import nfc

@@ -1,3 +1,7 @@
+"""
+    NFC Reader
+    author: Team7
+"""
 import binascii
 import nfc
 from time import time

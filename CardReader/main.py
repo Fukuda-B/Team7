@@ -1,8 +1,10 @@
 """
     メイン画面表示部分
+    author: Team7
 """
 
 from py_modules import NFCRead_dummy
+import db_mod
 
 import sys
 from PySide2 import QtWidgets
