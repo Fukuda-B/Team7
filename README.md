@@ -1,5 +1,5 @@
 # Team7
-Attendance Management System  
+Management System  
 ---
 
 Attendance Management with Python + Node.js  
