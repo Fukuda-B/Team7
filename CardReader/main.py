@@ -20,6 +20,12 @@ class MainWindow(QtWidgets.QWidget):
         label.setStyleSheet(l_style)
         label.setText("出席")
 
+class MainClass:
+    def __init__(self) -> None:
+        pass
+
+    def wait(self):
+        pass
 
 app = QtWidgets.QApplication()
 window = MainWindow()
