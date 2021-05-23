@@ -19,6 +19,23 @@ class MainWindow(QtWidgets.QWidget):
         label = QtWidgets.QLabel(self)
         label.setStyleSheet(l_style)
         label.setText("出席")
+    def show_s(self):
+        app = QtWidgets.QApplication()
+        window = MainWindow()
+        window.show()
+        app.exec_()
+
+        # app = QApplication([])
+        # window = Qwidget()
+        # layout = QGridLayout()
+        # label = QLabel("出席", window)
+        # label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
+        # label.setFont(QFont("Monospace Regular", 16, QFont.Bold))
+        # layout.addWidget(label, 0, 0)
+        # window.setLayout(layout)
+        # QTimer.singleShot(2000, window.close)
+        # sys.exit(app.exec_())
+        
 
 class MainClass:
     def __init__(self) -> None:
@@ -26,20 +43,21 @@ class MainClass:
 
     def wait(self):
         pass
+    
+    def add(self):
+        pass
 
-app = QtWidgets.QApplication()
-window = MainWindow()
-window.show()
-app.exec_()
+    def check(self, idm):
+        pass
+    
+    def check_allow(self):
+        MainWindow.show_s()
 
+    def check_deny(self):
+        pass
 
-# app = QApplication([])
-# window = Qwidget()
-# layout = QGridLayout()
-# label = QLabel("出席", window)
-# label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-# label.setFont(QFont("Monospace Regular", 16, QFont.Bold))
-# layout.addWidget(label, 0, 0)
-# window.setLayout(layout)
-# QTimer.singleShot(2000, window.close)
-# sys.exit(app.exec_())
+class AsyncClass:
+    async def __init__(self) -> None:
+        pass
+    async def check(self):
+        pass
