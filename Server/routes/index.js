@@ -6,20 +6,20 @@
 var express = require('express');
 var router = express.Router();
 
-var var_pack = {
+var varPack = {
     title: 'Team7',
 }
 
 router
     // GET req
     .get('/', (req, res) => {
-        res.render('index', var_pack)
+        res.render('index', varPack)
     })
     .get('/login', (req, res) => {
-        res.render('login', var_pack)
+        res.render('login', varPack)
     })
     .get('/api/v1/team7', (req, res) => {
-        res.render('api', var_pack)
+        res.render('api', varPack)
     })
 
     // POST req
@@ -29,4 +29,4 @@ router
         res.render('api', {...var_pack, ...{username: _username}});
     })
 
-module.exports = app;
+module.exports = router;

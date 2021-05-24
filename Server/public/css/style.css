@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 /*
-    Team7 client css | Update: 2021/05/23
+    Team7 client css | Update: 2021/05/25
 
     The main color is defined by a global css variable in the pseudo-class:root.
     The other colors can be defined by the members.
@@ -10,50 +10,9 @@
     --main-color: #4368d7;
 }
 
-#login_fie {
-    position: relative;
-    width: 300px;
-    margin: 0;
-    margin-left: calc(50% - 150px);
-    margin-top: 150px;
-    border-radius: 5px;
-    border: 1px solid #bbb;
-    padding: 15px;
-    box-shadow: 0 0 3px #aaa;
-    
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
-
-#login_tit {
-    text-align: center;
-    padding-bottom: 5px;
-    border-bottom: 1px solid var(--main-color);
-    font-size: 1.1em;
-}
-
-#login_fie_user, #login_fie_pass {
-    display: block;
-    text-align: center;
-    margin-top: 15px;
-}
-
-#login_fie .login_fie_input {
-    margin: auto auto;
-    padding: 10px;
-    margin-top: 10px;
-    display: inline;
-}
-
-#login_fie_button {
-    color: #fff;
-    width: 84px;
-    margin-left: calc(100% - 85px);
-    background: var(--main-color);
-    border: none;
-    margin-top: 30px;
-    padding: 10px 15px;
-    border-radius: 3px;
-}
-
-#login_fie_botton:hover {
-    box-shadow: 0 0 3px #aaa;
+#index_top {
+    border-top: var(--main-color);
 }
