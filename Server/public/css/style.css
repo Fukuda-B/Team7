@@ -1,18 +1,66 @@
-@charset "utf-8";
-
 /*
     Team7 client css | Update: 2021/05/25
 
     The main color is defined by a global css variable in the pseudo-class:root.
     The other colors can be defined by the members.
 */
+
+@charset "utf-8";
 :root {
     --main-color: #4368d7;
+    --sub-color: rgb(167, 191, 205);
 }
 
 body {
+    margin: 0;
+}
+
+#top_bar {
+    padding: 10px 5px;
+    background: var(--main-color);
+}
+#top_bar_wrap {
+    display: block;
+    text-align: right;
+    padding: 0;
+    margin: 0;
+}
+#top_bar_link {
+    text-align: center;
+    width: 100px;
+    text-decoration: none;
+    padding: 10px;
+    color: #fff;
+}
+#top_bar_link:hover {
+    color: rgb(208, 214, 231);
+}
+#top_bar_link i {
+    padding-right: 5px;
+}
+
+#index_top {
+    margin-top: 100px;
+    text-align: center;
+    font-size: 1.5em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
-#index_top {
-    border-top: var(--main-color);
+#index_top h1 {
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--main-color);
+    width: 250px;
+    margin-left: calc(50% - 125px);
+}
+#index_top p {
+    font-weight: 300;
+}
+
+#bottom {
+    padding: 0;
+    margin: 0;
+    margin-top: 70px;
+    border-top: 10px solid var(--sub-color);
+    height: 1000px;
+    text-align: center;
+    padding-top: 70px;
 }

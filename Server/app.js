@@ -35,8 +35,8 @@ var app = express();
 // Gzip complession
 app.use(compression({
     threshold: 0,
-    level: 6,
-    memLevel: 6
+    level: 7,
+    memLevel: 7
 }));
 
 // Cookie settings
@@ -50,13 +50,12 @@ app.use(
 );
 */
 
-// Template engine & Req Middle
+// Engine & Req Middle
 app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '/public')));
-
+app.use('/public', express.static(path.join(__dirname, '/public')));
 /*
 app.use(passport.initialize());
 passport.use(new LocalStrategy({
@@ -85,7 +84,7 @@ app.use(function(err, req, res, next) {
     res.locals.error = req.app.get('env') == 'development' ? err : {};
 
     res.status(err.status || 500);
-    res.render('error');
+    res.render('error', {title: 'Server Error'});
 });
 
 app.listen(listenPort, () => {

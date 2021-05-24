@@ -1,11 +1,11 @@
-@charset "utf-8";
-
 /*
     Team7 client css | Update: 2021/05/23
 
     The main color is defined by a global css variable in the pseudo-class:root.
     The other colors can be defined by the members.
 */
+
+@charset "utf-8";
 :root {
     --main-color: #4368d7;
 }
