@@ -88,5 +88,5 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(listenPort, () => {
-    console.log('ok, b')
+    console.log('Welcome to Team7!')
 })
