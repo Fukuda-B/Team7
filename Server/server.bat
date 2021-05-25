@@ -4,7 +4,7 @@ rem|____________________________________________________________
 rem|   Team7 Portable | Start server | Update: 2021/05/25
 rem
 rem|   Requirements: LTS Node.js
-rem|   Place it in the same directory as Team7/Server/app.js.
+rem|   Place this batfile in the same directory as Team7/Server/app.js.
 rem|____________________________________________________________
 
 rem| portable nodejs dir
