@@ -1,0 +1,97 @@
+/*
+    Team7 client css | Update: 2021/05/25
+
+    The main color is defined by a global css variable in the pseudo-class:root.
+    The other colors can be defined by the members.
+*/
+
+@charset "utf-8";
+body {
+    margin: 0;
+}
+#top_bar {
+    padding: 10px 5px;
+    background: var(--main-color);
+}
+#top_bar_wrap {
+    display: block;
+    text-align: right;
+    padding: 0;
+    margin: 0;
+}
+#top_bar_link {
+    text-align: center;
+    width: 100px;
+    text-decoration: none;
+    padding: 10px;
+    color: #fff;
+}
+#top_bar_link:hover {
+    color: var(--hover-color);
+}
+#top_bar_link i {
+    padding-right: 5px;
+}
+
+#wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#dashboard {
+    margin: 0;
+    width: 15%;
+    height: calc(100vh - 41px - 40px);
+    border: none;
+    border-left: solid 1px var(--sub-color);
+    background: #ddd;
+    padding: 20px 0;
+}
+#dashboard p {
+    margin: 0;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #444;
+}
+.dash_li {
+    margin-left: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: #111;
+}
+
+#main {
+    margin-left: 5%;
+    /* margin-left: calc(50% - 28.5%); */
+    width: 70%;
+    text-align: center;
+}
+#lecture_table {
+    margin-top: 100px;
+}
+#lecture_table h3 {
+    font-weight: 300;
+}
+#lecture_table_val {
+    margin: 0 auto;
+    border-collapse: collapse;
+    font-family: 游ゴシック体, 'Yu Gothic', YuGothic, 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+}
+#lecture_table_val th {
+    background-color: var(--main-color);
+    color: #fff;
+    font-weight: 500;
+}
+#lecture_table_val td {
+    border: none;
+    background: #fff;
+}
+#lecture_table_val tr:nth-child(odd) td {
+    background: #eee;
+}
+#lecture_table_val td, th {
+    padding: 5px 15px;
+}
+    #lecture_table_val tr {
+    border: solid 1px var(--sub-color);
+}

@@ -25,8 +25,9 @@ var passport = require('passport'),
 // -----
 // Router module
 var index = require('./routes/index');
-// var api_root = require('./routes/api/v1/team7');
-// var login = require('./routes/login');
+var login = require('./routes/login');
+var home = require('./routes/home');
+var api_root = require('./routes/api');
 var listenPort = 3000;
 
 // -----
@@ -72,8 +73,9 @@ app.use(cookieParser());
 
 // Router setting
 app.use('/', index);
-// app.use('/api/v1/team7', api_root);
-// app.use('/login', login);
+app.use('/home', home);
+app.use('/login', login);
+app.use('/api/v1/team7', api_root);
 
 app.use(function(req, res, next) {
     next(createError(404));

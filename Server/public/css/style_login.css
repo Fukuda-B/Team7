@@ -6,10 +6,6 @@
 */
 
 @charset "utf-8";
-:root {
-    --main-color: #4368d7;
-}
-
 #login_fie {
     position: relative;
     width: 300px;

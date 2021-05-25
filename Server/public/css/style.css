@@ -6,12 +6,6 @@
 */
 
 @charset "utf-8";
-:root {
-    --main-color: #4368d7;
-    --sub-color: rgb(167, 191, 205);
-    --hover-color: rgb(208, 214, 231);
-}
-
 body {
     margin: 0;
 }
@@ -75,11 +69,20 @@ body {
     padding: 10px;
     margin: 0;
     border: 1px solid var(--sub-color);
+    border-radius: 4px;
 }
 .dl:hover {
     background: var(--main-color);
     color: #fff;
     border: 1px solid var(--main-color);
+}
+#dl_other {
+    display: block;
+    text-decoration: none;
+    margin-top: 40px;
+    width: 150px;
+    margin-left: calc(50% - 75px);
+    color: #999;
 }
 
 #footer {
@@ -101,7 +104,7 @@ body {
     color: var(--hover-color);
 }
 #cp {
-    font-size: 0.5em;
+    font-size: 0.7em;
     margin-top: 80px;
     color: var(--sub-color);
 }
