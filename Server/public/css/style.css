@@ -9,6 +9,7 @@
 :root {
     --main-color: #4368d7;
     --sub-color: rgb(167, 191, 205);
+    --hover-color: rgb(208, 214, 231);
 }
 
 body {
@@ -33,7 +34,7 @@ body {
     color: #fff;
 }
 #top_bar_link:hover {
-    color: rgb(208, 214, 231);
+    color: var(--hover-color);
 }
 #top_bar_link i {
     padding-right: 5px;
@@ -63,4 +64,44 @@ body {
     /* height: 1000px; */
     text-align: center;
     padding-top: 70px;
+}
+
+#dl_list {
+    margin-top: 30px;
+}
+.dl {
+    color: #111;
+    text-decoration: none;
+    padding: 10px;
+    margin: 0;
+    border: 1px solid var(--sub-color);
+}
+.dl:hover {
+    background: var(--main-color);
+    color: #fff;
+    border: 1px solid var(--main-color);
+}
+
+#footer {
+    padding: 0;
+    margin: 0;
+    margin-top: 150px;
+    background: var(--main-color);
+    /* height: 1000px; */
+    text-align: center;
+    padding-top: 70px;
+    padding-bottom: 20px;
+    color: #fff;
+}
+#footer a {
+    text-decoration: none;
+    color: #fff;
+}
+#footer a:hover {
+    color: var(--hover-color);
+}
+#cp {
+    font-size: 0.5em;
+    margin-top: 80px;
+    color: var(--sub-color);
 }
