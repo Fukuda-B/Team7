@@ -14,7 +14,7 @@
     position: relative;
     width: 300px;
     margin: 0;
-    margin-left: calc(50% - 150px);
+    margin-left: calc(50% - 150px - 16px);
     margin-top: 150px;
     border-radius: 5px;
     border: 1px solid #bbb;
@@ -33,7 +33,7 @@
 #login_fie_user, #login_fie_pass {
     display: block;
     text-align: center;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 #login_fie .login_fie_input {
@@ -45,15 +45,18 @@
 
 #login_fie_button {
     color: #fff;
-    width: 84px;
-    margin-left: calc(100% - 85px);
+    width: 65px;
+    margin-left: calc(100% - 100px);
     background: var(--main-color);
     border: none;
-    margin-top: 30px;
-    padding: 10px 15px;
+    display: block;
+    margin-top: 20px;
+    padding: 7px 15px;
     border-radius: 3px;
+    text-align: center;
+    text-decoration: none;
 }
 
 #login_fie_botton:hover {
-    box-shadow: 0 0 3px #aaa;
+    box-shadow: 0 0 5px #888;
 }
