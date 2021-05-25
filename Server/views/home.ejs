@@ -27,38 +27,12 @@
     </div>
     <div id="main">
         <div id="lecture_table">
-            <h3>講義一覧</h3>
+            <h3>講義一覧 (UID: <%- user_id %>)</h3>
             <table id="lecture_table_val">
                 <tr>
-                    <th>科目名</th> <th>曜日・時限</th> <th>担当</th> <th>出席率</th>
+                    <th>科目名 - ID</th> <th>曜日・時限</th> <th>担当</th> <th>出席率</th>
                 </tr>
-                <tr>
-                    <td>科目A - 0001</td> <td>前期 月曜 1限</td> <td>A</td> <td>0.38%</td>
-                </tr>
-                <tr>
-                    <td>科目B - 0002</td> <td>前期 月曜 2限</td> <td>B</td> <td>70.48%</td>
-                </tr>
-                <tr>
-                    <td>科目C - 0003</td> <td>前期 月曜 4限</td> <td>C</td> <td>93.57%</td>
-                </tr>
-                <tr>
-                    <td>科目D - 0004</td> <td>前期 月曜 8限</td> <td>D</td> <td>67.10%</td>
-                </tr>
-                <tr>
-                    <td>科目E - 0005</td> <td>前期 火曜 1限</td> <td>E</td> <td>9.62%</td>
-                </tr>
-                <tr>
-                    <td>科目F - 0006</td> <td>前期 水曜 9限</td> <td>F</td> <td>60.17%</td>
-                </tr>
-                <tr>
-                    <td>科目G - 0007</td> <td>前期 水曜 3限</td> <td>G</td> <td>87.39%</td>
-                </tr>
-                <tr>
-                    <td>科目H - 0008</td> <td>前期 土曜 1限</td> <td>H</td> <td>0.14%</td>
-                </tr>
-                <tr>
-                    <td>科目I - 0009</td> <td>前期 日曜 1限</td> <td>I</td> <td>0.04%</td>
-                </tr>
+                <%- lecture_table %>
             </table>
         </div>
         </div>
