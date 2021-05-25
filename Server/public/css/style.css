@@ -105,3 +105,17 @@ body {
     margin-top: 80px;
     color: var(--sub-color);
 }
+@media screen and (max-width: 600px) {
+    .dl {
+        width: 80%;
+        display: block;
+        margin-left: calc(10% - 10px);
+        margin-top: 10px;
+    }
+    #footer {
+        padding-top: 40px;
+    }
+    #cp {
+        margin-top: 50px;
+    }
+}
