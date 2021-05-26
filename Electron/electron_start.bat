@@ -1,10 +1,10 @@
 @echo off
-title Team7 - Server
+title Team7 - Electron
 rem|____________________________________________________________
-rem|   Team7 Portable | Start server | Update: 2021/05/25
+rem|   Team7 Portable | Start electron | Update: 2021/05/26
 rem
 rem|   Requirements: LTS Node.js
-rem|   Place this batfile in the same directory as Team7/Server/app.js.
+rem|   Place this .bat file in the same directory as Team7/Electron/main.js
 rem|____________________________________________________________
 
 rem| portable nodejs dir
@@ -18,4 +18,4 @@ rem|____________________________________________________________
 rem| install node-module
 if not exist "node_modules" call npm install
 rem| start server
-call node app.js
+call npm start
