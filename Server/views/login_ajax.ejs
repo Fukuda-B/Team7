@@ -1,0 +1,29 @@
+<%#
+    Team7 client ejs - login ajax | Update: 2021/05/26
+
+    CDN List
+    crypto-js : https://cdnjs.com/libraries/crypto-js
+%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    function crypto_text(tx) {
+        var key = crypto_key;
+        return Crypto.AES.encrypt(tx, key);
+    } 
+    function ajax() {
+        var req = new XMLHttpRequest();
+        var user = document.getElementById('login_fie_input_user');
+        var pass = document.getElementById('login_fie_input_pass');
+        req.onreadystatechange = function() {
+            if (req.readyState == 4) {
+                if (req.status == 200) {
+                    console.log('ok, b');
+                }
+            }
+        }
+        req.open('POST', '', true);
+        req.setRequestHeader('content-type','application/x-www-form-urlencoded;charset=UTF-8');
+        var s_tx = crypto_text('username='+user+'&password='+pass)
+        req.send(s_tx);
+    }
+</script>

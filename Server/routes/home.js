@@ -7,7 +7,7 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 
-var jsonFile = './routes/test_json.json';
+var jsonFile = './routes/user_json.json';
 
 function createTable(lecture_json) {
     var lecture_table = '',
