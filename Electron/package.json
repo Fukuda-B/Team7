@@ -1,15 +1,18 @@
 {
-  "name": "Team7_Electron",
-  "version": "1.0.0",
+  "name": "team7_electron",
+  "version": "0.1.1",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Team7",
+  "dependencies": {
+    "electron": "^13.0.1"
+  },
   "devDependencies": {
-    "electorn": "0.0.1-security"
+    "electron-packager": "^15.2.0"
   }
 }
