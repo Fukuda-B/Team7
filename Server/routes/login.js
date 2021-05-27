@@ -4,11 +4,14 @@
     Memo:
     https://qiita.com/dojyorin/items/2fd99491f4b459f937a4
     https://http2.try-and-test.net/ecdhe.html
+
+    CSRF
 */
 
 var express = require('express');
 var passport = require('passport');
 var crypto = require('crypto');
+var cryptojs = require('crypto-js')
 var router = express.Router();
 
 var CRYPTOS = {
@@ -28,9 +31,8 @@ var CRYPTOS = {
         var crypto_u = ["deriverKey"];
         return crypto.subtle.generateKey(crypto_v, false, crypto_u);
     },
-
     // Generating a common key
-    KEY_GEN_C : function() {
+    KEY_GEN_C : function(iv) {
         var gkey = CRYPTOS.KEY_GEN();
         var aes = {
             name: "ARS-GCM",
@@ -41,32 +43,45 @@ var CRYPTOS = {
             public: gkey.publickey
         };
         var crypto_u = ["encrypt", "decrypt"];
-        return crypto.subtle.deriveKey(ecdh, gkey.publickey, aes, false, crypto_u);
+        return {
+            "iv": iv,
+            "key": gkey,
+            "publickey": crypto.subtle.deriveKey(ecdh, gkey.publickey, aes, false, crypto_u),
+        };
     },
-
     // Decrypto from AES
-    DECRYPTO : function(key, val) {
-            var aes = {
-                name: "AES-GCM",
-                iv: val.subarray(0, 16),
-                tagLength: 256
-            };
-        return new Uint8Array(await crypto.subtle.decrypto(aes, key , val.subarray(16)));
+    DECRYPTO : function(bank, val) {
+        var key = bank.gkey.publickey;
+        var iv = bank.iv;
+        var encryptedHexStr = CryptoJS.enc.Hex.parse(val);
+        var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
+        var decrypt = CryptoJS.AES.decrypt(srcs, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+        var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
+        return decryptedStr.toString();
+            // var aes = {
+            //     name: "AES-GCM",
+            //     iv: val.subarray(0, 16),
+            //     tagLength: 256
+            // };
+        // return new Uint8Array(await crypto.subtle.decrypto(aes, key , val.subarray(16)));
+        // return
     },
 }
 
+var iv = CryptoJS.enc.Utf8.parse('team7');
+var bank = CRYPTOS.KEY_GEN_C(iv);
 
 router
     // GET req
     .get('/', function(req, res, next) {
         res.render('login', {
             title: 'Team7 | Login',
-            crypto_key: key_gen.publickey
+            crypto_key: bank.publickey
         });
     })
     // POST req
     .post('/', function(req, res) {
-
+        var data = CRYPTOS.DECRYPTO(bank, req);
     });
 
 // -----
