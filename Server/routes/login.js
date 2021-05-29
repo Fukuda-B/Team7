@@ -7,7 +7,19 @@
     https://qiita.com/angel_p_57/items/2e3f3f8661de32a0d432
     https://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
 
-    CSRF
+
+-----
+    用語
+
+    CSRF: Cross-Site Request Forgeries
+    CORS: Cross-Origin Resource Sharing
+     XSS: Cross Site Scripting
+
+      iv: 初期化ベクトル (initialization vector)
+     key: 暗号鍵 (key)
+
+    暗号化 ⇔ 復号 (復号化ではない)
+    パティング: 暗号アルゴリズムによるが、データ長はある値の倍長である必要があるときに余分な追加される
 */
 
 var express = require('express');
