@@ -1,26 +1,31 @@
 <%#
-    Team7 client ejs - login ajax | Update: 2021/05/28
+    Team7 client ejs - login ajax | Update: 2021/05/29
 
     CDN List
     crypto-js : https://cdnjs.com/libraries/crypto-js
 %>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-    var CRYPTOS = {
-        ECRYPTO : function(crypto_key, data, iv) {
-            srcs = CryptoJS.enc.Utf8.parse(data);
-            var encrypted = CryptoJS.AES.encrypt(srcs, key, {
-                iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7
-            });
-            return encrypted.ciphertext.toString().toUpperCase();
-            // return Crypto.AES.encrypt(tx, key);
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
+    integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type='text/javascript'>
+    const bank = <%-JSON.stringify(crypto_bank)%>;
+    // Encrypto
+    function encrypto(data, bank) {
+        srcs = CryptoJS.enc.Utf8.parse(data);
+        console.log(srcs);
+        var encrypted = CryptoJS.AES.encrypt(srcs, bank.key, {
+            iv: bank.iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        });
+        return encrypted.ciphertext.toString().toUpperCase();
     }
+
     function ajax() {
         var req = new XMLHttpRequest();
         var user = document.getElementById('login_fie_input_user');
         var pass = document.getElementById('login_fie_input_pass');
-        req.onreadystatechange = function() {
+        req.onreadystatechange = function () {
             if (req.readyState == 4) {
                 if (req.status == 200) {
                     console.log('ok, b');
@@ -28,8 +33,11 @@
             }
         }
         req.open('POST', '', true);
-        req.setRequestHeader('content-type','application/x-www-form-urlencoded;charset=UTF-8');
-        var s_tx = crypto_text('username='+user+'&password='+pass)
+        req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+        // var t_tx = '{username:"' + encodeURI(user) + '",password:"' + encodeURI(pass) + '"}';
+        var t_tx = 'b';
+        var s_tx = 'team7=' + encrypto(t_tx, bank);
+        console.log(s_tx);
         req.send(s_tx);
     }
 </script>
