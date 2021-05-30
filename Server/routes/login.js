@@ -47,9 +47,9 @@ function decryptoo(data, bank) {
     // console.log(srcs);
     // var decrypt = CryptoJS.AES.decrypt(srcs, bank.key, {
     var decrypted = CryptoJS.AES.decrypt(data, bank.key, {
-        // iv: bank.iv,
-        // mode: CryptoJS.mode.CBC,
-        // padding: CryptoJS.pad.Pkcs7
+        iv: bank.iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
     });
     // var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
     // return decryptedStr.toString();
@@ -80,8 +80,8 @@ router
     .post('/', function (req, res) {
         if (req.body.team7) {
             try {
-                // var body = decodeURI(req.body.team7);
-                var body = req.body.team7;
+                var body = decodeURIComponent(req.body.team7);
+                // var body = req.body.team7;
                 console.log({'req':body, 'bank':bank});
                 var data = decryptoo(body, bank);
                 console.log(data);
