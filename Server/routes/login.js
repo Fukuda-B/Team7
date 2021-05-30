@@ -29,7 +29,7 @@ var passport = require('passport');
 var crypto = require('crypto');
 var CryptoJS = require('crypto-js');
 var router = express.Router();
-var key_size = 2<<6; // 2<<7=128, key.length=256
+var key_size = 2<<6; // 2<<6=128, key.length=256
 var key_timeout = 7777; // ms
 
 
@@ -102,8 +102,9 @@ router
                 var body = decodeURIComponent(req.body.team7);
                 // var body = req.body.team7;
                 console.log({'req':body, 'bank':bank});
-                var data = CRYP.decryptoo(body, bank);
-                console.log('>> '+data);
+                var data = JSON.parse(CRYP.decryptoo(body, bank));
+                console.log('----- decryption result -----');
+                console.log(data);
                 res.send('b');
             } catch (error) {
                 console.log(error);

@@ -44,8 +44,8 @@
 
     function ajax() {
         var req = new XMLHttpRequest();
-        var user = document.getElementById('login_fie_input_user');
-        var pass = document.getElementById('login_fie_input_pass');
+        var user = document.getElementById('login_fie_input_user').value;
+        var pass = document.getElementById('login_fie_input_pass').value;
         req.onreadystatechange = function () {
             if (req.readyState == 4) {
                 if (req.status == 200) {
@@ -56,8 +56,8 @@
         update_iv();
         req.open('POST', '', true); // 非同期
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
-        // var t_tx = '{username:"' + encodeURI(user) + '",password:"' + encodeURI(pass) + '"}';
-        var t_tx = 'This is the password (test)'; // b = UTF-32LE : 1644167168
+        var t_tx = '{"username":"' + encodeURI(user) + '", "password":"' + encodeURI(pass) + '"}';
+        // var t_tx = 'This is the password (test)'; // b = UTF-32LE : 1644167168
         var s_tx = 'team7=' + encodeURIComponent(CRYP.encryptoo(t_tx, bank)); // Fixing problems caused by '+'
         // var s_tx = 'team7=' + CRYP.encryptoo2(t_tx, bank);
         // console.log(CRYP.decryptoo2(CRYP.encryptoo2(t_tx, bank), bank));
