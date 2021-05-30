@@ -12,4 +12,4 @@ client / admin login
   
 encryption test  
   
-![image](https://user-images.githubusercontent.com/60131202/120101623-d5646300-c181-11eb-941e-9b0b99226427.png)  
+![image](https://user-images.githubusercontent.com/60131202/120101705-4a379d00-c182-11eb-8756-1ca409c61b2c.png)  
