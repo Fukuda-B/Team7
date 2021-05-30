@@ -30,49 +30,55 @@ var crypto = require('crypto');
 var CryptoJS = require('crypto-js');
 var router = express.Router();
 var key_size = 2<<6; // 2<<7=128, key.length=256
-var key_timeout = 10*1000; // ms
+var key_timeout = 7777; // ms
 
-// Generate key
-let key_v_gen = () => crypto.randomBytes(key_size).toString('hex');
-// Generate iv
-let iv_v_gen = () => crypto.randomBytes(key_size).toString('hex');
-// Generating a encryption key
-function key_gen() {
-    return {
-        "iv": iv_v_gen(),
-        "key": key_v_gen(),
-    }
-}
 
-// Decrypt
-function decryptoo(data, bank) {
-    // var encryptedHexStr = CryptoJS.enc.Hex.parse(data);
-    // var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
-    // var srcs = CryptoJS.enc.Utf8.parse(data);
-    // console.log(srcs);
-    // var decrypt = CryptoJS.AES.decrypt(srcs, bank.key, {
-    var decrypted = CryptoJS.AES.decrypt(data, bank.key, {
-        iv: bank.iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-    });
-    // var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
-    // return decryptedStr.toString();
-    return decrypted.toString(CryptoJS.enc.Utf8);
-}
-// not use custom iv
-function decryptoo2(data, bank) {
-    // var dec = CryptoJS.enc.Base64.parse(data).toString(CryptoJS.enc.Utf8);
-    // var decrypted = CryptoJS.AES.decrypt(dec, bank.key);
-    var decrypted = CryptoJS.AES.decrypt(data, bank.key);
-    return decrypted.toString(CryptoJS.enc.Utf8);
+var CRYP = {
+    // Generate key
+    key_v_gen : function() {
+        return crypto.randomBytes(key_size).toString('hex');
+    },
+    // Generate iv
+    iv_v_gen : function() {
+        return crypto.randomBytes(key_size).toString('hex');
+    },
+    // Generating a encryption key
+    key_gen : function() {
+        return {
+            "iv": CRYP.iv_v_gen(),
+            "key": CRYP.key_v_gen(),
+        }
+    },
+    // Decrypt
+    decryptoo : function(data, bank) {
+        // var encryptedHexStr = CryptoJS.enc.Hex.parse(data);
+        // var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
+        // var srcs = CryptoJS.enc.Utf8.parse(data);
+        // console.log(srcs);
+        // var decrypt = CryptoJS.AES.decrypt(srcs, bank.key, {
+        var decrypted = CryptoJS.AES.decrypt(data, bank.key, {
+            iv: bank.iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        });
+        // var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
+        // return decryptedStr.toString();
+        return decrypted.toString(CryptoJS.enc.Utf8);
+    },
+    // not use custom iv
+    decryptoo2 : function(data, bank) {
+        // var dec = CryptoJS.enc.Base64.parse(data).toString(CryptoJS.enc.Utf8);
+        // var decrypted = CryptoJS.AES.decrypt(dec, bank.key);
+        var decrypted = CryptoJS.AES.decrypt(data, bank.key);
+        return decrypted.toString(CryptoJS.enc.Utf8);
+    },
 }
 
 // Update the encryption key periodically.
-var bank = key_gen();
+var bank = CRYP.key_gen();
 var update_iv = () => {
-    bank.iv = iv_v_gen();
-    console.log(bank.iv);
+    bank.iv = CRYP.iv_v_gen();
+    // console.log(bank.iv);
     setTimeout(update_iv, key_timeout);
 }
 update_iv();
@@ -96,7 +102,7 @@ router
                 var body = decodeURIComponent(req.body.team7);
                 // var body = req.body.team7;
                 console.log({'req':body, 'bank':bank});
-                var data = decryptoo(body, bank);
+                var data = CRYP.decryptoo(body, bank);
                 console.log('>> '+data);
                 res.send('b');
             } catch (error) {
