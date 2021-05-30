@@ -1,5 +1,5 @@
 /*
-    Team7 server js - login | Update: 2021/05/29
+    Team7 server js - login | Update: 2021/05/31
 
     Memo:
     https://qiita.com/dojyorin/items/2fd99491f4b459f937a4
@@ -25,7 +25,9 @@
 */
 
 var express = require('express');
-var passport = require('passport');
+var session = require('express-session');
+var passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
 var crypto = require('crypto');
 var CryptoJS = require('crypto-js');
 var router = express.Router();
@@ -73,7 +75,6 @@ var CRYP = {
         return decrypted.toString(CryptoJS.enc.Utf8);
     },
 }
-
 // Update the encryption key periodically.
 var bank = CRYP.key_gen();
 var update_iv = () => {
@@ -82,6 +83,26 @@ var update_iv = () => {
     setTimeout(update_iv, key_timeout);
 }
 update_iv();
+
+// passport
+passport.use(new LocalStrategy(
+    (username, password, done) => {
+        if (username === userB.username && password === userB.password) {
+            return done(null, {username:username, password:password});
+        } else {
+            return done(null, false);
+        }
+    }
+));
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
+router.use(passport.initialize());
+router.use(passport.session());
+
 
 // Request
 router
@@ -110,6 +131,10 @@ router
                 console.log(error);
                 res.send('d');
             }
+            passport.authenticate('local', {
+                failureRedirect : '',
+                successRedirect : '/home'
+            })
         }
     });
 

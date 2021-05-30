@@ -1,6 +1,6 @@
 {
   "name": "team7",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Attendance Management System",
   "main": "app.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "crypto-js": "^4.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
