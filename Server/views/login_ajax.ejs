@@ -25,6 +25,19 @@
         srcs = CryptoJS.enc.Utf8.parse(data);
         return CryptoJS.AES.encrypt(srcs, bank.key);
     }
+    function update_iv() {
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            if (req.readyState == 4) {
+                if (req.status == 200) {
+                    bank.iv = req.responseText;
+                    return true;
+                }
+            }
+        }
+        req.open('GET', 'login/u', true);
+        req.send();
+    }
 
     function ajax() {
         var req = new XMLHttpRequest();
@@ -37,10 +50,11 @@
                 }
             }
         }
+        update_iv();
         req.open('POST', '', true);
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
         // var t_tx = '{username:"' + encodeURI(user) + '",password:"' + encodeURI(pass) + '"}';
-        var t_tx = 'This is password (test)'; // b = UTF-32LE : 1644167168
+        var t_tx = 'This is the password (test)'; // b = UTF-32LE : 1644167168
         var s_tx = 'team7=' + encodeURIComponent(encryptoo(t_tx, bank)); // Fixing problems caused by '+'
         // var s_tx = 'team7=' + encryptoo2(t_tx, bank);
         // console.log(decryptoo2(encryptoo2(t_tx, bank), bank));
