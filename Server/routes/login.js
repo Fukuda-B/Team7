@@ -27,31 +27,40 @@ var passport = require('passport');
 var crypto = require('crypto');
 var CryptoJS = require('crypto-js');
 var router = express.Router();
-var key_size = 2**7; // 2**7=128, key.length=256
-var key_timeout = 10000; // ms
+var key_size = 2<<6; // 2<<7=128, key.length=256
+var key_timeout = 10*1000; // ms
 
 // Generating a encryption key
 function key_gen() {
-    var key = crypto.randomBytes(key_size).toString('hex');
-    var iv = crypto.randomBytes(key_size).toString('hex');
+    var iv_val = crypto.randomBytes(key_size).toString('hex');
+    var key_val = crypto.randomBytes(key_size).toString('hex');
     return {
-        "iv": iv,
-        "key": key,
+        "iv": iv_val,
+        "key": key_val,
     }
 }
 // Decrypt
 function decryptoo(data, bank) {
-    var encryptedHexStr = CryptoJS.enc.Hex.parse(data);
-    var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
-    console.log(srcs);
-    var decrypt = CryptoJS.AES.decrypt(srcs, bank.key, {
-        iv: bank.iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
+    // var encryptedHexStr = CryptoJS.enc.Hex.parse(data);
+    // var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
+    // var srcs = CryptoJS.enc.Utf8.parse(data);
+    // console.log(srcs);
+    // var decrypt = CryptoJS.AES.decrypt(srcs, bank.key, {
+    var decrypted = CryptoJS.AES.decrypt(data, bank.key, {
+        // iv: bank.iv,
+        // mode: CryptoJS.mode.CBC,
+        // padding: CryptoJS.pad.Pkcs7
     });
-    console.log(decrypt);
-    var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
-    return decryptedStr.toString();
+    // var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
+    // return decryptedStr.toString();
+    return decrypted.toString(CryptoJS.enc.Utf8);
+}
+// not use custom iv
+function decryptoo2(data, bank) {
+    // var dec = CryptoJS.enc.Base64.parse(data).toString(CryptoJS.enc.Utf8);
+    // var decrypted = CryptoJS.AES.decrypt(dec, bank.key);
+    var decrypted = CryptoJS.AES.decrypt(data, bank.key);
+    return decrypted.toString(CryptoJS.enc.Utf8);
 }
 
 // Update the encryption key periodically.
@@ -69,10 +78,16 @@ router
     })
     // POST req
     .post('/', function (req, res) {
-        if (req.body) {
-            console.log({'req':req.body.team7, 'bank':bank});
-            var data = decryptoo(req.body.team7, bank);
-            console.log(data);
+        if (req.body.team7) {
+            try {
+                // var body = decodeURI(req.body.team7);
+                var body = req.body.team7;
+                console.log({'req':body, 'bank':bank});
+                var data = decryptoo(body, bank);
+                console.log(data);
+            } catch (error) {
+                console.log(error);
+            }
         }
     });
 

@@ -10,16 +10,26 @@
 <script type='text/javascript'>
     const bank = <%-JSON.stringify(crypto_bank)%>;
     // Encrypto
-    function encrypto(data, bank) {
+    function encryptoo(data, bank) {
         srcs = CryptoJS.enc.Utf8.parse(data);
         console.log(srcs);
         var encrypted = CryptoJS.AES.encrypt(srcs, bank.key, {
-            iv: bank.iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7
+            // iv: bank.iv,
+            // mode: CryptoJS.mode.CBC,
+            // padding: CryptoJS.pad.Pkcs7
         });
         return encrypted.ciphertext.toString().toUpperCase();
     }
+    function encryptoo2(data, bank) {
+        srcs = CryptoJS.enc.Utf8.parse(data);
+        return CryptoJS.AES.encrypt(srcs, bank.key);
+    }
+    function decryptoo2(data, bank) {
+        var decrypted = CryptoJS.AES.decrypt(data, bank.key);
+        // console.log(decrypted);
+        return decrypted.toString(CryptoJS.enc.Utf8);
+    }
+
 
     function ajax() {
         var req = new XMLHttpRequest();
@@ -35,9 +45,11 @@
         req.open('POST', '', true);
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
         // var t_tx = '{username:"' + encodeURI(user) + '",password:"' + encodeURI(pass) + '"}';
-        var t_tx = 'b';
-        var s_tx = 'team7=' + encrypto(t_tx, bank);
+        var t_tx = 'b'; // b = UTF-32LE : 1644167168
+        var s_tx = 'team7=' + encryptoo(t_tx, bank);
+        // console.log(decryptoo2(encryptoo2(t_tx, bank), bank));
         console.log(s_tx);
+        // req.send(encodeURI(s_tx));
         req.send(s_tx);
     }
 </script>

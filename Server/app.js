@@ -31,6 +31,10 @@ var api_root = require('./routes/api');
 var listenPort = 3000;
 
 // -----
+process.on('uncaughtException', (err) => {
+    console.error(err);
+});
+
 var app = express();
 
 // Gzip complession
