@@ -118,6 +118,10 @@ router
     })
     // POST req
     .post('/', function (req, res) {
+        // passport.authenticate('local', {
+        //     failureRedirect : '',
+        //     successRedirect : '/home'
+        // })
         if (req.body.team7) {
             try {
                 var body = decodeURIComponent(req.body.team7);
@@ -131,10 +135,6 @@ router
                 console.log(error);
                 res.send('d');
             }
-            passport.authenticate('local', {
-                failureRedirect : '',
-                successRedirect : '/home'
-            })
         }
     });
 
