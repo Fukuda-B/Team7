@@ -16,6 +16,7 @@ var cookieSettion = require('cookie-session');
 var ejs = require('ejs');
 var byrypt = require('bcrypt');
 var express = require('express');
+var session = require('express-session');
 var compression = require('compression');
 var morgan = require('morgan');
 var path = require('path')
@@ -26,6 +27,7 @@ var passport = require('passport'),
 // Router module
 var index = require('./routes/index');
 var login = require('./routes/login');
+var logout = require('./routes/logout');
 var home = require('./routes/home');
 var api_root = require('./routes/api');
 var listenPort = 3000;
@@ -61,16 +63,8 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, '/public')));
-/*
+
 app.use(passport.initialize());
-passport.use(new LocalStrategy({
-    usernameFil: "username",
-    passwordFil: "password",
-}, funciton(username, password, done) {
-}));
-passport.use(new LocalStrategy(function(username, passport, done){
-}))
-*/
 
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -79,6 +73,7 @@ app.use(cookieParser());
 app.use('/', index);
 app.use('/home', home);
 app.use('/login', login);
+app.use('/logout', logout);
 app.use('/api/v1/team7', api_root);
 
 app.use(function(req, res, next) {
