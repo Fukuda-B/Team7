@@ -32,7 +32,7 @@ cd Electron
 ./electron_start.bat
 ```
   
-Build electron package for Windows, Linux, MacOS :  
+Build electron package for Windows, Linux, MacOS (Windows) :  
 ```cmd
 cd Electron
 ./electron_build.bat
