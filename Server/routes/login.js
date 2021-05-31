@@ -31,7 +31,7 @@ var passport = require('passport'),
 var crypto = require('crypto');
 var CryptoJS = require('crypto-js');
 var router = express.Router();
-var key_size = 2<<6; // 2<<6=128, key.length=256
+var key_size = 2<<7; // 2<<6=256, key.length=512
 var key_timeout = 7777; // ms
 
 
