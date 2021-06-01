@@ -27,9 +27,6 @@ var passport = require('passport'),
 // Router module
 var index = require('./routes/index');
 var main = require('./routes/main');
-// var login = require('./routes/login');
-// var logout = require('./routes/logout');
-// var home = require('./routes/home');
 var api_root = require('./routes/api');
 var listenPort = 3000;
 
@@ -48,13 +45,6 @@ app.use(compression({
 }));
 
 // Cookie settings
-// app.use(
-//     cookieSettion({
-        // name: [userName],
-        // keys: [passWord],
-//         maxAge: 12*60*60*1000,
-//     })
-// );
 var expiryDate = new Date(Date.now() + 24*60*60*1000); // 1day
 app.use(session({
     secret: 'hello_team7',
@@ -82,9 +72,6 @@ app.disable('x-powered-by'); // disable header
 
 // Router setting
 app.use('/', index);
-// app.use('/home', home);
-// app.use('/login', login);
-// app.use('/logout', logout);
 app.use('/main', main);
 app.use('/api/v1/team7', api_root);
 

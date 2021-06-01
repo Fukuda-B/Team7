@@ -13,13 +13,11 @@
         // Encrypto
         encryptoo : function(data, bank) {
             srcs = CryptoJS.enc.Utf8.parse(data);
-            // console.log(srcs);
             var encrypted = CryptoJS.AES.encrypt(srcs, bank.key, {
                 iv: bank.iv,
                 mode: CryptoJS.mode.CBC,
                 padding: CryptoJS.pad.Pkcs7
             });
-            // return encrypted.ciphertext.toString().toUpperCase();
             return encrypted;
         },
         encryptoo2 : function(data, bank) {
@@ -51,21 +49,13 @@
             if (req.readyState == 4) {
                 if (req.status == 200) {
                     location.href = req.responseText;
-                } else {
-                    // console.log(req.status);
                 }
             }
         }
         update_iv();
         req.open('POST', '', true); // 非同期
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
-        // var t_tx = '{"p":"'+encodeURI(pass)+'","u":"'+encodeURI(user)+'"}';
-        // var t_tx = 'This is the password (test)'; // b = UTF-32LE : 1644167168
-        // var s_tx = 'team7=' + encodeURIComponent(CRYP.encryptoo(t_tx, bank)); // Fixing problems caused by '+'
-        // var s_tx = '{"password":"'+encodeURIComponent(CRYP.encryptoo(pass, bank))+'","username":"'+encodeURIComponent(CRYP.encryptoo(user, bank)))+'"}';
         var s_tx = 'password='+encodeURIComponent(CRYP.encryptoo(pass, bank))+'&username='+encodeURIComponent(CRYP.encryptoo(user, bank));
-        // var s_tx = 'team7=' + CRYP.encryptoo2(t_tx, bank);
-        // console.log(CRYP.decryptoo2(CRYP.encryptoo2(t_tx, bank), bank));
         console.log(s_tx);
         req.send(s_tx);
     }

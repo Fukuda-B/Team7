@@ -55,25 +55,16 @@ var CRYP = {
     },
     // Decrypt
     decryptoo : function(data, bank) {
-        // var encryptedHexStr = CryptoJS.enc.Hex.parse(data);
-        // var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
-        // var srcs = CryptoJS.enc.Utf8.parse(data);
-        // console.log(srcs);
-        // var decrypt = CryptoJS.AES.decrypt(srcs, bank.key, {
         data = decodeURIComponent(data);
         var decrypted = CryptoJS.AES.decrypt(data, bank.key, {
             iv: bank.iv,
             mode: CryptoJS.mode.CBC,
             padding: CryptoJS.pad.Pkcs7
         });
-        // var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
-        // return decryptedStr.toString();
         return decrypted.toString(CryptoJS.enc.Utf8);
     },
     // not use custom iv
     decryptoo2 : function(data, bank) {
-        // var dec = CryptoJS.enc.Base64.parse(data).toString(CryptoJS.enc.Utf8);
-        // var decrypted = CryptoJS.AES.decrypt(dec, bank.key);
         var decrypted = CryptoJS.AES.decrypt(data, bank.key);
         return decrypted.toString(CryptoJS.enc.Utf8);
     },
@@ -82,12 +73,11 @@ var CRYP = {
 var bank = CRYP.key_gen();
 var update_iv = () => {
     bank.iv = CRYP.iv_v_gen();
-    // console.log(bank.iv);
     setTimeout(update_iv, key_timeout);
 }
 update_iv();
 
-// passport
+// Passport
 passport.use(new LocalStrategy({
         usernameField: "username",
         passwordField: "password",
@@ -95,8 +85,6 @@ passport.use(new LocalStrategy({
     (username, password, done) => {
         var user = CRYP.decryptoo(username, bank),
             pass = CRYP.decryptoo(password, bank);
-        // console.log({username:username, password:password});
-        // console.log({user:user, pass:pass});
 
         if (check_user(user, pass)) {
             return done(null, user);
@@ -106,16 +94,6 @@ passport.use(new LocalStrategy({
     }
 ));
 router.use(passport.initialize());
-// router.use(session({
-//     secret: 'hello_team7',
-    // resave: true,
-    // saveUninitialized: false,
-    // cookie: {
-    //     secure: true,
-    //     httpOnly: true,
-    //     expires: expiryDate,
-    // }
-// }));
 router.use(passport.session());
 passport.serializeUser((user, done) => {
     done(null, user);
@@ -166,41 +144,13 @@ router
         res.redirect('/');
     })
     .post('/login',
-        // (req, res, next) => {
-        //     console.log(req.body);
-        //     next();
-        // },
         passport.authenticate('local', {
-            // session : true,
-            // successRedirect : '/login',
+            successRedirect : '',
             failureRedirect : 'main/login',
         }),
         (req, res) => {
-            // console.log({"u":req.user});
             res.send('/main');
         }
-        // function (req, res) {
-        //     res.redirect('/home');
-        //     res.send('b');
-        // }
-        // function (req, res) {
-        //     console.log(req.body);
-        //     if (req.body) {
-        //         try {
-        //             console.log(req.body.username);
-        //             var body = req.body.team7;
-        //             console.log({'user':req.body.username, 'pass':req.body.password});
-        //             var user = CRYP.decryptoo(req.body.username, bank),
-        //                 pass = CRYP.decryptoo(req.body.password, bank);
-        //             console.log('----- decryption result -----');
-        //             console.log({"user":user, "pass":pass});
-        //             res.send('b');
-        //         } catch (error) {
-        //             console.log(error);
-        //             res.send('d');
-        //         }
-        //     }
-        // }
         );
 
 
@@ -209,29 +159,24 @@ function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     } else {
-        res.redirect('/login'); // ログインページへリダイレクト
-        // console.log({"u":req});
-        // res.send('d');
+        res.redirect('main/login'); // ログインページへリダイレクト
     }
 }
 
 // ----- JSON読み込みテスト -----
 var fs = require('fs');
 var jsonFile = './routes/user_json.json';
-function createTable(lecture_json) {
-    var lecture_table = '',
-    tmp = '';
-    for(var i=0; i<lecture_json.lecture.length; i++) {
-        tmp = lecture_json.lecture[i];
-        // console.log(tmp.lecture_date);
-        lecture_table += '<tr><td>'+tmp.lecture_name
-            +'</td><td>'+tmp.lecture_date.f+' '
-            +tmp.lecture_date.w+' '
-            +tmp.lecture_date.t
-            +'</td><td>'+tmp.lecture_teach
-            +'</td><td>'+tmp.lecture_par+'%</td></tr>';
+function createTable(json) {
+    var table = '';
+    for (var tmp of json.lecture) {
+        table += '<tr><td>'+tmp.lecture_name
+        +'</td><td>'+tmp.lecture_date.f+' '
+        +tmp.lecture_date.w+' '
+        +tmp.lecture_date.t
+        +'</td><td>'+tmp.lecture_teach
+        +'</td><td>'+tmp.lecture_par+'%</td></tr>';
     }
-    return lecture_table;
+    return table;
 }
 var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
 var lecture_table = createTable(lecture_json);
