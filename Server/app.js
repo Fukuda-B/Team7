@@ -1,5 +1,5 @@
 /*
-    Team7 server js | Update: 2021/05/25
+    Team7 server js | Update: 2021/06/02
     Our project: https://github.com/Fukuda-B/Team7
 
     Memo:

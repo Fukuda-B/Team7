@@ -1,5 +1,5 @@
 <%#
-    Team7 client ejs - login ajax | Update: 2021/06/01
+    Team7 client ejs - login ajax | Update: 2021/06/02
 
     CDN List
     crypto-js : https://cdnjs.com/libraries/crypto-js
@@ -56,7 +56,6 @@
         req.open('POST', '', true); // 非同期
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
         var s_tx = 'password='+encodeURIComponent(CRYP.encryptoo(pass, bank))+'&username='+encodeURIComponent(CRYP.encryptoo(user, bank));
-        console.log(s_tx);
         req.send(s_tx);
     }
 </script>

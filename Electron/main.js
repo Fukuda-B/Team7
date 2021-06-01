@@ -18,6 +18,7 @@ app.on('window-all-closed', function () {
 // start electron
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
+        // titleBarStyle: 'hidden',
         width: 1000, height: 720,
         webPreferences: { nodeIntegration : false } // DbXSS
     });

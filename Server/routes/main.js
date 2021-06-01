@@ -86,6 +86,11 @@ passport.use(new LocalStrategy({
         var user = CRYP.decryptoo(username, bank),
             pass = CRYP.decryptoo(password, bank);
 
+        console.log('--------------------');
+        console.log({"user":username, "pass":password});
+        console.log({"user":user, "pass":pass});
+        console.log('--------------------');
+
         if (check_user(user, pass)) {
             return done(null, user);
         } else {
@@ -127,7 +132,6 @@ router
             }
         },
         (req, res) => { // 未認証
-            console.log(req.session);
             res.render('login', {
                 title: 'Team7 | Login',
                 crypto_bank: bank,
@@ -151,7 +155,7 @@ router
         (req, res) => {
             res.send('/main');
         }
-        );
+    );
 
 
 // ----- 認証済みか確認する関数 -----

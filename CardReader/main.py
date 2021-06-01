@@ -35,7 +35,7 @@ class MainWindow(QtWidgets.QWidget):
         # window.setLayout(layout)
         # QTimer.singleShot(2000, window.close)
         # sys.exit(app.exec_())
-        
+
 
 class MainClass:
     def __init__(self) -> None:
@@ -60,4 +60,6 @@ class AsyncClass:
     async def __init__(self) -> None:
         pass
     async def check(self):
+        pass
+    async def fetch(self):
         pass
