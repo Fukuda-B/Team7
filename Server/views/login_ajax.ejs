@@ -1,5 +1,5 @@
 <%#
-    Team7 client ejs - login ajax | Update: 2021/05/31
+    Team7 client ejs - login ajax | Update: 2021/06/01
 
     CDN List
     crypto-js : https://cdnjs.com/libraries/crypto-js
@@ -57,9 +57,11 @@
         update_iv();
         req.open('POST', '', true); // 非同期
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
-        var t_tx = '{"p":"'+encodeURI(pass)+'","u":"'+encodeURI(user)+'"}';
+        // var t_tx = '{"p":"'+encodeURI(pass)+'","u":"'+encodeURI(user)+'"}';
         // var t_tx = 'This is the password (test)'; // b = UTF-32LE : 1644167168
-        var s_tx = 'team7=' + encodeURIComponent(CRYP.encryptoo(t_tx, bank)); // Fixing problems caused by '+'
+        // var s_tx = 'team7=' + encodeURIComponent(CRYP.encryptoo(t_tx, bank)); // Fixing problems caused by '+'
+        // var s_tx = '{"password":"'+encodeURIComponent(CRYP.encryptoo(pass, bank))+'","username":"'+encodeURIComponent(CRYP.encryptoo(user, bank)))+'"}';
+        var s_tx = 'password='+encodeURIComponent(CRYP.encryptoo(pass, bank))+'&username='+encodeURIComponent(CRYP.encryptoo(user, bank));
         // var s_tx = 'team7=' + CRYP.encryptoo2(t_tx, bank);
         // console.log(CRYP.decryptoo2(CRYP.encryptoo2(t_tx, bank), bank));
         console.log(s_tx);

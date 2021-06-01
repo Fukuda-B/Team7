@@ -4,7 +4,8 @@ var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
 router.post('/', (req, res) => {
-  req.session.passport.user = undefined;
+  req.logout();
+  // req.session.passport.user = undefined;
   res.redirect('/');
 });
 

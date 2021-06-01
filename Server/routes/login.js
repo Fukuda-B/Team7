@@ -1,5 +1,5 @@
 /*
-    Team7 server js - login | Update: 2021/05/31
+    Team7 server js - login | Update: 2021/06/01
 
     Memo:
     https://qiita.com/dojyorin/items/2fd99491f4b459f937a4
@@ -58,6 +58,7 @@ var CRYP = {
         // var srcs = CryptoJS.enc.Utf8.parse(data);
         // console.log(srcs);
         // var decrypt = CryptoJS.AES.decrypt(srcs, bank.key, {
+        data = decodeURIComponent(data);
         var decrypted = CryptoJS.AES.decrypt(data, bank.key, {
             iv: bank.iv,
             mode: CryptoJS.mode.CBC,
@@ -85,7 +86,10 @@ var update_iv = () => {
 update_iv();
 
 // passport
-passport.use(new LocalStrategy(
+passport.use(new LocalStrategy({
+        usernameField: "username",
+        passwordField: "password",
+    },
     (username, password, done) => {
         if (username === userB.username && password === userB.password) {
             return done(null, {username:username, password:password});
@@ -118,18 +122,20 @@ router
     })
     // POST req
     .post('/', function (req, res) {
-        // passport.authenticate('local', {
-        //     failureRedirect : '',
-        //     successRedirect : '/home'
-        // })
-        if (req.body.team7) {
+        passport.authenticate('local', {
+            successRedirect : '/home',
+            failureRedirect : '/login',
+        });
+        console.log(req.body);
+        if (req.body) {
             try {
-                var body = decodeURIComponent(req.body.team7);
+                // console.log(req.body.username);
                 // var body = req.body.team7;
-                console.log({'req':body, 'bank':bank});
-                var data = JSON.parse(CRYP.decryptoo(body, bank));
+                // console.log({'user':req.body.username, 'pass':req.body.password});
+                var user = CRYP.decryptoo(req.body.username, bank);
+                var pass = CRYP.decryptoo(req.body.password, bank);
                 console.log('----- decryption result -----');
-                console.log(data);
+                console.log({"user":user, "pass":pass});
                 res.send('b');
             } catch (error) {
                 console.log(error);
