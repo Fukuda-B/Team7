@@ -1,5 +1,6 @@
 /*
     Team7 server js - login | Update: 2021/06/01
+    Our project: https://github.com/Fukuda-B/Team7
 
     Memo:
     https://qiita.com/dojyorin/items/2fd99491f4b459f937a4

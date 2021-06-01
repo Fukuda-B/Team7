@@ -1,5 +1,6 @@
 /*
     Team7 server js - api | Update: 2021/06/02
+    Our project: https://github.com/Fukuda-B/Team7
 */
 
 'use strict'
