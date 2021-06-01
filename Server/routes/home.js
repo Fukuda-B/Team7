@@ -6,9 +6,7 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-
 var jsonFile = './routes/user_json.json';
-
 function createTable(lecture_json) {
     var lecture_table = '',
     tmp = '';
@@ -28,9 +26,19 @@ function createTable(lecture_json) {
 var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
 var lecture_table = createTable(lecture_json);
 
+// 認証済みか確認する関数
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        res.redirect('/login'); // ログインページへリダイレクト
+    }
+}
+
 router
     // GET req
-    .get('/', (req, res) => {
+    .get('/', isAuthenticated,
+        (req, res) => {
         res.render('home', {
             title: 'Team7',
             lecture_table: lecture_table,

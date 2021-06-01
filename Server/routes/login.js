@@ -24,12 +24,14 @@
     サイドチャネル攻撃
 */
 
+'use strict'
 var express = require('express');
 var session = require('express-session');
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 var crypto = require('crypto');
 var CryptoJS = require('crypto-js');
+const { nextTick } = require('process');
 var router = express.Router();
 var key_size = 2<<7; // 2<<6=256, key.length=512
 var key_timeout = 7777; // ms
@@ -93,8 +95,8 @@ passport.use(new LocalStrategy({
     (username, password, done) => {
         var user = CRYP.decryptoo(username, bank),
             pass = CRYP.decryptoo(password, bank);
-        console.log({username:username, password:password});
-        console.log({user:user, pass:pass});
+        // console.log({username:username, password:password});
+        // console.log({user:user, pass:pass});
 
         if (check_user(user, pass)) {
             return done(null, user);
@@ -103,14 +105,20 @@ passport.use(new LocalStrategy({
         }
     }
 ));
+router.use(passport.initialize());
+router.use(session({
+    secret: 'hello_team7',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {secure: false}
+}));
+router.use(passport.session());
 passport.serializeUser((user, done) => {
     done(null, user);
 });
 passport.deserializeUser((user, done) => {
     done(null, user);
 });
-router.use(passport.initialize());
-router.use(passport.session());
 
 
 // Request
@@ -123,15 +131,37 @@ router
             crypto_bank: bank,
         });
     })
-    .get('/u', function (req, res) {
-        res.send(bank.iv);
+    .get('/u',
+        isAuthenticated,
+        (req, res) => {
+        res.render('home', {
+            title: 'Team7',
+            lecture_table: lecture_table,
+            user_id: lecture_json.user_id
+        });
     })
     // POST req
+    .post('/u', function (req, res) {
+        res.send(bank.iv);
+    })
     .post('/',
+        (req, res, next) => {
+            console.log(req.body);
+            next();
+        },
         passport.authenticate('local', {
-            successRedirect : '/home',
+            // session : true,
+            // successRedirect : '/login',
             // failureRedirect : '/login',
         }),
+        (req, res) => {
+            console.log('u: '+req.user);
+            res.send('login/u');
+        }
+        // function (req, res) {
+        //     res.redirect('/home');
+        //     res.send('b');
+        // }
         // function (req, res) {
         //     console.log(req.body);
         //     if (req.body) {
@@ -152,8 +182,39 @@ router
         // }
         );
 
-// -----
 
+// ----- 認証済みか確認する関数 -----
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        // res.redirect('/login'); // ログインページへリダイレクト
+        res.send('d');
+    }
+}
+
+// ----- JSON読み込みテスト -----
+var fs = require('fs');
+var jsonFile = './routes/user_json.json';
+function createTable(lecture_json) {
+    var lecture_table = '',
+    tmp = '';
+    for(var i=0; i<lecture_json.lecture.length; i++) {
+        tmp = lecture_json.lecture[i];
+        // console.log(tmp.lecture_date);
+        lecture_table += '<tr><td>'+tmp.lecture_name
+            +'</td><td>'+tmp.lecture_date.f+' '
+            +tmp.lecture_date.w+' '
+            +tmp.lecture_date.t
+            +'</td><td>'+tmp.lecture_teach
+            +'</td><td>'+tmp.lecture_par+'%</td></tr>';
+    }
+    return lecture_table;
+}
+var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+var lecture_table = createTable(lecture_json);
+
+// ----- ユーザ確認 -----
 function check_user(user, pass) {
 
     const userB = {

@@ -28,7 +28,7 @@ var passport = require('passport'),
 var index = require('./routes/index');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
-var home = require('./routes/home');
+// var home = require('./routes/home');
 var api_root = require('./routes/api');
 var listenPort = 3000;
 
@@ -66,20 +66,23 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 
 app.use(passport.initialize());
 
-app.use(morgan('dev'));
+app.use(morgan('dev')); // logger
 app.use(cookieParser());
+app.disable('x-powered-by'); // disable header
 
 // Router setting
 app.use('/', index);
-app.use('/home', home);
+// app.use('/home', home);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/api/v1/team7', api_root);
 
+// 404 Not Found
 app.use(function(req, res, next) {
     next(createError(404));
 });
 
+// 500 Internal Server Error
 app.use(function(err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') == 'development' ? err : {};
@@ -88,6 +91,7 @@ app.use(function(err, req, res, next) {
     res.render('error', {title: 'Server Error'});
 });
 
+// Listen port
 app.listen(listenPort, () => {
     console.log('Welcome to Team7!')
 })

@@ -38,7 +38,7 @@
                 }
             }
         }
-        req.open('GET', 'login/u', false); // 同期
+        req.open('POST', 'login/u', false); // 同期
         req.send();
     }
 
@@ -50,7 +50,9 @@
         req.onreadystatechange = function () {
             if (req.readyState == 4) {
                 if (req.status == 200) {
-                    console.log(req.responseText);
+                    location.href = req.responseText;
+                } else {
+                    // console.log(req.status);
                 }
             }
         }
