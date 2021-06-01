@@ -91,8 +91,13 @@ passport.use(new LocalStrategy({
         passwordField: "password",
     },
     (username, password, done) => {
-        if (username === userB.username && password === userB.password) {
-            return done(null, {username:username, password:password});
+        var user = CRYP.decryptoo(username, bank),
+            pass = CRYP.decryptoo(password, bank);
+        console.log({username:username, password:password});
+        console.log({user:user, pass:pass});
+
+        if (check_user(user, pass)) {
+            return done(null, user);
         } else {
             return done(null, false);
         }
@@ -112,6 +117,7 @@ router.use(passport.session());
 router
     // GET req
     .get('/', function (req, res, next) {
+        console.log(req.session);
         res.render('login', {
             title: 'Team7 | Login',
             crypto_bank: bank,
@@ -121,35 +127,46 @@ router
         res.send(bank.iv);
     })
     // POST req
-    .post('/', function (req, res) {
+    .post('/',
         passport.authenticate('local', {
             successRedirect : '/home',
-            failureRedirect : '/login',
-        });
-        console.log(req.body);
-        if (req.body) {
-            try {
-                // console.log(req.body.username);
-                // var body = req.body.team7;
-                // console.log({'user':req.body.username, 'pass':req.body.password});
-                var user = CRYP.decryptoo(req.body.username, bank);
-                var pass = CRYP.decryptoo(req.body.password, bank);
-                console.log('----- decryption result -----');
-                console.log({"user":user, "pass":pass});
-                res.send('b');
-            } catch (error) {
-                console.log(error);
-                res.send('d');
-            }
-        }
-    });
+            // failureRedirect : '/login',
+        }),
+        // function (req, res) {
+        //     console.log(req.body);
+        //     if (req.body) {
+        //         try {
+        //             console.log(req.body.username);
+        //             var body = req.body.team7;
+        //             console.log({'user':req.body.username, 'pass':req.body.password});
+        //             var user = CRYP.decryptoo(req.body.username, bank),
+        //                 pass = CRYP.decryptoo(req.body.password, bank);
+        //             console.log('----- decryption result -----');
+        //             console.log({"user":user, "pass":pass});
+        //             res.send('b');
+        //         } catch (error) {
+        //             console.log(error);
+        //             res.send('d');
+        //         }
+        //     }
+        // }
+        );
 
 // -----
 
-const userB = {
-    username: "B",
-    password: "GOD"
-};
+function check_user(user, pass) {
+
+    const userB = {
+        username: "b",
+        password: "god"
+    };
+    
+    if (user === userB.username && pass === userB.password) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 // -----
 
