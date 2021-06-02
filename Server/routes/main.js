@@ -115,6 +115,7 @@ router
     .get('/',
         isAuthenticated,
         (req, res) => {
+        // console.log(req.session);
         res.render('home', {
             title: 'Team7',
             lecture_table: lecture_table,
@@ -191,9 +192,11 @@ function check_user(user, pass) {
 
     const userB = {
         username: "b",
-        password: "god"
+        password: "god",
+        admin: true,
+        UID: "X00001011",
     };
-    
+
     return (user === userB.username && pass === userB.password);
 }
 
