@@ -25,7 +25,7 @@ Download & Install Node.js -> [Node.js - Download](https://nodejs.org/ja/downloa
 
 \-\-\-  
 \[ [Team7/Server](./Server) \]  
-Install nodejs-domule & Start ( Windows - powershell ) :  
+Install nodejs-module and start the server ( Windows - powershell ) :  
 ```cmd
 cd Server
 ./server_start.bat
@@ -33,7 +33,7 @@ cd Server
 
 \-\-\-    
 \[ [Team7/Electron](./Electron) \]  
-Install nodejs-domule & Start ( Windows - powershell ) :  
+Install nodejs-module and start ( Windows - powershell ) :  
 ```cmd
 cd Electron
 ./electron_start.bat
