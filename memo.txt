@@ -4,4 +4,4 @@ https://www.atmarkit.co.jp/ait/articles/1108/12/news095.html
 -----
 はじめは、SQLite3で練習するのがよさそうです。GUIエディタもあります。
 SQLite3 - エディタ : https://sqlitebrowser.org/dl/
-Hello word
+Hello world
