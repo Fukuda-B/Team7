@@ -111,7 +111,7 @@ router.use(session({
     secret: 'hello_team7',
     resave: true,
     saveUninitialized: false,
-    // cookie: {secure: false}
+    cookie: {secure: true}
 }));
 router.use(passport.session());
 passport.serializeUser((user, done) => {

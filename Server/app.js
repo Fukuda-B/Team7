@@ -4,7 +4,32 @@
 
     Memo:
     npm install --save []
----
+
+    ---
+    https://qiita.com/tarotaro1129/items/71fd835314a108834b5a
+    https://www.guru99.com/web-security-vulnerabilities.html
+    https://www.whitehatsec.com/faq/content/top-vulnerabilities-list
+    https://github.com/OWASP/Top10
+    https://wiki.owasp.org/images/2/23/OWASP_Top_10-2017%28ja%29.pdf
+
+    OS Command Injection
+    SQL-injection
+    Directory traversal
+    Session hijacking
+    Cross-site scripting (XSS)
+    Cross-site request forgery (CSRF)
+    http header-injection
+    Clickjacking
+    Broken Authentication and Session Management
+    Insecure Direct Object References
+    Security Misconfiguration
+    Insecure Cryptographic Storage
+    Failure to restrict URL Access
+    Insufficient Transport Layer Protection
+    Unvalidated Redirects and Forwards
+    Session fixation
+
+    ---
     Authentication middleware: [passport](https://github.com/jaredhanson/passport])
     Template engine: [ejs](https://ejs.co/)
 */
