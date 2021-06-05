@@ -70,7 +70,7 @@ var app = express();
 // }));
 
 // Cookie settings
-var expiryDate = new Date(Date.now() + 24*60*60*1000); // 1day
+var expiryDate = new Date(Date.now() + 7*24*60*60*1000); // 1week
 app.use(session({
     secret: 'hello_team7',
     resave: true,
