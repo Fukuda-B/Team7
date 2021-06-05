@@ -6,8 +6,10 @@
 'use strict'
 var express = require('express');
 var router = express.Router();
+var passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
 
-var js = {
+    var js = {
     "user": {
         "name": "A",
         "attendance": {
@@ -39,6 +41,7 @@ var js = {
         },
     },
 };
+
 
 router
     // GET req
