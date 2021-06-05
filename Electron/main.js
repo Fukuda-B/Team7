@@ -22,7 +22,7 @@ app.on('ready', function() {
         width: 1000, height: 720,
         webPreferences: { nodeIntegration : false } // DbXSS
     });
-    mainWindow.loadURL('http://localhost:3000/');
+    mainWindow.loadURL('http://localhost:8080/');
 
     mainWindow.on('closed', function() {
         mainWindow = null;
