@@ -1,1 +1,4 @@
+start nginx
+nginx -s quit
+
 taskkill /f /IM nginx.exe

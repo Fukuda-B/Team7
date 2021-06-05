@@ -42,7 +42,7 @@ var ejs = require('ejs');
 var byrypt = require('bcrypt');
 var express = require('express');
 var session = require('express-session');
-var compression = require('compression');
+// var compression = require('compression');
 var morgan = require('morgan');
 var path = require('path')
 var passport = require('passport'),
@@ -63,11 +63,11 @@ process.on('uncaughtException', (err) => {
 var app = express();
 
 // Gzip complession
-app.use(compression({
-    threshold: 0,
-    level: 7,
-    memLevel: 7
-}));
+// app.use(compression({
+//     threshold: 0,
+//     level: 7,
+//     memLevel: 7
+// }));
 
 // Cookie settings
 var expiryDate = new Date(Date.now() + 24*60*60*1000); // 1day
