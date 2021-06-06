@@ -1,0 +1,95 @@
+https://github.com/alexfernandez/loadtest
+CPU: i3-8130U@2.20GHz 2C4T / MEM: 12GB
+
+# 要求総数 10000
+npx loadtest -n 10000 http://localhost:8080/main/
+
+Target URL  : http://localhost/
+Max requests: 10000
+Total time  : 57.47s
+Req per sec : 174
+Mean latecy : 5.7ms
+
+Percentage of the requests served within a certain time
+ 50% 3ms
+ 90% 15ms
+ 95% 16ms
+ 99% 27ms
+100% 65ms (longest request)
+
+-----
+Target URL  : http://localhost/main/login/
+Max requests: 10000
+Total time  : 64.49s
+Req per sec : 155
+Mean latecy : 6.4ms
+
+Percentage of the requests served within a certain time
+ 50% 4ms
+ 90% 15ms
+ 95% 16ms
+ 99% 26ms
+100% 422ms (longest request)
+
+-----
+Target URL  : http://localhost/main/
+Max requests: 10000
+Total time  : 46.36s
+Req per sec : 216
+Mean latecy : 4.6ms
+
+Percentage of the requests served within a certain time
+ 50% 2ms
+ 90% 13ms
+ 95% 15ms
+ 99% 24ms
+100% 114ms (longest request)
+
+
+# 同時実行 200, 測定時間 20s, Agent: keepalieve
+npx loadtest http://localhost:8080 -t 20 -c 200 --keepalive
+
+Target URL    : http://localhost/
+Completed req : 7716
+Total errors  : 0
+Total time    : 20.00196s
+Requests / s  : 386
+Mean latency  : 510 ms
+Percentage of the requests served within a certain time
+ 50% 466ms
+ 90% 662ms
+ 95% 764ms
+ 99% 861ms
+100% 896ms (longest request)
+
+-----
+npx loadtest http://localhost:8080/main/login -t 20 -c 200 --keepalive
+Target URL    : http://localhost/main/login
+Completed req : 5358
+Total errors  : 0
+Total time    : 20.00172s
+Requests / s  : 268
+Mean latency  : 729.5 ms
+Percentage of the requests served within a certain time
+ 50%  696ms
+ 90%  841ms
+ 95% 1116ms
+ 99% 1434ms
+100% 1621ms (longest request)
+
+
+# 同時実行 20, 測定時間 20s, Agent: keepalive
+npx loadtest http://localhost:8080/main/login -t 20 -c 20 --keepalive
+
+Target URL    : http://localhost/main/login
+Completed req : 6360
+Total errors  : 0
+Total time    : 20.00236s
+Requests / s  : 316
+Mean latency  : 62.6 ms
+Percentage of the requests served within a certain time
+ 50%  58ms
+ 90%  70ms
+ 95%  76ms
+ 99% 116ms
+100% 274ms (longest request)
