@@ -1,38 +1,11 @@
 /*
-    Team7 client css | Update: 2021/05/25
+    Team7 client css | Update: 2021/06/07
 
     The main color is defined by a global css variable in the pseudo-class:root.
     The other colors can be defined by the members.
 */
 
 @charset "utf-8";
-body {
-    margin: 0;
-}
-
-#top_bar {
-    padding: 10px 5px;
-    background: var(--main-color);
-}
-#top_bar_wrap {
-    display: block;
-    text-align: right;
-    padding: 0;
-    margin: 0;
-}
-#top_bar_link {
-    text-align: center;
-    width: 100px;
-    text-decoration: none;
-    padding: 10px;
-    color: #fff;
-}
-#top_bar_link:hover {
-    color: var(--hover-color);
-}
-#top_bar_link i {
-    padding-right: 5px;
-}
 
 #index_top {
     margin-top: 100px;

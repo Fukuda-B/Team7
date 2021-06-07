@@ -1,0 +1,51 @@
+/*
+    Team7 client css _top_bar | Update: 2021/06/07
+
+    The main color is defined by a global css variable in the pseudo-class:root.
+    The other colors can be defined by the members.
+*/
+
+@charset "utf-8";
+body {
+  margin: 0;
+}
+
+#top_bar {
+  position: relative;
+  padding: 10px 5px;
+  background: var(--main-color);
+}
+#top_bar_logo p {
+  text-decoration: none;
+  position: absolute;
+  top: 0;
+  padding: 10px;
+  padding-top: 7px;
+  margin: 0;
+  margin-left: 10px;
+  border-top: 3px solid #fff;
+  color: #fff;
+  stroke: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.15);
+}
+#top_bar_wrap {
+  display: block;
+  text-align: right;
+  padding: 0;
+  margin: 0;
+}
+#top_bar_link {
+  text-align: center;
+  width: 100px;
+  text-decoration: none;
+  padding: 10px;
+  color: #fff;
+}
+#top_bar_link:hover {
+  text-decoration: underline;
+}
+#top_bar_link i {
+  padding-right: 5px;
+}

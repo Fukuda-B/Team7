@@ -6,32 +6,6 @@
 */
 
 @charset "utf-8";
-body {
-    margin: 0;
-}
-#top_bar {
-    padding: 10px 5px;
-    background: var(--main-color);
-}
-#top_bar_wrap {
-    display: block;
-    text-align: right;
-    padding: 0;
-    margin: 0;
-}
-#top_bar_link {
-    text-align: center;
-    width: 100px;
-    text-decoration: none;
-    padding: 10px;
-    color: #fff;
-}
-#top_bar_link:hover {
-    color: var(--hover-color);
-}
-#top_bar_link i {
-    padding-right: 5px;
-}
 
 #wrap {
     display: flex;

@@ -91,7 +91,7 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 
 app.use(passport.initialize());
 
-// app.use(morgan('dev')); // logger
+app.use(morgan('dev')); // logger
 app.use(cookieParser());
 app.disable('x-powered-by'); // disable header
 

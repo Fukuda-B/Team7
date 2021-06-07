@@ -119,7 +119,9 @@ router
         res.render('home', {
             title: 'Team7',
             lecture_table: lecture_table,
-            user_id: lecture_json.user_id
+            user_id: lecture_json.user_id,
+            top_bar_link: '/main/logout',
+            top_bar_text: '<i class="fas fa-sign-in-alt"></i> Sign out'
         });
     })
     .get('/logout', (req, res) => {
@@ -137,20 +139,22 @@ router
             res.render('login', {
                 title: 'Team7 | Login',
                 crypto_bank: bank,
+                top_bar_link: '',
+                top_bar_text: ''
             });
         }
     )
 
     // POST req
-    .post('/u', function (req, res) {
+    .post('/u', function (req, res) { // 認証用 iv
         res.send(bank.iv);
     })
-    .post('/logout', (req, res) => {
+    .post('/logout', (req, res) => { // ログアウト処理
         req.logout();
         res.redirect('/');
     })
     .post('/login',
-        passport.authenticate('local', {
+        passport.authenticate('local', { // 認証処理
             successRedirect : '',
             failureRedirect : 'main/login',
         }),
