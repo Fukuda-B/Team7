@@ -41,8 +41,10 @@
 
 #login_fie_button {
     color: #fff;
-    width: 65px;
-    margin-left: calc(100% - 100px);
+    /* width: 65px; */
+    /* margin-left: calc(100% - 100px); */
+    width: 85px;
+    margin-left: calc(100% - 85px);
     background: var(--main-color);
     border: none;
     display: block;
