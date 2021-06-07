@@ -61,6 +61,23 @@ const menu_list = Menu.buildFromTemplate([
             { role:'toggleDevTools', label:'Toggle dev tools'},
         ]
     }, {
+        label: "Go",
+        submenu: [
+            {
+                label:'My Page',
+                click: () => {
+                    mainWindow.loadURL(start_page+'main');
+                }
+            },
+            { type: 'separator'},
+            {
+                label:'Logout',
+                click: () => {
+                    mainWindow.loadURL(start_page+'main/logout');
+                }
+            },
+        ]
+    }, {
         label: "Help",
         submenu: [
             {
