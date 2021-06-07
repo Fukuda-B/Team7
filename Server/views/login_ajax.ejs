@@ -32,7 +32,6 @@
             if (req.readyState == 4) {
                 if (req.status == 200) {
                     bank.iv = req.responseText;
-                    return true;
                 }
             }
         }
@@ -49,6 +48,9 @@
             if (req.readyState == 4) {
                 if (req.status == 200) {
                     location.href = req.responseText;
+                } else if (req.status == 401) {
+                    var noti = document.getElementById('login_notice');
+                    noti.style.display = 'block';
                 }
             }
         }

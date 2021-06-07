@@ -155,8 +155,7 @@ router
     })
     .post('/login',
         passport.authenticate('local', { // 認証処理
-            successRedirect : '',
-            failureRedirect : 'main/login',
+            // successRedirect : '',
         }),
         (req, res) => {
             res.send('/main');

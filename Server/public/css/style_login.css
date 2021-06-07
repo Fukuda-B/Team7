@@ -57,3 +57,11 @@
 #login_fie_botton:hover {
     box-shadow: 0 0 5px #888;
 }
+
+#login_notice {
+    display: none;
+    margin-bottom: 0;
+    text-align: center;
+    color: red;
+    font-size: 0.8em;
+}

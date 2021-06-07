@@ -30,6 +30,9 @@ body {
   font-weight: bold;
   background: rgba(255, 255, 255, 0.15);
 }
+#top_bar_logo p:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 #top_bar_wrap {
   display: block;
   text-align: right;

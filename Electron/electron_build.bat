@@ -20,4 +20,5 @@ if not exist "node_modules" call npm install
 rem| start server
 call npm i -D electron-packager
 call npx electron-packager . Team7 --platform=all --arch=all --overwrite
+@REM call npx electron-packager . Team7 --platform=all --arch=all --overwrite --asar
 @REM call npx electron-packager . Team7 --platform=all --arch=all

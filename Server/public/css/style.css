@@ -57,6 +57,9 @@
     margin-left: calc(50% - 75px);
     color: #999;
 }
+#dl_other:hover {
+    text-decoration: underline;
+}
 
 #footer {
     padding: 0;
