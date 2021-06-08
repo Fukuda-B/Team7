@@ -19,6 +19,6 @@ rem| install node-module
 if not exist "node_modules" call npm install
 rem| start server
 call npm i -D electron-packager
-call npx electron-packager . Team7 --platform=all --arch=all --overwrite
+call npx electron-packager . Team7 --platform=all --arch=all --overwrite --icon=icon.ico
 @REM call npx electron-packager . Team7 --platform=all --arch=all --overwrite --asar
 @REM call npx electron-packager . Team7 --platform=all --arch=all

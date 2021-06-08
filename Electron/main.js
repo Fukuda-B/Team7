@@ -7,12 +7,13 @@
 
 const { Menu, Tray } = require('electron');
 var electron = require('electron');
+var paht = require('path');
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
 let mainWindow; // main window | gc (garbage collection) measures
 let tray = null; // task tray  | gc (garbage collection) measures
 
-var icon = 'icon.png';
+var icon =  __dirname + '/icon.ico';
 var default_zoom = 0.9;
 var start_page = 'http://localhost:8080/';
 var issue_page = 'https://github.com/Fukuda-B/Team7/issues';
