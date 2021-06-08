@@ -15,22 +15,18 @@ body {
   padding: 10px 5px;
   background: var(--main-color);
 }
-#top_bar_logo p {
-  text-decoration: none;
+#top_bar_logo img {
   position: absolute;
   top: 0;
-  padding: 10px;
-  padding-top: 7px;
+  padding: 4px 5px;
+  /* padding-top: 7px; */
   margin: 0;
   margin-left: 10px;
   border-top: 3px solid #fff;
-  color: #fff;
-  stroke: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-weight: bold;
   background: rgba(255, 255, 255, 0.15);
+  height: 30px;
 }
-#top_bar_logo p:hover {
+#top_bar_logo img:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 #top_bar_wrap {
