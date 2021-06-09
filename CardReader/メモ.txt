@@ -1,0 +1,4 @@
+WindowsでもドライバをインストールすることでPythonからカードリーダを扱うことができます。
+
+Zadig: https://zadig.akeo.ie/
+----

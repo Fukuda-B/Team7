@@ -1,67 +1,63 @@
 /*
-    Team7 server js - api | Update: 2021/06/02
+    Team7 server js - api | Update: 2021/06/08
     Our project: https://github.com/Fukuda-B/Team7
 */
 
 'use strict'
-var express = require('express');
-var router = express.Router();
-var passport = require('passport'),
+const express = require('express');
+const router = express.Router();
+const passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
-    var js = {
-    "user": {
-        "name": "A",
-        "attendance": {
-            1:true,
-            2:false,
-            3:true,
-            4:true,
-            5:true,
-        },
-    },
-    "user2": {
-        "name": "B",
-        "attendance": {
-            1:true,
-            2:true,
-            3:true,
-            4:true,
-            5:true,
-        },
-    },
-    "user3": {
-        "name": "C",
-        "attendance": {
-            1:true,
-            2:true,
-            3:true,
-            4:true,
-            5:true,
-        },
-    },
-};
+const fs = require('fs');
+var res_json = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
 
+// Passport
+passport.use(new LocalStrategy ({
+    usernameField: "u",
+    passwordField: "p",
+    session: false,
+}, (username, passwrod, done) => {
+    if (check_user(username, passwrod)) {
+        return done(null, username);
+    } else {
+        return done(null, false);
+    }
+}));
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
 
 router
     // GET req
-    .get('/post', function (req, res) {
-        res.header('Content-Type', 'application/json; charset=utf-8');
-        res.send(req.body);
+    .get('/', isAuthenticated, function (req, res) {
+        console.log(req.body);
+        res.send('team7 - api');
+        console.log(req);
     })
-    .get('/get', function (req, res) {
+    .get('/v1/team7', function (req, res) {
         res.header('Content-Type', 'application/json; charset=utf-8');
-        res.send(js);
+        res.send(res_json);
     })
 
     // POST req
-    .post('/post', function (req, res) {
+    .post('/v1/team7', function (req, res) {
         res.header('Content-Type', 'application/json; charset=utf-8');
-        res.send(req.body);
-    })
-    .post('/get', function (req, res) {
-        res.header('Content-Type', 'application/json; charset=utf-8');
-        res.send(js);
+        res.send(res_json);
     });
+
+function isAuthenticated(req, res, next) {
+    if(req.isAuthenticated()) {
+        return next();
+    } else {
+        res.send('bad request');
+    }
+}
+function check_user() {
+    return false;
+}
 
 module.exports = router;

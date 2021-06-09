@@ -26,19 +26,21 @@
 */
 
 'use strict'
-var express = require('express');
-var session = require('express-session');
-var passport = require('passport'),
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
-var crypto = require('crypto');
-var CryptoJS = require('crypto-js');
+const crypto = require('crypto');
+const CryptoJS = require('crypto-js');
 const { nextTick } = require('process');
-var router = express.Router();
+const router = express.Router();
+const fs = require('fs');
+
 var key_size = 2<<7; // 2<<7=2^8=256, key.length=512
 var key_timeout = 7777; // ms
 
 
-var CRYP = {
+const CRYP = {
     // Generate key
     key_v_gen : function() {
         return crypto.randomBytes(key_size).toString('hex');
@@ -173,7 +175,6 @@ function isAuthenticated(req, res, next) {
 }
 
 // ----- JSON読み込みテスト -----
-var fs = require('fs');
 var jsonFile = './routes/user_json.json';
 function createTable(json) {
     var table = '';
@@ -192,14 +193,7 @@ var lecture_table = createTable(lecture_json);
 
 // ----- ユーザ確認 -----
 function check_user(user, pass) {
-
-    const userB = {
-        username: "b",
-        password: "god",
-        admin: true,
-        UID: "X00001011",
-    };
-
+    var userB = JSON.parse(fs.readFileSync('user_data.json', 'utf8'));
     return (user === userB.username && pass === userB.password);
 }
 
