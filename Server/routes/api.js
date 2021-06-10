@@ -1,19 +1,21 @@
 /*
-    Team7 server js - api | Update: 2021/06/08
+    Team7 server js - api | Update: 2021/06/10
     Our project: https://github.com/Fukuda-B/Team7
 */
 
 'use strict'
 const express = require('express');
 const router = express.Router();
-const passport = require('passport'),
+const passport_nos = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
 const fs = require('fs');
+const path = require('path');
 var res_json = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
 
-// Passport
-passport.use(new LocalStrategy ({
+// Passport_no_session
+routor.use(passport_nos.initialize());
+passport_nos.use(new LocalStrategy ({
     usernameField: "u",
     passwordField: "p",
     session: false,
@@ -24,10 +26,10 @@ passport.use(new LocalStrategy ({
         return done(null, false);
     }
 }));
-passport.serializeUser((user, done) => {
+passport_nos.serializeUser((user, done) => {
     done(null, user);
 });
-passport.deserializeUser((user, done) => {
+passport_nos.deserializeUser((user, done) => {
     done(null, user);
 });
 
