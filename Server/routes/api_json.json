@@ -1,0 +1,32 @@
+{
+"user": {
+        "name": "A",
+        "attendance": {
+            "1":true,
+            "2":false,
+            "3":true,
+            "4":true,
+            "5":true
+        }
+    },
+    "user2": {
+        "name": "B",
+        "attendance": {
+            "1":true,
+            "2":true,
+            "3":true,
+            "4":true,
+            "5":true
+        }
+    },
+    "user3": {
+        "name": "C",
+        "attendance": {
+            "1":true,
+            "2":true,
+            "3":true,
+            "4":true,
+            "5":true
+        }
+    }
+}

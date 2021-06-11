@@ -35,24 +35,24 @@
 */
 
 'use strict'
-var createError = require('http-errors');
-var cookieParser = require('cookie-parser');
-var cookieSettion = require('cookie-session');
-var ejs = require('ejs');
-var byrypt = require('bcrypt');
-var express = require('express');
-var session = require('express-session');
-// var compression = require('compression');
-var morgan = require('morgan');
-var path = require('path')
-var passport = require('passport'),
+const createError = require('http-errors');
+const cookieParser = require('cookie-parser');
+const cookieSettion = require('cookie-session');
+const ejs = require('ejs');
+const byrypt = require('bcrypt');
+const express = require('express');
+const session = require('express-session');
+// const compression = require('compression');
+const morgan = require('morgan');
+const path = require('path')
+const passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
 // -----
 // Router module
-var index = require('./routes/index');
-var main = require('./routes/main');
-var api_root = require('./routes/api');
+const index = require('./routes/index.js');
+const main = require('./routes/main.js');
+const api_root = require('./routes/api.js');
 var listenPort = 3000;
 
 // -----
@@ -98,7 +98,7 @@ app.disable('x-powered-by'); // disable header
 // Router setting
 app.use('/', index);
 app.use('/main', main);
-app.use('/api/v1/team7', api_root);
+app.use('/api', api_root);
 
 // 404 Not Found
 app.use(function(req, res, next) {
