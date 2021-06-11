@@ -58,11 +58,11 @@ app.on('ready', function() {
             label: "View",
             submenu: [
                 { role:'reload', label:'Reload'},
-                { type: 'separator'},
+                { type:'separator'},
                 { role:'resetZoom', label:'Reset Zoom'},
                 { role:'zoomIn', label:'Zoom in'},
                 { role:'zoomOut', label:'Zoom out'},
-                { type: 'separator'},
+                { type:'separator'},
                 { role:'toggleDevTools', label:'Toggle dev tools'},
             ]
         }, {
@@ -74,7 +74,7 @@ app.on('ready', function() {
                         mainWindow.loadURL(start_page+'main');
                     }
                 },
-                { type: 'separator'},
+                { type:'separator'},
                 {
                     label:'Logout',
                     click: () => {
@@ -92,7 +92,7 @@ app.on('ready', function() {
                         await shell.openExternal(issue_page);
                     }
                 },
-                { type: 'separator'},
+                { type:'separator'},
                 { role:'about', label:`About ${app.name}` }
             ]
         }
