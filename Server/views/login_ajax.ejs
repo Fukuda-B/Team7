@@ -3,10 +3,23 @@
 
     CDN List
     crypto-js : https://cdnjs.com/libraries/crypto-js
+
+    PBKDF2 : https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf
+    scrypt :
+        https://blog.visvirial.com/articles/519
+        https://www.tarsnap.com/scrypt/scrypt-slides.pdf
+        https://github.com/tonyg/js-scrypt
+        https://github.com/barrysteyn/node-scrypt
+    argon2 :
+        https://github.com/antelle/argon2-browser
+        https://www.jsdelivr.com/package/npm/argon2-browser
+        https://github.com/Daninet/hash-wasm/
+        https://stackoverflow.com/questions/768268/how-to-calculate-md5-hash-of-a-file-using-javascript/63287199#63287199
 %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
     integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/hash-wasm@4.7.0/dist/argon2.umd.min.js"></script>
 <script type='text/javascript'>
     const bank = <%-JSON.stringify(crypto_bank)%>;
     var CRYP = {
@@ -23,6 +36,19 @@
         encryptoo2 : function(data, bank) {
             srcs = CryptoJS.enc.Utf8.parse(data);
             return CryptoJS.AES.encrypt(srcs, bank.key);
+        },
+        // Argon2
+        argon2_h : function(data, bank) {
+            salt = bank.salt;
+            return hashwasm.argon2id({
+                password: data,
+                salt,
+                parallelism: 2,
+                iterations: 5,
+                memorySize: 1024*20, // memory (KB)
+                hashLength: 128, // byte
+                outputType: 'encoded',
+            });
         },
     }
 
@@ -57,7 +83,10 @@
         update_iv();
         req.open('POST', '', true); // 非同期
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
-        var s_tx = 'password='+encodeURIComponent(CRYP.encryptoo(pass, bank))+'&username='+encodeURIComponent(CRYP.encryptoo(user, bank));
-        req.send(s_tx);
+        CRYP.argon2_h(pass, bank).then((pp) => {
+            console.log(pp);
+            var s_tx = 'password='+encodeURIComponent(pp)+'&username='+encodeURIComponent(CRYP.encryptoo(user, bank));
+            req.send(s_tx);
+        });
     }
 </script>

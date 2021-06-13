@@ -6,6 +6,8 @@
     npm install --save []
 
     ---
+    https://dropbox.tech/security/how-dropbox-securely-stores-your-passwords
+
     https://qiita.com/tarotaro1129/items/71fd835314a108834b5a
     https://www.guru99.com/web-security-vulnerabilities.html
     https://www.whitehatsec.com/faq/content/top-vulnerabilities-list
