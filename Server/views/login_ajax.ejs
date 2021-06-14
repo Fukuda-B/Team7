@@ -25,27 +25,28 @@
     var CRYP = {
         // Encrypto
         encryptoo : function(data, bank) {
-            srcs = CryptoJS.enc.Utf8.parse(data);
-            var encrypted = CryptoJS.AES.encrypt(srcs, bank.key, {
-                iv: bank.iv,
+            var srcs = CryptoJS.enc.Utf8.parse(data);
+            var encrypted = CryptoJS.AES.encrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
+                iv: CryptoJS.enc.Utf8.parse(bank.iv),
                 mode: CryptoJS.mode.CBC,
                 padding: CryptoJS.pad.Pkcs7
             });
             return encrypted;
         },
         encryptoo2 : function(data, bank) {
-            srcs = CryptoJS.enc.Utf8.parse(data);
+            var srcs = CryptoJS.enc.Utf8.parse(data);
             return CryptoJS.AES.encrypt(srcs, bank.key);
         },
+
         // Argon2
         argon2_h : function(data, bank) {
-            salt = bank.salt;
+            var salt = bank.salt;
             return hashwasm.argon2id({
                 password: data,
                 salt,
                 parallelism: 2,
                 iterations: 5,
-                memorySize: 1024*20, // memory (KB)
+                memorySize: 1024*10, // memory (KB)
                 hashLength: 128, // byte
                 outputType: 'encoded',
             });
@@ -84,7 +85,7 @@
         req.open('POST', '', true); // 非同期
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
         CRYP.argon2_h(pass, bank).then((pp) => {
-            console.log(pp);
+            // console.log(pp);
             var s_tx = 'password='+encodeURIComponent(pp)+'&username='+encodeURIComponent(CRYP.encryptoo(user, bank));
             req.send(s_tx);
         });

@@ -1,5 +1,5 @@
 /*
-    Team7 server js - main | Update: 2021/06/01
+    Team7 server js - main | Update: 2021/06/15
     Our project: https://github.com/Fukuda-B/Team7
 
     Memo:
@@ -50,6 +50,7 @@ const CRYP = {
         return crypto.randomBytes(key_size).toString('hex');
     },
     // Generating a encryption key
+    // salt is only used for argon2 hasing
     key_gen : function() {
         return {
             "iv": CRYP.iv_v_gen(),
@@ -59,13 +60,14 @@ const CRYP = {
     },
     // Decrypt
     decryptoo : function(data, bank) {
-        data = decodeURIComponent(data);
-        var decrypted = CryptoJS.AES.decrypt(data, bank.key, {
-            iv: bank.iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7
-        });
-        return decrypted.toString(CryptoJS.enc.Utf8);
+        var srcs = decodeURIComponent(data);
+        var decrypted = CryptoJS.AES.decrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
+                iv: CryptoJS.enc.Utf8.parse(bank.iv),
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            }
+        );
+        return decrypted.toString(CryptoJS.enc.Utf8).toString();
     },
     // not use custom iv
     decryptoo2 : function(data, bank) {
