@@ -60,6 +60,20 @@ const CRYP = {
     },
     // Decrypt
     decryptoo : function(data, bank) {
+        var word = decodeURIComponent(data);
+        var encryptedHexStr = CryptoJS.enc.Hex.parse(word);
+        var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
+        var decrypted = CryptoJS.AES.decrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
+                iv: CryptoJS.enc.Utf8.parse(bank.iv),
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            }
+        );
+        // console.log({"rec":data, "hex":encryptedHexStr, "pure":srcs, "decrypted":decrypted, "final":decrypted.toString(CryptoJS.enc.Utf8)});
+        return decrypted.toString(CryptoJS.enc.Utf8).toString();
+    },
+    // pure aes decrypt
+    decryptoo2 : function(data, bank) {
         var srcs = decodeURIComponent(data);
         var decrypted = CryptoJS.AES.decrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
                 iv: CryptoJS.enc.Utf8.parse(bank.iv),
@@ -68,11 +82,6 @@ const CRYP = {
             }
         );
         return decrypted.toString(CryptoJS.enc.Utf8).toString();
-    },
-    // not use custom iv
-    decryptoo2 : function(data, bank) {
-        var decrypted = CryptoJS.AES.decrypt(data, bank.key);
-        return decrypted.toString(CryptoJS.enc.Utf8);
     },
 }
 // Update the encryption key periodically.
@@ -93,10 +102,10 @@ passport.use(new LocalStrategy({
             // pass = CRYP.decryptoo(password, bank);
             pass = password
 
-        console.log('--------------------');
-        console.log({"user":username, "pass":password});
-        console.log({"user":user, "pass":pass});
-        console.log('--------------------');
+        // console.log('--------------------');
+        // console.log({"user":username, "pass":password});
+        // console.log({"user":user, "pass":password});
+        // console.log('--------------------');
 
         if (check_user(user, pass)) {
             return done(null, user);

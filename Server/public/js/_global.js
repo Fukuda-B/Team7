@@ -3,6 +3,6 @@
 */
 
 (function () {
-    console.log("%cTeam7%c v0.2.7 - 20210608" , style="font-size: 1.5em;", style="color:orange;");
+    console.log("%cTeam7%c v0.2.8 - 20210615" , style="font-size: 1.5em;", style="color:orange;");
     console.log("%cWelcome (・∀・)/%c" , style="color:#888;", "");
 }());

@@ -1,5 +1,5 @@
 <%#
-    Team7 client ejs - login ajax | Update: 2021/06/02
+    Team7 client ejs - login ajax | Update: 2021/06/15
 
     CDN List
     crypto-js : https://cdnjs.com/libraries/crypto-js
@@ -31,11 +31,16 @@
                 mode: CryptoJS.mode.CBC,
                 padding: CryptoJS.pad.Pkcs7
             });
-            return encrypted;
+            return encrypted.ciphertext.toString();
         },
         encryptoo2 : function(data, bank) {
             var srcs = CryptoJS.enc.Utf8.parse(data);
-            return CryptoJS.AES.encrypt(srcs, bank.key);
+            var encrypted = CryptoJS.AES.encrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
+                iv: CryptoJS.enc.Utf8.parse(bank.iv),
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            return encrypted;
         },
 
         // Argon2
