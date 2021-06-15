@@ -22,6 +22,8 @@ import asyncio
 import aiohttp
 # import requests
 import threading
+from gtts import gTTS
+import playsound
 # モジュールの読み込み
 import main_window # メインウィンドウを表示するモジュール
 
@@ -115,9 +117,15 @@ class IC():
         ''' タッチされたときの動作 '''
         self.idm = binascii.hexlify(tag.idm).decode().upper()
         self.cs.update_main("出席", "IDm : "+str(self.idm))
+        self.sound()
         self.flag = True
         return True
 
+    def sound(self):
+        tts = gTTS('ピッ!', lang='ja')
+        tts.save('b.mp3')
+        playsound.playsound('b.mp3')
+        
     def read_id(self):
         try:
             clf = nfc.ContactlessFrontend('usb')
