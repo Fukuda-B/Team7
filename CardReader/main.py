@@ -20,10 +20,6 @@ class Main(QtWidgets.QWidget):
 
     def __init__(self):
         ''' 画面表示 '''
-        # timer
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_i)
-        self.timer.start(2000)
         # window
         self.app = QtWidgets.QApplication(sys.argv)
         self.MainWindow = QtWidgets.QMainWindow()
@@ -39,13 +35,25 @@ class Main(QtWidgets.QWidget):
         print('Team7 ready!')
 
     def update_i(self):
+        current_time = str(datetime.datetime.now())
+        self.ui.statusbar.showMessage(current_time)
+
+class Sub():
+    def __init__(self, cs):
+        # timer
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_i)
+        self.timer.start(1000/60)
+        self.cs = cs
+        self.update_i
+
+    def update_i(self):
         ''' 定期実行 '''
-        print('update')
-        # current_time = str(datetime.datetime.now().time())
-        # self.ui.statusbar.showMessage("Message in statusbar.")
+        self.cs.update_i()
 
 if __name__ == "__main__":
     application = Main()
     application.ready()
+    sub_proc = Sub(application)
 
     sys.exit(application.app.exec_())
