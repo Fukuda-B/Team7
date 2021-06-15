@@ -1,65 +1,51 @@
 """
-    メイン画面表示部分
+    メイン処理部分
     author: Team7
+
+
+    memo:
+        https://www.finddevguides.com/Pyqt-qstatusbar-widget
+        https://teratail.com/questions/263508
 """
 
-from py_modules import NFCRead_dummy
-import db_mod
-
 import sys
-from PySide2 import QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QTimer
+import datetime
+# -----
+from py_modules import NFCRead_dummy
+import main_window
 
-class MainWindow(QtWidgets.QWidget):
+class Main(QtWidgets.QWidget):
+
     def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Team7 - Main")
-        l_style = """QLabel {
-            font-size: 16px;
-        }"""
-        label = QtWidgets.QLabel(self)
-        label.setStyleSheet(l_style)
-        label.setText("出席")
-    def show_s(self):
-        app = QtWidgets.QApplication()
-        window = MainWindow()
-        window.show()
-        app.exec_()
+        ''' 画面表示 '''
+        # timer
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_i)
+        self.timer.start(2000)
+        # window
+        self.app = QtWidgets.QApplication(sys.argv)
+        self.MainWindow = QtWidgets.QMainWindow()
+        self.ui = main_window.Ui_MainWindow()
+        self.ui.setupUi(self.MainWindow)
+        self.MainWindow.show()
 
-        # app = QApplication([])
-        # window = Qwidget()
-        # layout = QGridLayout()
-        # label = QLabel("出席", window)
-        # label.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-        # label.setFont(QFont("Monospace Regular", 16, QFont.Bold))
-        # layout.addWidget(label, 0, 0)
-        # window.setLayout(layout)
-        # QTimer.singleShot(2000, window.close)
-        # sys.exit(app.exec_())
+    def ready(self):
+        ''' 画面更新 '''
+        _translate = QtCore.QCoreApplication.translate
+        self.ui.label.setText(_translate("Team7", "出席管理システム"))
+        self.ui.label_2.setText(_translate("Hi", "こんにちは"))
+        print('Team7 ready!')
 
+    def update_i(self):
+        ''' 定期実行 '''
+        print('update')
+        # current_time = str(datetime.datetime.now().time())
+        # self.ui.statusbar.showMessage("Message in statusbar.")
 
-class MainClass:
-    def __init__(self) -> None:
-        pass
+if __name__ == "__main__":
+    application = Main()
+    application.ready()
 
-    def wait(self):
-        pass
-    
-    def add(self):
-        pass
-
-    def check(self, idm):
-        pass
-    
-    def check_allow(self):
-        MainWindow.show_s()
-
-    def check_deny(self):
-        pass
-
-class AsyncClass:
-    async def __init__(self) -> None:
-        pass
-    async def check(self):
-        pass
-    async def fetch(self):
-        pass
+    sys.exit(application.app.exec_())
