@@ -31,7 +31,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("UD デジタル 教科書体 N-R")
+        font.setFamily("UD デジタル 教科書体 N-R, メイリオ")
         font.setPointSize(50)
         self.label.setFont(font)
         self.label.setScaledContents(False)
@@ -108,6 +108,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("Team7 - CardReader", "Team7 - CardReader"))
+        MainWindow.setWindowIcon(QtGui.QIcon('icon.png'))
         # self.label.setText(_translate("", ""))
         # self.label_2.setText(_translate("", ""))
         self.menu.setTitle(_translate("File", "ファイル"))
@@ -121,8 +122,7 @@ class Ui_MainWindow(object):
         self.actionAbout.setText(_translate("About", "About"))
         self.action_5.setText(_translate("Exit", "終了"))
         self.action_6.setText(_translate("Edit data", "出席状況修正"))
-        self.action_8.setText(_translate("Update database", "データベース更新\n"
-""))
+        self.action_8.setText(_translate("Update database", "データベース更新"))
         self.action_9.setText(_translate("Preferences", "環境設定"))
         self.action_10.setText(_translate("Exit", "終了"))
 

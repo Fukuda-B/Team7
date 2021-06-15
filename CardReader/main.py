@@ -13,7 +13,6 @@
 from asyncio.tasks import gather
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QTimer
 import datetime
 import sqlite3
 import binascii
@@ -46,14 +45,19 @@ class Main(QtWidgets.QWidget):
         print('Team7 ready!')
 
     async def update_i(self, date, nws):
+        ''' ステータスバー更新 '''
         if nws: # オンライン状態
             self.ui.statusbar.setStyleSheet("background-color : #5BFF7F")
             text = str(date + '  [online]')
         else: # オフライン状態
             self.ui.statusbar.setStyleSheet("background-color : #FF69A3")
             text = str(date + '  [offline]')
-            
         self.ui.statusbar.showMessage(text)
+
+    def update_main(self, mtext, stext):
+        self.ui.label.setText(mtext)
+        self.ui.label_2.setText(stext)
+        
 
 # ----- Sub -----
 # 表示以外の内部処理
@@ -67,14 +71,15 @@ class Sub():
         self.nc = Network()
         self.nws = '-' # network status
         # timer
-        self.timer = QTimer()
+        self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.interval)
         self.timer.start(1000/self.fps)
         # ic card
-        ic_card = IC()
+        ic_card = IC(self.cs)
         self.thread_handle=threading.Thread(target=ic_card.start) # 別スレッドとして生成
         self.thread_handle.setDaemon(True)
         self.thread_handle.start()
+
 
     def interval(self):
         ''' 定期実行 '''
@@ -101,12 +106,15 @@ class Sub():
 # ----- IC -----
 # ICカードのidm読み取り
 class IC():
-    def __init__(self) -> None:
-        pass
+    def __init__(self, cs):
+        self.cs = cs # main ui
+        self.flag = False # not start display
 
     def on_connect(self, tag):
         ''' タッチされたときの動作 '''
         self.idm = binascii.hexlify(tag.idm).decode().upper()
+        self.cs.update_main("出席", "IDm : "+str(self.idm))
+        self.flag = True
         return True
 
     def read_id(self):
@@ -122,6 +130,9 @@ class IC():
         ''' タッチ待ち '''
         while True:
             self.read_id()
+            if self.flag:
+                self.flag = False
+                self.cs.ready() # 初期状態表示に戻す
 
 # ----- Database -----
 # データベースの読み書き
