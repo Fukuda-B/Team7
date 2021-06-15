@@ -3,3 +3,4 @@ nfcpy
 requests
 asyncio
 passlib
+pyqt5-tools

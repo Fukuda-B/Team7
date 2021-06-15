@@ -13,6 +13,7 @@
 from asyncio.tasks import gather
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+import time
 import datetime
 import sqlite3
 import binascii
@@ -57,7 +58,7 @@ class Main(QtWidgets.QWidget):
     def update_main(self, mtext, stext):
         self.ui.label.setText(mtext)
         self.ui.label_2.setText(stext)
-        
+
 
 # ----- Sub -----
 # 表示以外の内部処理
@@ -132,6 +133,7 @@ class IC():
             self.read_id()
             if self.flag:
                 self.flag = False
+                time.sleep(1)
                 self.cs.ready() # 初期状態表示に戻す
 
 # ----- Database -----
