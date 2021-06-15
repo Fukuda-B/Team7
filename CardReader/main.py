@@ -4,20 +4,30 @@
 
 
     memo:
+        https://passlib.readthedocs.io/en/stable/lib/passlib.hash.argon2.html
         https://www.finddevguides.com/Pyqt-qstatusbar-widget
         https://teratail.com/questions/263508
 """
 
+# 基本的なライブラリをインポートする
+from asyncio.tasks import gather
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QTimer
 import datetime
 import sqlite3
-import requests
-# -----
-from py_modules import NFCRead_dummy
-import main_window
+import binascii
+import nfc
+import asyncio
+import aiohttp
+# import requests
+import threading
+# モジュールの読み込み
+import main_window # メインウィンドウを表示するモジュール
 
+
+# ----- Main -----
+# 画面の表示処理を行う
 class Main(QtWidgets.QWidget):
     def __init__(self):
         ''' 画面表示 '''
@@ -32,52 +42,89 @@ class Main(QtWidgets.QWidget):
         ''' 画面更新 '''
         _translate = QtCore.QCoreApplication.translate
         self.ui.label.setText(_translate("Team7", "出席管理システム"))
-        self.ui.label_2.setText(_translate("Hi", "こんにちは"))
+        self.ui.label_2.setText(_translate("Touch ID Card", "IDカードをタッチ"))
         print('Team7 ready!')
 
-    def update_i(self, text):
+    async def update_i(self, date, nws):
+        if nws: # オンライン状態
+            self.ui.statusbar.setStyleSheet("background-color : #5BFF7F")
+            text = str(date + '  [online]')
+        else: # オフライン状態
+            self.ui.statusbar.setStyleSheet("background-color : #FF69A3")
+            text = str(date + '  [offline]')
+            
         self.ui.statusbar.showMessage(text)
 
+# ----- Sub -----
+# 表示以外の内部処理
 class Sub():
     def __init__(self, cs):
-        self.cs = cs
-        self.cnt = 0
-        self.fps = 60
+        self.cs = cs # main ui
+        self.cnt = 0 # exec count
+        self.fps = 60 # update frame rate
+        # network
+        self.nc_check = 3 # network check interval (s)
         self.nc = Network()
+        self.nws = '-' # network status
         # timer
         self.timer = QTimer()
-        self.timer.timeout.connect(self.update_i)
+        self.timer.timeout.connect(self.interval)
         self.timer.start(1000/self.fps)
-        self.update_i # Exec update_i()
+        # ic card
+        ic_card = IC()
+        self.thread_handle=threading.Thread(target=ic_card.start) # 別スレッドとして生成
+        self.thread_handle.setDaemon(True)
+        self.thread_handle.start()
 
-    def update_i(self):
+    def interval(self):
         ''' 定期実行 '''
         self.cnt += 1
-        nws = ''
-        if (self.cnt%self.fps*5 == 0):
-            if (self.nc.netstat()):
-                nws = 'online'
-            else:
-                nws = 'offline'
+        # loop = asyncio.get_event_loop()
+        # gather = asyncio.gather( # 並行処理
+        #     self.update_n(), # ネットワークの接続状況の更新
+        #     self.update_i(), # 画面の更新
+        # )
+        # loop.run_until_complete(gather)
+        asyncio.run(self.update_n())
+        asyncio.run(self.update_i())
 
-        current_time = str(datetime.datetime.now())
-        self.cs.update_i(current_time + '   ['+nws+']')
+    async def update_i(self):
+        current_time = str(datetime.datetime.now().strftime('%Y年%m月%d日 %H:%M:%S'))
+        asyncio.create_task(self.cs.update_i(current_time, self.nws)) # 画面の更新
 
+    async def update_n(self):
+        ''' ネットワークの接続状況の確認 '''
+        if (self.cnt%(self.fps*self.nc_check) == 0):
+            res = asyncio.create_task(self.nc.netstat())
+            self.nws = await res
+
+# ----- IC -----
+# ICカードのidm読み取り
 class IC():
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def on_connect(self, tag):
+        ''' タッチされたときの動作 '''
         self.idm = binascii.hexlify(tag.idm).decode().upper()
         return True
 
     def read_id(self):
-        clf = nfc.ContactlessFrontend('usb')
         try:
+            clf = nfc.ContactlessFrontend('usb')
             clf.connect(rdwr={'on-connect': self.on_connect})
-        finally:
             clf.close()
+        except IOError:
+            # print('No such device')
+            return False
 
+    def start(self):
+        ''' タッチ待ち '''
+        while True:
+            self.read_id()
+
+# ----- Database -----
+# データベースの読み書き
 class Database():
     def __init__(self):
         self.fname = 'attendance.sqlite3'
@@ -90,18 +137,29 @@ class Database():
         cur.close()
         connection.close()
 
+# ----- Network -----
+# ネットワーク接続状況やサーバへのデータ送信処理
 class Network():
     def __init__(self):
         self.netCheck = 'http://www.google.com/'
-        self.netCheckT = 3
+        self.netCheckT = 3 # connection timeout
 
-    def netstat(self):
+    async def netstat(self):
+        ''' ネットワークの接続確認 '''
         try:
-            r = requests.head(self.netCheck, timeout=self.netCheckT)
-            return True
-        except requests.ConnectionError as ex:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(self.netCheck, compress=True):
+                    return True
+        except:
             return False
+        # try:
+        #     requests.head(self.netCheck, timeout=self.netCheckT)
+        #     return True
+        # except requests.ConnectionError:
+        #     return False
 
+# ----- Encryption -----
+# 暗号化/復号、ハッシュ導出
 class Encryption():
     def __init__(self):
         self.key = 'hi_Team7'
@@ -119,6 +177,7 @@ class Encryption():
         ''' AES復号 '''
         return data
 
+# 実行
 if __name__ == "__main__":
     application = Main()
     application.ready()

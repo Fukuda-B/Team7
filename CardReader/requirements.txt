@@ -1,3 +1,5 @@
 pyqt5
 nfcpy
 requests
+asyncio
+passlib

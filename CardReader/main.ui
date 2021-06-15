@@ -44,7 +44,7 @@
        </font>
       </property>
       <property name="text">
-       <string>出席</string>
+       <string>出席管理システム</string>
       </property>
       <property name="scaledContents">
        <bool>false</bool>
@@ -75,7 +75,7 @@
        </font>
       </property>
       <property name="text">
-       <string>こんにちは xxx さん</string>
+       <string>IDカードをタッチ</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
