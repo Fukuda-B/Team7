@@ -2,7 +2,8 @@ pyqt5
 nfcpy
 requests
 asyncio
-passlib
 pyqt5-tools
 gtts
 playsound
+passlib
+argon2_cffi

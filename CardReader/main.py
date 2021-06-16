@@ -24,7 +24,7 @@ import aiohttp
 import threading
 from gtts import gTTS
 import playsound
-import passlib
+from passlib.hash import argon2
 from io import BytesIO
 # モジュールの読み込み
 import main_window # メインウィンドウを表示するモジュール
@@ -84,7 +84,6 @@ class Sub():
         self.thread_handle=threading.Thread(target=ic_card.start) # 別スレッドとして生成
         self.thread_handle.setDaemon(True)
         self.thread_handle.start()
-
 
     def interval(self):
         ''' 定期実行 '''
@@ -185,18 +184,20 @@ class Network():
 # 暗号化/復号、ハッシュ導出
 class Encryption():
     def __init__(self):
-        self.key = 'hi_Team7'
-        self.iv = 'hi_Team7'
+        self.key = 'hi_Team7'.encode('utf-8')
+        self.iv = 'hi_Team7'.encode('utf-8')
+        self.salt = 'hi_Team7'.encode('utf-8')
     
-    def argon2(data):
+    def argon2(self, data):
         ''' ハッシュ化 '''
+        data = argon2.using(type="ID", salt=self.salt, parallelism=2, rounds=5, memory_cost=1024*10, digest_size=128).hash(data)
         return data
 
-    def aes_e(data):
+    def aes_e(self, data):
         ''' AES暗号化 '''
         return data
     
-    def aes_d(data):
+    def aes_d(self, data):
         ''' AES復号 '''
         return data
 
