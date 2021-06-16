@@ -102,10 +102,10 @@ passport.use(new LocalStrategy({
             // pass = CRYP.decryptoo(password, bank);
             pass = password
 
-        // console.log('--------------------');
-        // console.log({"user":username, "pass":password});
-        // console.log({"user":user, "pass":password});
-        // console.log('--------------------');
+        console.log('--------------------');
+        console.log({"user":username, "pass":password});
+        console.log({"user":user, "pass":password});
+        console.log('--------------------');
 
         if (check_user(user, pass)) {
             return done(null, user);

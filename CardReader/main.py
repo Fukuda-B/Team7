@@ -40,7 +40,8 @@ class Main(QtWidgets.QWidget):
         self.MainWindow = QtWidgets.QMainWindow()
         self.ui = main_window.Ui_MainWindow()
         self.ui.setupUi(self.MainWindow)
-        self.MainWindow.show()
+        # self.MainWindow.show()
+        self.MainWindow.showMaximized()
 
     def ready(self):
         ''' 画面更新 '''
@@ -112,21 +113,25 @@ class Sub():
 class IC():
     def __init__(self, cs):
         self.cs = cs # main ui
-        self.flag = False # not start display
+        self.flag = False # delay
+        self.last = '' # last idm
 
     def on_connect(self, tag):
         ''' タッチされたときの動作 '''
         self.idm = binascii.hexlify(tag.idm).decode().upper()
-        self.cs.update_main("出席", "IDm : "+str(self.idm))
+        if (time.monotonic() - self.flag) > 10 or self.idm != self.last:
+            self.cs.update_main("出席", "IDm : "+str(self.idm))
+        else:
+            self.flag = time.monotonic()
         # self.sound()
-        self.flag = True
-        return True
+        self.last = self.idm
+        self.flag = time.monotonic()
 
     def sound(self):
         tts = gTTS('ピッ!', lang='ja')
         tts.save('b.mp3')
         playsound.playsound('b.mp3')
-        
+
     def read_id(self):
         try:
             clf = nfc.ContactlessFrontend('usb')
@@ -140,10 +145,14 @@ class IC():
         ''' タッチ待ち '''
         while True:
             self.read_id()
-            if self.flag:
-                self.flag = False
-                time.sleep(1)
-                self.cs.ready() # 初期状態表示に戻す
+            time.sleep(1)
+            self.cs.ready() # 初期状態に戻す
+            # if self.cs_flag:
+            #     if (time.monotonic() - self.flag) > 2.0:
+            #         self.cs.ready() # 初期状態に戻す
+            #         self.cs_flag = False
+                # else:
+                #     self.flag = time.monotonic()
 
 # ----- Database -----
 # データベースの読み書き
