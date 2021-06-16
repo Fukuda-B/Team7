@@ -24,6 +24,8 @@ import aiohttp
 import threading
 from gtts import gTTS
 import playsound
+import passlib
+from io import BytesIO
 # モジュールの読み込み
 import main_window # メインウィンドウを表示するモジュール
 
@@ -117,7 +119,7 @@ class IC():
         ''' タッチされたときの動作 '''
         self.idm = binascii.hexlify(tag.idm).decode().upper()
         self.cs.update_main("出席", "IDm : "+str(self.idm))
-        self.sound()
+        # self.sound()
         self.flag = True
         return True
 

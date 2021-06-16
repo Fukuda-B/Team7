@@ -5,6 +5,7 @@
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import webbrowser
 
 
 class Ui_MainWindow(object):
@@ -104,6 +105,10 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        # action
+        self.action_5.triggered.connect(QtWidgets.qApp.quit)
+        self.action_10.triggered.connect(QtWidgets.qApp.quit)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
