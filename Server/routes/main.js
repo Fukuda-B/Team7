@@ -127,7 +127,23 @@ passport.deserializeUser((user, done) => {
 // Request
 router
     // GET req
-    .get('/',
+    .get('/', (req, res) => {
+        if (isAuthenticated_bool(req, res)) {
+            res.render('index', {
+                title: 'Team7',
+                top_bar_link: '/main',
+                top_bar_text: '<i class="fas fa-user"></i> My Page'
+            });
+        } else {
+            res.render('index', {
+                title: 'Team7',
+                top_bar_link: '/main',
+                top_bar_text: 'Sign in <i class="fas fa-sign-in-alt"></i>'
+            });
+        }
+    })
+
+    .get('/main',
         isAuthenticated,
         (req, res) => {
         // console.log(req.session);
@@ -136,14 +152,14 @@ router
             lecture_table: lecture_table,
             user_id: lecture_json.user_id,
             top_bar_link: '/main/logout',
-            top_bar_text: '<i class="fas fa-sign-in-alt"></i> Sign out'
+            top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>'
         });
     })
-    .get('/logout', (req, res) => {
+    .get('/main/logout', (req, res) => {
         req.logout();
         res.redirect('/');
     })
-    .get('/login', (req, res, next) => {
+    .get('/main/login', (req, res, next) => {
             if (req.isAuthenticated()) { // 認証済み
                 res.redirect('/main');
             } else {
@@ -161,14 +177,14 @@ router
     )
 
     // POST req
-    .post('/u', function (req, res) { // 認証用 iv
+    .post('/main/u', function (req, res) { // 認証用 iv
         res.send(bank.iv);
     })
-    .post('/logout', (req, res) => { // ログアウト処理
+    .post('/main/logout', (req, res) => { // ログアウト処理
         req.logout();
         res.redirect('/');
     })
-    .post('/login',
+    .post('/main/login',
         passport.authenticate('local', { // 認証処理
             // successRedirect : '',
         }),
@@ -183,8 +199,13 @@ function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     } else {
-        res.redirect('main/login'); // ログインページへリダイレクト
+        res.redirect('/main/login'); // ログインページへリダイレクト
     }
+}
+
+// ----- 認証済みか確認する関数 戻り値はbool -----
+function isAuthenticated_bool(req, res) {
+    return req.isAuthenticated();
 }
 
 // ----- JSON読み込みテスト -----

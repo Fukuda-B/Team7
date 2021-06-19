@@ -15,10 +15,11 @@
 /* left side dashboard */
 #dashboard {
     margin: 0;
-    width: 15%;
+    /* width: 15%; */
+    min-width: 160px;
     height: calc(100vh - 41px - 40px);
     border: none;
-    border-left: solid 1px var(--sub-color);
+    /* border-left: solid 1px var(--sub-color); */
     background: #ddd;
     padding: 20px 0;
 }
@@ -27,6 +28,17 @@
     margin-bottom: 20px;
     text-align: center;
     color: #111;
+    font-size: 0.9em;
+}
+#dashboard_title i {
+    padding-right: 3px;
+    font-size: 0.9em;
+    color: #666;
+}
+#dashboard_title span {
+    padding-left: 3px;
+    margin-left: 3px;
+    font-size: 0.9em;
 }
 .dash_li {
     margin: 0;
@@ -35,18 +47,30 @@
     /* margin-left: 10px; */
     text-align: left;
     text-decoration: none;
-    color: #111;
+    /* color: #111; */
+    color: #777;
 }
 #dashboard_menu a {
     text-decoration: none;
 }
+#dashboard_menu i {
+    padding-right: 10px;
+    font-size: 0.9em;
+}
 #dashboard_menu p:hover {
     background: #fff;
+    color: #111;
 }
 .dash_li_main {
     padding-left: 10px;
     border-left: 3px solid var(--main-color);
     background: #fff;
+    color: #111;
+}
+#dash_li_main i {
+    padding-right: 10px;
+    font-size: 0.8em;
+    color: #111;
 }
 
 #main {
@@ -83,4 +107,12 @@
 }
     #lecture_table_val tr {
     border: solid 1px var(--sub-color);
+}
+
+/* 画面の幅が1000px以上 */
+@media screen and (min-width:1400px) {
+    #wrap {
+        width: 1400px;
+        margin-left: calc(50% - 700px);
+    }
 }

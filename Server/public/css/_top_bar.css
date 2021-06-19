@@ -19,14 +19,17 @@ body {
   text-decoration: none;
   color: #fff;
   font-weight: bold;
+  /* font-family: zillaslab,palatino,"Palatino Linotype",serif; */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  letter-spacing: 0.03em;
 }
 #top_bar_logo p {
   position: absolute;
   top: 0;
-  padding: 4px 5px;
-  padding-top: 7px; /* if use svg, comment out this line */
+  padding: 4px 10px;
+  padding-top: 8px; /* if use svg, comment out this line */
   margin: 0;
-  margin-left: 10px;
+  margin-left: 0;
   border-top: 3px solid #fff;
   background: rgba(255, 255, 255, 0.15);
   height: 30px;
@@ -61,10 +64,20 @@ body {
   text-decoration: none;
   padding: 10px;
   color: #fff;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+  font-size: 0.9em;
 }
 #top_bar_link:hover {
   text-decoration: underline;
 }
 #top_bar_link i {
-  padding-right: 5px;
+  padding-left: 3px;
+}
+
+/* 画面の幅が1000px以上 */
+@media screen and (min-width:1400px) {
+  #top_wrap {
+      width: 1400px;
+      margin-left: calc(50% - 700px);
+  }
 }

@@ -52,7 +52,6 @@ const passport = require('passport'),
 
 // -----
 // Router module
-const index = require('./routes/index.js');
 const main = require('./routes/main.js');
 const api_root = require('./routes/api.js');
 var listenPort = 3000;
@@ -98,8 +97,7 @@ app.use(cookieParser());
 app.disable('x-powered-by'); // disable header
 
 // Router setting
-app.use('/', index);
-app.use('/main', main);
+app.use('/', main);
 app.use('/api', api_root);
 
 // 404 Not Found
