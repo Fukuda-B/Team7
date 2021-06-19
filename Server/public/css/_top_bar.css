@@ -15,11 +15,31 @@ body {
   padding: 10px 5px;
   background: var(--main-color);
 }
-#top_bar_logo img {
+#top_bar_logo a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+}
+#top_bar_logo p {
   position: absolute;
   top: 0;
   padding: 4px 5px;
-  /* padding-top: 7px; */
+  padding-top: 7px; /* if use svg, comment out this line */
+  margin: 0;
+  margin-left: 10px;
+  border-top: 3px solid #fff;
+  background: rgba(255, 255, 255, 0.15);
+  height: 30px;
+}
+#top_bar_logo p:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* #top_bar_logo img {
+  position: absolute;
+  top: 0;
+  padding: 4px 5px;
+  padding-top: 7px;
   margin: 0;
   margin-left: 10px;
   border-top: 3px solid #fff;
@@ -28,7 +48,7 @@ body {
 }
 #top_bar_logo img:hover {
   background: rgba(255, 255, 255, 0.2);
-}
+} */
 #top_bar_wrap {
   display: block;
   text-align: right;

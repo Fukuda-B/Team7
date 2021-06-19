@@ -12,13 +12,17 @@
     text-align: center;
     font-size: 1.5em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-weight: bold;
 }
-#index_top img {
+#index_top h1 {
+    font-size: 2.0em;
+}
+/* #index_top img {
     margin-bottom: 0;
     border-bottom: 1px solid var(--main-color);
     width: 250px;
     filter: invert(100%);
-}
+} */
 #index_top p {
     font-weight: 300;
 }

@@ -22,7 +22,12 @@
 <script src="https://cdn.jsdelivr.net/npm/hash-wasm@4.7.0/dist/argon2.umd.min.js"></script>
 <script type='text/javascript'>
     const bank = <%-JSON.stringify(crypto_bank)%>;
-    var CRYP = {
+    window.onload = function() { // 読み込み時実行
+        window.addEventListener("keydown", function(event) {
+            if (event.key === 'Enter') ajax(); // Enterが押されたら関数実行
+        })
+    };
+    var CRYP = { // 暗号化, ハッシュ値導出
         // Encrypto
         encryptoo : function(data, bank) {
             var srcs = CryptoJS.enc.Utf8.parse(data);
@@ -58,7 +63,7 @@
         },
     }
 
-    function update_iv() {
+    function update_iv() { // ivの更新
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
             if (req.readyState == 4) {
@@ -71,7 +76,7 @@
         req.send();
     }
 
-    function ajax() {
+    function ajax() { // xhrで送信
         var req = new XMLHttpRequest();
         var user = document.getElementById('login_fie_input_user').value;
         var pass = document.getElementById('login_fie_input_pass').value;
@@ -86,7 +91,7 @@
                 }
             }
         }
-        update_iv();
+        update_iv(); // iv値更新
         req.open('POST', '', true); // 非同期
         req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
         CRYP.argon2_h(pass, bank).then((pp) => {

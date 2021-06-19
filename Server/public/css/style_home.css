@@ -22,21 +22,30 @@
     background: #ddd;
     padding: 20px 0;
 }
-#dashboard p {
+#dashboard_title {
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     text-align: center;
-    color: #444;
+    color: #111;
 }
 .dash_li {
-    width: 15%;
+    margin: 0;
+    padding: 10px 0 10px 13px;
     font-size: 0.9em;
-    margin-left: 10px;
-    text-align: center;
+    /* margin-left: 10px; */
+    text-align: left;
     text-decoration: none;
     color: #111;
 }
-.dash_li:hover {
+#dashboard_menu a {
+    text-decoration: none;
+}
+#dashboard_menu p:hover {
+    background: #fff;
+}
+.dash_li_main {
+    padding-left: 10px;
+    border-left: 3px solid var(--main-color);
     background: #fff;
 }
 
@@ -47,7 +56,7 @@
     text-align: center;
 }
 #lecture_table {
-    margin-top: 100px;
+    margin-top: 80px;
 }
 #lecture_table h3 {
     font-weight: 300;
