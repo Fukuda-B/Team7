@@ -42,6 +42,7 @@ class Main(QtWidgets.QWidget):
         self.ui.setupUi(self.MainWindow)
         # self.MainWindow.show()
         self.MainWindow.showMaximized()
+        # self.MainWindow.showFullScreen()
 
     def ready(self):
         ''' 画面更新 '''

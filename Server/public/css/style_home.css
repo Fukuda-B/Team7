@@ -12,6 +12,7 @@
     flex-wrap: wrap;
 }
 
+/* left side dashboard */
 #dashboard {
     margin: 0;
     width: 15%;
@@ -28,10 +29,15 @@
     color: #444;
 }
 .dash_li {
+    width: 15%;
+    font-size: 0.9em;
     margin-left: 10px;
     text-align: center;
     text-decoration: none;
     color: #111;
+}
+.dash_li:hover {
+    background: #fff;
 }
 
 #main {
