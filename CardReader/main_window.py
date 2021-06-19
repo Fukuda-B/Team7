@@ -5,14 +5,13 @@
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import webbrowser
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(860, 540)
+        MainWindow.resize(800, 480)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -89,6 +88,10 @@ class Ui_MainWindow(object):
         self.action_9.setObjectName("action_9")
         self.action_10 = QtWidgets.QAction(MainWindow)
         self.action_10.setObjectName("action_10")
+        self.action_7 = QtWidgets.QAction(MainWindow)
+        self.action_7.setObjectName("action_7")
+        self.action_11 = QtWidgets.QAction(MainWindow)
+        self.action_11.setObjectName("action_11")
         self.menu.addAction(self.action_9)
         self.menu.addAction(self.action_10)
         self.menu_2.addAction(self.action_6)
@@ -96,6 +99,9 @@ class Ui_MainWindow(object):
         self.menu_2.addAction(self.action_8)
         self.menu_3.addAction(self.action)
         self.menu_3.addAction(self.action_2)
+        self.menu_3.addSeparator()
+        self.menu_3.addAction(self.action_7)
+        self.menu_3.addAction(self.action_11)
         self.menu_4.addAction(self.actionGithub)
         self.menu_4.addAction(self.actionAbout)
         self.menubar.addAction(self.menu.menuAction())
@@ -105,10 +111,6 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-        # action
-        self.action_5.triggered.connect(QtWidgets.qApp.quit)
-        self.action_10.triggered.connect(QtWidgets.qApp.quit)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -130,6 +132,8 @@ class Ui_MainWindow(object):
         self.action_8.setText(_translate("Update database", "データベース更新"))
         self.action_9.setText(_translate("Preferences", "環境設定"))
         self.action_10.setText(_translate("Exit", "終了"))
+        self.action_7.setText(_translate("Window", "ウィンドウ表示"))
+        self.action_11.setText(_translate("FullScreen", "フルスクリーン表示"))
 
 if __name__ == "__main__":
     import sys

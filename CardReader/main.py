@@ -49,7 +49,7 @@ class Main(QtWidgets.QWidget):
         _translate = QtCore.QCoreApplication.translate
         self.ui.label.setText(_translate("Team7", "出席管理システム"))
         self.ui.label_2.setText(_translate("Touch ID Card", "IDカードをタッチ"))
-        print('Team7 ready!')
+        # print('Team7 ready!')
 
     async def update_i(self, date, nws):
         ''' ステータスバー更新 '''
