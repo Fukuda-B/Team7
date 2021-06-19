@@ -105,8 +105,17 @@
 #lecture_table_val td, th {
     padding: 5px 15px;
 }
-    #lecture_table_val tr {
+#lecture_table_val tr {
     border: solid 1px var(--sub-color);
+}
+
+#lecture_table i {
+    padding-left: 10px;
+    padding-right: 3px;
+    color: #666;
+}
+#lecture_table #td_dl {
+    border-left: 1px solid #ddd;
 }
 
 /* 画面の幅が1000px以上 */

@@ -217,9 +217,13 @@ function createTable(json) {
         +'</td><td>'+tmp.lecture_date.f+' '
         +tmp.lecture_date.w+' '
         +tmp.lecture_date.t
-        +'</td><td>'+tmp.lecture_teach
-        +'</td><td>'+tmp.lecture_par+'%</td></tr>';
+        +'</td><td>'+tmp.lecture_teach // 担当
+        +'</td><td>'+tmp.lecture_par+'%' // 出席率
+        +'</td><td id="td_dl"> <i class="fas fa-file-csv"></i>csv <i class="fas fa-file-excel"></i>xlsx <i class="fas fa-file-image"></i>png'
+        +'</td></tr>'; // end
     }
+    table += '</td><td></td><td></td><td></td><td></td><td></td></tr>';
+    table += '</td><td>一括保存</td><td></td><td></td><td></td><td id="td_dl"><i class="fas fa-file-download"></i>csv <i class="fas fa-file-download"></i>xlsx <i class="fas fa-file-download"></i>png</td></tr>';
     return table;
 }
 var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
