@@ -42,7 +42,7 @@
 }
 .dash_li {
     margin: 0;
-    padding: 10px 0 10px 13px;
+    padding: 10px 0 10px 12px;
     font-size: 0.9em;
     /* margin-left: 10px; */
     text-align: left;
@@ -62,8 +62,8 @@
     color: #111;
 }
 .dash_li_main {
-    padding-left: 10px;
-    border-left: 3px solid var(--main-color);
+    padding-left: 8px;
+    border-left: 4px solid var(--main-color);
     background: #fff;
     color: #111;
 }

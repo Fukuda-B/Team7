@@ -219,11 +219,12 @@ function createTable(json) {
         +tmp.lecture_date.t
         +'</td><td>'+tmp.lecture_teach // 担当
         +'</td><td>'+tmp.lecture_par+'%' // 出席率
-        +'</td><td id="td_dl"> <i class="fas fa-file-csv"></i>csv <i class="fas fa-file-excel"></i>xlsx <i class="fas fa-file-image"></i>png'
+        +'</td><td>'+'' // なにか
+        +'</td><td id="td_dl"> <i class="fas fa-file-csv"></i>csv <i class="fas fa-file-excel"></i>xlsx'
         +'</td></tr>'; // end
     }
     table += '</td><td></td><td></td><td></td><td></td><td></td></tr>';
-    table += '</td><td>一括保存</td><td></td><td></td><td></td><td id="td_dl"><i class="fas fa-file-download"></i>csv <i class="fas fa-file-download"></i>xlsx <i class="fas fa-file-download"></i>png</td></tr>';
+    table += '</td><td>一括保存</td><td></td><td></td><td></td><td></td><td id="td_dl"><i class="fas fa-file-download"></i>csv <i class="fas fa-file-download"></i>xlsx</td></tr>';
     return table;
 }
 var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
