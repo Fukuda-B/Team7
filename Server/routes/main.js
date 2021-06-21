@@ -130,7 +130,8 @@ router
                     });
                     break;
                 case 'dev': // /main?p=dev
-                    var userB = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+                    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+                    // console.log(req.user);
                     res.render('dev', {
                         title: 'Team7 - 開発者向け',
                         lecture_table: lecture_table,
@@ -138,7 +139,7 @@ router
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
                         dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
-                        webapi_key: get_key(userB)
+                        webapi_key: get_key(user_list[req.user])
                     });
                     break;
                 default: // default (main?p=home)
@@ -230,8 +231,8 @@ var lecture_table = createTable(lecture_json);
 
 // ----- ユーザ確認 -----
 function check_user(user, pass) {
-    var userB = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-    return (user === userB.username && pass === userB.password);
+    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+    return (user === user_list[user].username && pass === user_list[user].password);
     // return (user === userB.username);
 }
 

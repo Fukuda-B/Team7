@@ -14,7 +14,7 @@ const router = express.Router();
 const fs = require('fs');
 
 var res_json = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-var userB = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
 const bank_api = require('./cryp.js').bank_api;
 const CRYP = require('./cryp.js').CRYP;
 const get_key = require('./cryp.js').get_key;
@@ -29,8 +29,14 @@ router
         res.header('Content-Type', 'application/json; charset=utf-8');
         res.send(res_json);
     })
-    .get('/v1/gkey', function (req, res) {
-        res.send(get_key(userB));
+    // .get('/v1/gkey', function (req, res) {
+    //     res.send(get_key(user_list.b));
+    // })
+    .get('/v1/argon2', function (req, res) { // argon2のハッシュ値導出
+        CRYP.argon2_h(req.query.x, bank_api).then((val) => {
+            console.log(val);
+            res.send(val);
+        });
     })
 
     // POST req
@@ -40,19 +46,20 @@ router
     });
 
 function isAuthenticated_nos(req, res, next) {
-    if (check_user(req)) {
+    if (check_user_api(req)) {
         return next();
     } else {
         res.send('bad request');
     }
 }
 
-function check_user(req) {
-    var userB = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+function check_user_api(req) {
+    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
     var dec = CRYP.decryptoo(req.query.x, bank_api);
     var dec_p = JSON.parse(dec);
     // console.log(dec_p);
-    return (dec_p.u === userB.username && dec_p.p === userB.password);
+    // return (dec_p.u === userB.username && dec_p.p === userB.password);
+    return (dec_p.u === user_list[user].username && dec_p.p === user_list[user].password);
 }
 
 module.exports = router;
