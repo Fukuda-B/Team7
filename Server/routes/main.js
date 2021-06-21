@@ -102,8 +102,8 @@ router
                 case 'course': // /main?p=course
                     res.render('course', {
                         title: 'Team7 - コース',
-                        lecture_table: lecture_table,
-                        user_id: lecture_json.user_id,
+                        lecture_table: createTable(req.user),
+                        user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
                         dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
@@ -112,8 +112,8 @@ router
                 case 'edit': // /main?p=edit
                     res.render('edit', {
                         title: 'Team7 - 編集',
-                        lecture_table: lecture_table,
-                        user_id: lecture_json.user_id,
+                        lecture_table: createTable(req.user),
+                        user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
                         dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
@@ -122,8 +122,8 @@ router
                 case 'stat': // /main?p=stat
                     res.render('stat', {
                         title: 'Team7 - 統計',
-                        lecture_table: lecture_table,
-                        user_id: lecture_json.user_id,
+                        lecture_table: createTable(req.user),
+                        user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
                         dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li"]
@@ -131,11 +131,10 @@ router
                     break;
                 case 'dev': // /main?p=dev
                     var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-                    // console.log(req.user);
                     res.render('dev', {
                         title: 'Team7 - 開発者向け',
-                        lecture_table: lecture_table,
-                        user_id: lecture_json.user_id,
+                        lecture_table: createTable(req.user),
+                        user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
                         dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
@@ -145,8 +144,8 @@ router
                 default: // default (main?p=home)
                     res.render('home', {
                         title: 'Team7 - マイページ',
-                        lecture_table: lecture_table,
-                        user_id: lecture_json.user_id,
+                        lecture_table: createTable(req.user),
+                        user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
                         dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
@@ -185,7 +184,7 @@ router
     })
     .post('/main/login',
         passport.authenticate('local', { // 認証処理
-            // successRedirect : '',
+            successRedirect : '',
         }),
         (req, res) => {
             res.send('/main');
@@ -208,9 +207,12 @@ function isAuthenticated_bool(req, res) {
 }
 
 // ----- JSON読み込みテスト -----
-var jsonFile = './routes/user_json.json';
-function createTable(json) {
-    var table = '';
+function createTable(user) {
+    var jsonFile = './routes/user_json.json';
+    var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+    var json = lecture_json[user];
+
+        var table = '';
     for (var tmp of json.lecture) {
         table += '<tr><td>'+tmp.lecture_name
         +'</td><td>'+tmp.lecture_date.f+' '
@@ -226,14 +228,21 @@ function createTable(json) {
     table += '</td><td>一括保存</td><td></td><td></td><td></td><td></td><td id="td_dl"><i class="fas fa-file-download"></i>csv <i class="fas fa-file-download"></i>xlsx</td></tr>';
     return table;
 }
-var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
-var lecture_table = createTable(lecture_json);
+// ----- get user id -----
+function get_user_id(user) {
+    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+    return user_list[user].UID;
+}
 
 // ----- ユーザ確認 -----
 function check_user(user, pass) {
-    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-    return (user === user_list[user].username && pass === user_list[user].password);
-    // return (user === userB.username);
+    try {
+        var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+        return (user === user_list[user].username && pass === user_list[user].password);
+        // return (user === userB.username);
+    } catch {
+        return false;
+    }
 }
 
 // -----

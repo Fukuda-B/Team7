@@ -1,82 +1,204 @@
 {
-    "user_id": "X00000000",
-    "lecture": [
-        {
-            "lecture_name": "科目A",
-            "lecture_id": "0001",
-            "lecture_date": {
-                "f": "前期",
-                "w": "月曜",
-                "t": "1限"
+    "a": {
+        "user_id": "X00000011",
+        "lecture": [
+            {
+                "lecture_name": "科目A",
+                "lecture_id": "0001",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "1限"
+                },
+                "lecture_teach": "A",
+                "lecture_par": 90.38
             },
-            "lecture_teach": "A",
-            "lecture_par": 0.38
-        },
-        {
-            "lecture_name": "科目B",
-            "lecture_id": "0002",
-            "lecture_date": {
-                "f": "前期",
-                "w": "月曜",
-                "t": "2限"
+            {
+                "lecture_name": "科目B",
+                "lecture_id": "0002",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "2限"
+                },
+                "lecture_teach": "B",
+                "lecture_par": 94.48
             },
-            "lecture_teach": "B",
-            "lecture_par": 70.48
-        },
-        {
-            "lecture_name": "科目C",
-            "lecture_id": "0003",
-            "lecture_date": {
-                "f": "前期",
-                "w": "月曜",
-                "t": "4限"
+            {
+                "lecture_name": "科目C",
+                "lecture_id": "0003",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "4限"
+                },
+                "lecture_teach": "C",
+                "lecture_par": 73.57
             },
-            "lecture_teach": "C",
-            "lecture_par": 93.57
-        },
-        {
-            "lecture_name": "科目D",
-            "lecture_id": "0004",
-            "lecture_date": {
-                "f": "前期",
-                "w": "月曜",
-                "t": "8限"
+            {
+                "lecture_name": "科目D",
+                "lecture_id": "0004",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "8限"
+                },
+                "lecture_teach": "D",
+                "lecture_par": 99.62
             },
-            "lecture_teach": "D",
-            "lecture_par": 9.62
-        },
-        {
-            "lecture_name": "科目E",
-            "lecture_id": "0005",
-            "lecture_date": {
-                "f": "前期",
-                "w": "火曜",
-                "t": "1限"
+            {
+                "lecture_name": "科目E",
+                "lecture_id": "0005",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "火曜",
+                    "t": "1限"
+                },
+                "lecture_teach": "E",
+                "lecture_par": 70.17
+            }
+        ]
+    },
+    "b": {
+        "user_id": "X00001011",
+        "lecture": [
+            {
+                "lecture_name": "科目A",
+                "lecture_id": "0001",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "1限"
+                },
+                "lecture_teach": "A",
+                "lecture_par": 50.38
             },
-            "lecture_teach": "E",
-            "lecture_par": 70.17
-        },
-        {
-            "lecture_name": "科目F",
-            "lecture_id": "0006",
-            "lecture_date": {
-                "f": "前期",
-                "w": "水曜",
-                "t": "2限"
+            {
+                "lecture_name": "科目B",
+                "lecture_id": "0002",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "2限"
+                },
+                "lecture_teach": "B",
+                "lecture_par": 39.48
             },
-            "lecture_teach": "F",
-            "lecture_par": 0.14
-        },
-        {
-            "lecture_name": "科目G",
-            "lecture_id": "0007",
-            "lecture_date": {
-                "f": "前期",
-                "w": "木曜",
-                "t": "4限"
+            {
+                "lecture_name": "科目C",
+                "lecture_id": "0003",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "4限"
+                },
+                "lecture_teach": "C",
+                "lecture_par": 13.57
             },
-            "lecture_teach": "G",
-            "lecture_par": 0.04
-        }
-    ]
+            {
+                "lecture_name": "科目D",
+                "lecture_id": "0004",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "8限"
+                },
+                "lecture_teach": "D",
+                "lecture_par": 9.62
+            },
+            {
+                "lecture_name": "科目E",
+                "lecture_id": "0005",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "火曜",
+                    "t": "1限"
+                },
+                "lecture_teach": "E",
+                "lecture_par": 70.17
+            },
+            {
+                "lecture_name": "科目F",
+                "lecture_id": "0006",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "水曜",
+                    "t": "2限"
+                },
+                "lecture_teach": "F",
+                "lecture_par": 0.14
+            },
+            {
+                "lecture_name": "科目G",
+                "lecture_id": "0007",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "木曜",
+                    "t": "4限"
+                },
+                "lecture_teach": "G",
+                "lecture_par": 0.04
+            }
+        ]
+    },
+    "c": {
+        "user_id": "X0000000B",
+        "lecture": [
+            {
+                "lecture_name": "科目A",
+                "lecture_id": "0001",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "1限"
+                },
+                "lecture_teach": "A",
+                "lecture_par": 0.38
+            },
+            {
+                "lecture_name": "科目B",
+                "lecture_id": "0002",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "月曜",
+                    "t": "2限"
+                },
+                "lecture_teach": "B",
+                "lecture_par": 70.48
+            },
+            {
+                "lecture_name": "科目E",
+                "lecture_id": "0005",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "火曜",
+                    "t": "1限"
+                },
+                "lecture_teach": "E",
+                "lecture_par": 70.17
+            },
+            {
+                "lecture_name": "科目F",
+                "lecture_id": "0006",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "水曜",
+                    "t": "2限"
+                },
+                "lecture_teach": "F",
+                "lecture_par": 0.14
+            },
+            {
+                "lecture_name": "科目G",
+                "lecture_id": "0007",
+                "lecture_date": {
+                    "f": "前期",
+                    "w": "木曜",
+                    "t": "4限"
+                },
+                "lecture_teach": "G",
+                "lecture_par": 0.04
+            }
+        ]
+    }
 }

@@ -27,7 +27,7 @@ router
     })
     .get('/v1/team7', isAuthenticated_nos, function (req, res) {
         res.header('Content-Type', 'application/json; charset=utf-8');
-        res.send(res_json);
+        res.send('ok');
     })
     // .get('/v1/gkey', function (req, res) {
     //     res.send(get_key(user_list.b));
@@ -42,7 +42,7 @@ router
     // POST req
     .post('/v1/team7', isAuthenticated_nos, function (req, res) {
         res.header('Content-Type', 'application/json; charset=utf-8');
-        res.send(res_json);
+        res.send('ok');
     });
 
 function isAuthenticated_nos(req, res, next) {
@@ -54,12 +54,17 @@ function isAuthenticated_nos(req, res, next) {
 }
 
 function check_user_api(req) {
-    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-    var dec = CRYP.decryptoo(req.query.x, bank_api);
-    var dec_p = JSON.parse(dec);
-    // console.log(dec_p);
-    // return (dec_p.u === userB.username && dec_p.p === userB.password);
-    return (dec_p.u === user_list[user].username && dec_p.p === user_list[user].password);
+    try {
+        var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+        var dec = CRYP.decryptoo(req.query.x, bank_api);
+        var dec_p = JSON.parse(dec);
+        // console.log(dec_p);
+        // return (dec_p.u === userB.username && dec_p.p === userB.password);
+        return (dec_p.u === user_list[dec_p.u].username && dec_p.p === user_list[dec_p.u].password);
+    } catch {
+        return false;
+    }
+
 }
 
 module.exports = router;
