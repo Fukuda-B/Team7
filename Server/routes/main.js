@@ -1,5 +1,5 @@
 /*
-    Team7 server js - main | Update: 2021/06/15
+    Team7 server js - main | Update: 2021/06/20
     Our project: https://github.com/Fukuda-B/Team7
 
     Memo:
@@ -27,63 +27,15 @@
 
 'use strict'
 const express = require('express');
-const session = require('express-session');
 const passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
-const crypto = require('crypto');
-const CryptoJS = require('crypto-js');
-const { nextTick } = require('process');
 const router = express.Router();
 const fs = require('fs');
+const CRYP = require('./cryp.js').CRYP;
+const get_key = require('./cryp.js').get_key;
 
-var key_size = 2<<7; // 2<<7=2^8=256, key.length=512
 var key_timeout = 7777; // ms
 
-
-const CRYP = {
-    // Generate key
-    key_v_gen : function() {
-        return crypto.randomBytes(key_size).toString('hex');
-    },
-    // Generate iv
-    iv_v_gen : function() {
-        return crypto.randomBytes(key_size).toString('hex');
-    },
-    // Generating a encryption key
-    // salt is only used for argon2 hasing
-    key_gen : function() {
-        return {
-            "iv": CRYP.iv_v_gen(),
-            "key": CRYP.key_v_gen(),
-            "salt": "4e7e77ff4ab30a2ef263c63e903ce4076a3b1feb2afd60266821c928e47d808d224c5a31b1b9a1fb4c39eac0aa14d12031ddf80b10e448b8296de75e22b2c1ce041d778449f2a1b60bb8429ef7fd40d413975a6edac570c0658dffc2b3b57d6e6298862b5997cc917a1fad490bb20ac85331acc9d104b97fa432ede4cd3552fcc6b1fb259a3fd55889ee4eb8c46c262aa63733be22dada12899514eacde996e25350a335221e84a438492b045e54532d05aa998b79b2909768cdc0315e2933099f76dd8158e333a7b73d9ab481844dd8e1a391ba4b17d27969d63edb01655dc41248f9e313b52a6cc7bb992b78ff12a50d6f3e4c27363b7d939d349aa44b08d0",
-        }
-    },
-    // Decrypt
-    decryptoo : function(data, bank) {
-        var word = decodeURIComponent(data);
-        var encryptedHexStr = CryptoJS.enc.Hex.parse(word);
-        var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
-        var decrypted = CryptoJS.AES.decrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
-                iv: CryptoJS.enc.Utf8.parse(bank.iv),
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7
-            }
-        );
-        // console.log({"rec":data, "hex":encryptedHexStr, "pure":srcs, "decrypted":decrypted, "final":decrypted.toString(CryptoJS.enc.Utf8)});
-        return decrypted.toString(CryptoJS.enc.Utf8).toString();
-    },
-    // pure aes decrypt
-    decryptoo2 : function(data, bank) {
-        var srcs = decodeURIComponent(data);
-        var decrypted = CryptoJS.AES.decrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
-                iv: CryptoJS.enc.Utf8.parse(bank.iv),
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7
-            }
-        );
-        return decrypted.toString(CryptoJS.enc.Utf8).toString();
-    },
-}
 // Update the encryption key periodically.
 var bank = CRYP.key_gen();
 var update_iv = () => {
@@ -127,7 +79,7 @@ passport.deserializeUser((user, done) => {
 // Request
 router
     // GET req
-    .get('/', (req, res) => {
+    .get('/', (req, res) => { // トップページ
         if (isAuthenticated_bool(req, res)) {
             res.render('index', {
                 title: 'Team7',
@@ -143,23 +95,69 @@ router
         }
     })
 
-    .get('/main',
+    .get('/main', // メインページ
         isAuthenticated,
         (req, res) => {
-        // console.log(req.session);
-        res.render('home', {
-            title: 'Team7',
-            lecture_table: lecture_table,
-            user_id: lecture_json.user_id,
-            top_bar_link: '/main/logout',
-            top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>'
-        });
+            switch(req.query.p) {
+                case 'course': // /main?p=course
+                    res.render('course', {
+                        title: 'Team7 - コース',
+                        lecture_table: lecture_table,
+                        user_id: lecture_json.user_id,
+                        top_bar_link: '/main/logout',
+                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                        dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+                    });
+                    break;
+                case 'edit': // /main?p=edit
+                    res.render('edit', {
+                        title: 'Team7 - 編集',
+                        lecture_table: lecture_table,
+                        user_id: lecture_json.user_id,
+                        top_bar_link: '/main/logout',
+                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                        dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
+                    });
+                    break;
+                case 'stat': // /main?p=stat
+                    res.render('stat', {
+                        title: 'Team7 - 統計',
+                        lecture_table: lecture_table,
+                        user_id: lecture_json.user_id,
+                        top_bar_link: '/main/logout',
+                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                        dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li"]
+                    });
+                    break;
+                case 'dev': // /main?p=dev
+                    var userB = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+                    res.render('dev', {
+                        title: 'Team7 - 開発者向け',
+                        lecture_table: lecture_table,
+                        user_id: lecture_json.user_id,
+                        top_bar_link: '/main/logout',
+                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                        dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
+                        webapi_key: get_key(userB)
+                    });
+                    break;
+                default: // default (main?p=home)
+                    res.render('home', {
+                        title: 'Team7 - マイページ',
+                        lecture_table: lecture_table,
+                        user_id: lecture_json.user_id,
+                        top_bar_link: '/main/logout',
+                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                        dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
+                    });
+                    break;
+            }
     })
-    .get('/main/logout', (req, res) => {
+    .get('/main/logout', (req, res) => { // ログアウト処理
         req.logout();
         res.redirect('/');
     })
-    .get('/main/login', (req, res, next) => {
+    .get('/main/login', (req, res, next) => { // ログイン処理
             if (req.isAuthenticated()) { // 認証済み
                 res.redirect('/main');
             } else {
@@ -223,7 +221,7 @@ function createTable(json) {
         +'</td><td id="td_dl"> <i class="fas fa-file-csv"></i>csv <i class="fas fa-file-excel"></i>xlsx'
         +'</td></tr>'; // end
     }
-    table += '</td><td></td><td></td><td></td><td></td><td></td></tr>';
+    // table += '</td><td></td><td></td><td></td><td></td><td></td></tr>';
     table += '</td><td>一括保存</td><td></td><td></td><td></td><td></td><td id="td_dl"><i class="fas fa-file-download"></i>csv <i class="fas fa-file-download"></i>xlsx</td></tr>';
     return table;
 }

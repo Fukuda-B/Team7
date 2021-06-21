@@ -39,9 +39,9 @@
 'use strict'
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
-const cookieSettion = require('cookie-session');
+// const cookieSettion = require('cookie-session');
 const ejs = require('ejs');
-const byrypt = require('bcrypt');
+// const byrypt = require('bcrypt');
 const express = require('express');
 const session = require('express-session');
 // const compression = require('compression');

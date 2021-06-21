@@ -1,5 +1,5 @@
 <%#
-    Team7 client ejs - login | Update: 2021/05/24
+    Team7 client ejs - home | Update: 2021/06/21
 %>
 
 <%- include( './_header.ejs' ); %>
@@ -14,11 +14,11 @@
     <div id="dashboard">
         <p id="dashboard_title">管理者<span>UID: <%- user_id %></span></p>
         <div id="dashboard_menu">
-            <a href="?p=home"><p class="dash_li dash_li_main"><i class="fas fa-table"></i>マイページ</p></a>
-            <a href="?p=course"><p class="dash_li"><i class="fas fa-chalkboard-teacher"></i>コース</p></a>
-            <a href="?p=edit"><p class="dash_li"><i class="fas fa-edit"></i>編集</p></a>
-            <a href="?p=stat"><p class="dash_li"><i class="fas fa-chart-bar"></i>統計</p></a>
-            <a href="?p=dev"><p class="dash_li"><i class="fas fa-wrench"></i>開発者向け</p></a>
+            <a href="?p=home"><p class="<%- dashboard_menu_class[0] %>"><i class="fas fa-table"></i>マイページ</p></a>
+            <a href="?p=course"><p class="<%- dashboard_menu_class[1] %>"><i class="fas fa-chalkboard-teacher"></i>コース</p></a>
+            <a href="?p=edit"><p class="<%- dashboard_menu_class[2] %>"><i class="fas fa-edit"></i>編集</p></a>
+            <a href="?p=stat"><p class="<%- dashboard_menu_class[3] %>"><i class="fas fa-chart-bar"></i>統計</p></a>
+            <a href="?p=dev"><p class="<%- dashboard_menu_class[4] %>"><i class="fas fa-wrench"></i>開発者向け</p></a>
         </div>
     </div>
     <div id="main">
