@@ -9,9 +9,19 @@
         https://teratail.com/questions/263508
 """
 
+# 起動時にライブラリの自動インストール
+import sys
+import subprocess
+def install():
+    f = open('requirements.txt', 'r')
+    packages = f.readlines()
+    for i in range(len(packages)):
+        subprocess.check_call([sys.executable, "-m", "pip", "install", packages[i]])
+    f.close()
+# install() # 初回以外は実行する必要なし
+
 # 基本的なライブラリをインポートする
 from asyncio.tasks import gather
-import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 import datetime
@@ -40,8 +50,8 @@ class Main(QtWidgets.QWidget):
         self.MainWindow = QtWidgets.QMainWindow()
         self.ui = main_window.Ui_MainWindow()
         self.ui.setupUi(self.MainWindow)
-        # self.MainWindow.show()
-        self.MainWindow.showMaximized()
+        self.MainWindow.show()
+        # self.MainWindow.showMaximized()
         # self.MainWindow.showFullScreen()
 
     def ready(self):
@@ -100,7 +110,7 @@ class Sub():
         asyncio.run(self.update_i())
 
     async def update_i(self):
-        current_time = str(datetime.datetime.now().strftime('%Y年%m月%d日 %H:%M:%S'))
+        current_time = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
         asyncio.create_task(self.cs.update_i(current_time, self.nws)) # 画面の更新
 
     async def update_n(self):
