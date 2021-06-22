@@ -9,6 +9,7 @@
         https://teratail.com/questions/263508
 """
 
+# ----- 初期化処理 -----
 # 起動時にライブラリの自動インストール
 import sys
 import subprocess
@@ -39,6 +40,9 @@ from io import BytesIO
 # モジュールの読み込み
 import main_window # メインウィンドウを表示するモジュール
 
+# ----- 定数宣言 -----
+SERVER_URI = 'http://localhost:8080/api/v1/team7'
+API_KEY = ''
 
 # ----- Main -----
 # 画面の表示処理を行う
@@ -185,6 +189,8 @@ class Network():
     def __init__(self):
         self.netCheck = 'http://www.google.com/'
         self.netCheckT = 3 # connection timeout
+        self.server = SERVER_URI
+        self.apiKey = API_KEY
 
     async def netstat(self):
         ''' ネットワークの接続確認 '''
@@ -200,6 +206,13 @@ class Network():
         # except requests.ConnectionError:
         #     return False
 
+    async def send(self, data):
+        data["key"] = self.apiKey
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.server, data=data) as resp:
+                res = resp.text()
+
+
 # ----- Encryption -----
 # 暗号化/復号、ハッシュ導出
 class Encryption():
@@ -207,7 +220,7 @@ class Encryption():
         self.key = 'hi_Team7'.encode('utf-8')
         self.iv = 'hi_Team7'.encode('utf-8')
         self.salt = 'hi_Team7'.encode('utf-8')
-    
+
     def argon2(self, data):
         ''' ハッシュ化 '''
         data = argon2.using(type="ID", salt=self.salt, parallelism=2, rounds=5, memory_cost=1024*10, digest_size=128).hash(data)
