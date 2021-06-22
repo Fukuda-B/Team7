@@ -7,6 +7,7 @@
         https://passlib.readthedocs.io/en/stable/lib/passlib.hash.argon2.html
         https://www.finddevguides.com/Pyqt-qstatusbar-widget
         https://teratail.com/questions/263508
+        aiohttp| https://docs.aiohttp.org/en/stable/client_quickstart.html
 """
 
 # ----- 初期化処理 -----
