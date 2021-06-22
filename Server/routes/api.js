@@ -21,11 +21,11 @@ const get_key = require('./cryp.js').get_key;
 
 router
     // GET req
-    .get('/', isAuthenticated_nos, function (req, res) {
+    .get('/', isAuthenticated_nos, function (req, res) { // /api
     // .get('/', function (req, res) {
         res.send('team7 - api');
     })
-    .get('/v1/team7', isAuthenticated_nos, function (req, res) {
+    .get('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
         res.header('Content-Type', 'application/json; charset=utf-8');
         res.send('ok');
     })
@@ -40,7 +40,7 @@ router
     })
 
     // POST req
-    .post('/v1/team7', isAuthenticated_nos, function (req, res) {
+    .post('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
         res.header('Content-Type', 'application/json; charset=utf-8');
         res.send('ok');
     });

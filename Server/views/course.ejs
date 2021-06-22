@@ -4,8 +4,8 @@
 
 <%- include( './_header.ejs' ); %>
 <head>
-    <link rel="preload" href="/public/css/style_home.css" as="style">
-    <link rel="stylesheet" href="/public/css/style_dev.css"">
+    <link rel="preload" href="/public/css/style_course.css" as="style">
+    <link rel="stylesheet" href="/public/css/style_course.css"">
     <title><%- title %></title>
 </head>
 <body>
@@ -23,8 +23,13 @@
     </div>
     <div id="main">
         <div id="lecture_table">
-            <h3>Course list</h3>
-            <p>講義一覧と、メニューが選べるようになる予定</p>
+            <h3>講義情報 確認</h3>
+            <table id="lecture_table_val">
+                <tr>
+                    <th>講義名 - ID</th> <th>曜日・時限</th> <th>担当</th> <th>出席数</th> <th>詳細</th> <th>リンク</th>
+                </tr>
+                <%- lecture_table %>
+            </table>
         </div>
         </div>
     </div>

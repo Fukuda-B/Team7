@@ -8,7 +8,7 @@
     https://qiita.com/angel_p_57/items/2e3f3f8661de32a0d432
     https://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
     https://ameblo.jp/reverse-eg-mal-memo/entry-12580058952.html
-
+    https://canvasjs.com/
 
 -----
     用語
@@ -100,9 +100,11 @@ router
         (req, res) => {
             switch(req.query.p) {
                 case 'course': // /main?p=course
-                    res.render('course', {
+                var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
+                var out_table = createTable(req.user, tx);
+                res.render('course', {
                         title: 'Team7 - コース',
-                        lecture_table: createTable(req.user),
+                        lecture_table: out_table,
                         user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
@@ -110,9 +112,11 @@ router
                     });
                     break;
                 case 'edit': // /main?p=edit
+                    var tx = '<a href="/main?p=edit">編集<i class="fas fa-pencil-alt"></i></a>';
+                    var out_table = createTable(req.user, tx);
                     res.render('edit', {
                         title: 'Team7 - 編集',
-                        lecture_table: createTable(req.user),
+                        lecture_table: out_table,
                         user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
@@ -122,7 +126,8 @@ router
                 case 'stat': // /main?p=stat
                     res.render('stat', {
                         title: 'Team7 - 統計',
-                        lecture_table: createTable(req.user),
+                        lecture_table: createTable(req.user, ''),
+                        lecture_graph_val: get_graph_val(req.user),
                         user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
@@ -133,7 +138,7 @@ router
                     var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
                     res.render('dev', {
                         title: 'Team7 - 開発者向け',
-                        lecture_table: createTable(req.user),
+                        lecture_table: createTable(req.user, ''),
                         user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
@@ -142,9 +147,17 @@ router
                     });
                     break;
                 default: // default (main?p=home)
+                    var tx = '<a href="/main"><i class="fas fa-file-csv"></i>csv</a>'
+                    + '<a href="/main"><i class="fas fa-file-excel"></i>xlsx</a>';
+                    var out_table = createTable(req.user, tx)
+                    +'</td><td>一括保存</td><td></td><td></td><td></td><td></td>'
+                    +'<td id="td_dl">'
+                    +'<a href="/main"><i class="fas fa-file-download"></i>csv</a>'
+                    +'<a href="/main"><i class="fas fa-file-download"></i>xlsx</a>'
+                    +'</td></tr>';
                     res.render('home', {
                         title: 'Team7 - マイページ',
-                        lecture_table: createTable(req.user),
+                        lecture_table: out_table,
                         user_id: get_user_id(req.user),
                         top_bar_link: '/main/logout',
                         top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
@@ -206,8 +219,9 @@ function isAuthenticated_bool(req, res) {
     return req.isAuthenticated();
 }
 
-// ----- JSON読み込みテスト -----
-function createTable(user) {
+// ----- 出席状況のテーブル生成 -----
+// txは一番右の列の表示内容
+function createTable(user, tx) {
     var jsonFile = './routes/user_json.json';
     var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
     var json = lecture_json[user];
@@ -219,16 +233,33 @@ function createTable(user) {
         +tmp.lecture_date.w+' '
         +tmp.lecture_date.t
         +'</td><td>'+tmp.lecture_teach // 担当
-        +'</td><td>'+tmp.lecture_par+'%' // 出席率
-        +'</td><td>'+'' // なにか
-        +'</td><td id="td_dl"> <i class="fas fa-file-csv"></i>csv <i class="fas fa-file-excel"></i>xlsx'
+        +'</td><td>'+tmp.lecture_cnt // 出席数
+        +'</td><td>'+'---' // なにか
+        +'</td><td id="td_dl"> '
+        +tx
+        // +'<a href="/main"><i class="fas fa-file-csv"></i>csv</a>'
+        // +'<a href="/main"><i class="fas fa-file-excel"></i>xlsx</a>'
         +'</td></tr>'; // end
     }
-    // table += '</td><td></td><td></td><td></td><td></td><td></td></tr>';
-    table += '</td><td>一括保存</td><td></td><td></td><td></td><td></td><td id="td_dl"><i class="fas fa-file-download"></i>csv <i class="fas fa-file-download"></i>xlsx</td></tr>';
     return table;
 }
-// ----- get user id -----
+
+// ----- グラフ出力に必要なデータ生成 -----
+function get_graph_val(user) {
+    var jsonFile = './routes/user_json.json';
+    var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+    var json = lecture_json[user];
+    var data = new Array();
+    for (var i=0; i<json.lecture.length; i++) {
+        data[i] = {
+            "label": json.lecture[i].lecture_name,
+            "y": json.lecture[i].lecture_cnt
+        }
+    }
+    return data;
+}
+
+// ----- ユーザ名からUIDを取得する -----
 function get_user_id(user) {
     var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
     return user_list[user].UID;

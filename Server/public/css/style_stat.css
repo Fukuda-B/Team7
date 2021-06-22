@@ -82,50 +82,19 @@
     width: 70%;
     text-align: center;
 }
-#lecture_table {
-    margin-top: 80px;
-}
-#lecture_table h3 {
-    font-weight: 300;
-}
-#lecture_table_val {
-    margin: 0 auto;
-    border-collapse: collapse;
-    font-family: 游ゴシック体, 'Yu Gothic', YuGothic, 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
-}
-#lecture_table_val th {
-    background-color: var(--main-color);
-    color: #fff;
-    font-weight: 500;
-}
-#lecture_table_val td {
-    border: none;
-    background: #fff;
-}
-#lecture_table_val tr:nth-child(odd) td {
-    background: #eee;
-}
-#lecture_table_val td, th {
-    padding: 5px 15px;
-}
-#lecture_table_val tr {
-    border: solid 1px var(--sub-color);
-}
 
-#lecture_table i {
-    padding-left: 10px;
-    padding-right: 3px;
-    color: #666;
+#stage {
+    width: 500px;
+    height: 300px;
+    margin-left: calc(50% - 250px);
 }
-#lecture_table #td_dl {
-    border-left: 1px solid #ddd;
+#stage2 {
+    width: 500px;
+    height: 300px;
+    margin-left: calc(50% - 250px);
 }
-#td_dl a {
-    text-decoration: none;
-    color: #444;
-}
-#td_dl a:hover {
-    text-decoration: underline;
+.canvasjs-chart-credit {
+    display: none;
 }
 
 

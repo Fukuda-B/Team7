@@ -17,10 +17,11 @@
     margin: 0;
     /* width: 15%; */
     min-width: 160px;
-    height: calc(100vh - 41px - 40px);
+    /* height: calc(100vh - 41px - 40px); */
+    height: 100%;
     border: none;
     /* border-left: solid 1px var(--sub-color); */
-    background: #ddd;
+    /* background: #ddd; */
     padding: 20px 0;
 }
 #dashboard_title {
@@ -58,13 +59,15 @@
     font-size: 0.9em;
 }
 #dashboard_menu p:hover {
-    background: #fff;
+    /* background: #fff; */
+    background: #e4e4e4;
     color: #111;
 }
 .dash_li_main {
     padding-left: 8px;
     border-left: 4px solid var(--main-color);
-    background: #fff;
+    background: #e4e4e4;
+    /* background: #fff; */
     color: #111;
 }
 #dash_li_main i {

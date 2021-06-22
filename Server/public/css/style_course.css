@@ -115,17 +115,17 @@
 #lecture_table i {
     padding-left: 10px;
     padding-right: 3px;
-    color: #666;
 }
 #lecture_table #td_dl {
     border-left: 1px solid #ddd;
 }
 #td_dl a {
     text-decoration: none;
-    color: #444;
+    color: #888;
 }
 #td_dl a:hover {
     text-decoration: underline;
+    color: #222;
 }
 
 
