@@ -141,9 +141,13 @@ class IC():
         if (time.monotonic() - self.flag) > 10 or self.idm != self.last:
             self.cs.update_main("出席", "IDm : "+str(self.idm))
 
-            self.net.send({"idm":self.idm, "date":datetime.datetime.now()})
+            now_date = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
+            asyncio.run(self.net.send({"idm":self.idm, "date":now_date}))
+            # self.net.send({"idm":self.idm, "date":datetime.datetime.now()})
             # con_loop = asyncio.get_event_loop()
+            # con_loop.run_until.complete(self.net.send({"idm":"b"}))
             # con_loop.run_until_complete(self.net.send({"idm":self.idm, "date":datetime.datetime.now()})) # とりあえず送信
+            # con_loop.close()
 
         else:
             self.flag = time.monotonic()
