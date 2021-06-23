@@ -141,8 +141,9 @@ class IC():
         if (time.monotonic() - self.flag) > 10 or self.idm != self.last:
             self.cs.update_main("出席", "IDm : "+str(self.idm))
 
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(nn.send({"idm":self.idm, "date":datetime.datetime.now()})) # とりあえず送信
+            self.net.send({"idm":self.idm, "date":datetime.datetime.now()})
+            # con_loop = asyncio.get_event_loop()
+            # con_loop.run_until_complete(self.net.send({"idm":self.idm, "date":datetime.datetime.now()})) # とりあえず送信
 
         else:
             self.flag = time.monotonic()
