@@ -45,7 +45,9 @@ import main_window # メインウィンドウを表示するモジュール
 # SERVER_URI = 'http://localhost:8080/api/v1/team7'
 SERVER_URI = 'http://172.28.92.72:8080/api/v1/team7'
 API_KEY = 'ee038e2b7542dcfa599e96aefccd33cdc199adf5f061274689aa0b9341f5cef890884b03c9641338f7dd7bd2e791e43f5a26b7639a828f54a49738b751163a08a8e7f74ba21f90de8ca1de10edd91bf67169839c10bc0359cad86b70887aa887b046f0c63582f6f63612d12033ca856fe28db812ab1cb8e2b00c1b40c6a72b350f93f4691f0b3c008c174cb8465fccd6c75989047965804ec8d283ea71144e935ec35b2e40a59819c6a55b0d504549b7685dfaabb06bc19a3a8ba1964f34258be47569686ce26cabef94cd0c0dc318253c28ac4785fdd0b05f2b27345f74ed0a9e710ed5312f1a072e4b1397145877bf1e272104449ba76531208462e9bd525891b10169bfbaf63108728e9b133c7bba4cfdaa891cd593c5d1348ae3f4111372a8efb48dec8c2b19e9216ca5563a92142a14e12d49e9e8456860f9c4589f2b7cca4bbc48c76f2b16e679ba0a8a30636af08ac3041cb40ba1bfd9e15f751adf31ddee18397604730eb5de5c187c492385c4d030358ca5ad6ed8ef710dacd209b92159abd87790a4f4a34b12d419feea50cc664900f5d2a40c72596fe4d1a897636d74d89ffb0017adde134d086041312181ca5de8ddee8b3b7d0bc73c2a68c9562b16820665cc1633122a55f88024e8f6e4e07c9c430d589ca23c435391cd7bf61e3fc7edc1ecc177110edbe0a02c0116d1e4902e36d762b35875691fcba3694eaee8376030f57b9aeb31d7470021bd1985cc16a2e084aae867aa7664dab724687782f88d1afff9c7940b154f18ccaecfcdb50af38284d60156d649c9e48a5b6602fa0590e830d07168f923e09d125fd04aaa8a8925bffbac472a4b0a1729c9b8d27ebd5ce9337901d68449e7e7930e70e70726a9bbf99a8bf95c8e6220592edb6d120a51f8ee7386412a6f8976e14cdd6b67ff19c13021d51f22c402d5430d5c7d15ee68719ccddeb5daebe62768205e8f430d314094e9e107e704b3fed730238c25151e1c02fb5be9cb66462f0475aadab607a199a7f9cb1294046e7cdfb186735f4df67317e2aa4d11b12bfbe81ac49352267397851161cef30418c5051eb51e80c35a819f38b79e340dc7ff8c2945aad4b86bc5ad9186467dc9dfd9ab32875a67aca78d0c55f2a6fcb5bc2cb03a11b7253adc17a7fcf54c24ddb5c99262ac425268c4ee5efcff09f835368ecd038ae704b6c6af163e88ae6a168f2c0b367b471a10692330df5c5d8dd8ee337965ea7812ec2d647c20680a8c0ef26262e4881341155678ca74aa77aa80ebc795ad59'
-DATABASE = 'attendance.db'
+
+DATABASE = 'attendance.db' # 出席を保存するデータベース
+DB_TABLE = 'attendance' # 出席を保存するテーブル
 
 # ----- Main -----
 # 画面の表示処理を行う
@@ -187,14 +189,23 @@ class IC():
 class Database():
     def __init__(self):
         self.fname = DATABASE
+        self.tname = DB_TABLE
+        self.sql('CREATE TABLE ' + str(self.fname) + '''(
+            id INTEGER PRIMARY KEY,
+            result TEXT NOT NULL,
+            datetime TIMESTAMP DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))
+        )''')
 
-    def query(self, q):
+    def sql(self, q):
         connection = sqlite3.connect(self.fname)
         cur = connection.cursor()
         cur.execute(q)
-        print(cur.fetchall())
+        # print(cur.fetchall())
         cur.close()
         connection.close()
+
+    def add_at(self, data): # add attendance
+        self.sql('INSERT')
 
 # ----- Network -----
 # ネットワーク接続状況やサーバへのデータ送信処理
@@ -225,7 +236,8 @@ class Network():
             async with aiohttp.ClientSession() as session:
                 async with session.post(self.server, data=data) as resp:
                     # res = resp.text()
-                    return True
+                    # return True
+                    return resp.text() == 'ok'
         except:
             return False
 
