@@ -16,10 +16,10 @@
 
     OS Command Injection
     SQL-injection
-    Directory traversal
+    Directory traversal - ok
     Session hijacking
     Cross-site scripting (XSS)
-    Cross-site request forgery (CSRF)
+    Cross-site request forgery (CSRF) - ok
     http header-injection
     Clickjacking
     Broken Authentication and Session Management

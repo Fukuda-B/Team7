@@ -4,7 +4,11 @@
     author: Team7
 """
 
+# PyQt5.QWidgets -> (showFullScreen <-> showNormal)
+# https://doc.qt.io/archives/qtforpython-5.12/PySide2/QtWidgets/QWidget.html#PySide2.QtWidgets.PySide2.QtWidgets.QWidget.showNormal
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+import webbrowser
 
 
 class Ui_MainWindow(object):
@@ -112,6 +116,12 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        # action
+        self.action_5.triggered.connect(QtWidgets.qApp.quit)
+        self.action_10.triggered.connect(QtWidgets.qApp.quit)
+        self.action_7.triggered.connect(self.windowShow)
+        self.action_11.triggered.connect(self.windowShowF)
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("Team7 - CardReader", "Team7 - CardReader"))
@@ -128,12 +138,21 @@ class Ui_MainWindow(object):
         self.actionGithub.setText(_translate("Github", "Github"))
         self.actionAbout.setText(_translate("About", "About"))
         self.action_5.setText(_translate("Exit", "終了"))
+        self.action_5.setShortcut('Alt+F4')
         self.action_6.setText(_translate("Edit data", "出席状況修正"))
         self.action_8.setText(_translate("Update database", "データベース更新"))
         self.action_9.setText(_translate("Preferences", "環境設定"))
         self.action_10.setText(_translate("Exit", "終了"))
+        self.action_10.setShortcut('Alt+F4')
         self.action_7.setText(_translate("Window", "ウィンドウ表示"))
         self.action_11.setText(_translate("FullScreen", "フルスクリーン表示"))
+
+    def windowShow(self, MainWindow):
+        MainWindow.showNormal()
+
+    def windowShowF(self, MainWIndow):
+        MainWindow.showFullScreen()
+
 
 if __name__ == "__main__":
     import sys

@@ -62,6 +62,7 @@ class Main(QtWidgets.QWidget):
         self.MainWindow.show()
         # self.MainWindow.showMaximized()
         # self.MainWindow.showFullScreen()
+        self.ui.actionConnect(self.MainWindow)
 
     def ready(self):
         ''' 画面更新 '''
@@ -211,7 +212,7 @@ class Database():
 # ネットワーク接続状況やサーバへのデータ送信処理
 class Network():
     def __init__(self):
-        self.netCheck = 'http://www.google.com/'
+        self.netCheck = 'https://www.google.com/'
         self.netCheckT = 3 # connection timeout
         self.server = SERVER_URI
         self.apiKey = API_KEY
