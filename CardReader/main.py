@@ -37,7 +37,9 @@ import threading
 from gtts import gTTS
 import playsound
 from passlib.hash import argon2
+from pathlib import Path
 from io import BytesIO
+
 # モジュールの読み込み
 import main_window # メインウィンドウを表示するモジュール
 
@@ -163,7 +165,8 @@ class IC():
         self.last = self.idm
         self.flag = time.monotonic()
 
-    def on_connect_dummy(self, tag):
+    def on_connect_dummy(self):
+        ''' デバッグ用 '''
         if (time.monotonic() - self.flag) > self.min_doubled or self.idm != self.last:
             self.cs.update_main("出席", "IDm : "+str(self.idm))
 
@@ -211,30 +214,32 @@ class Database():
     def __init__(self):
         self.fname = DATABASE
         self.tname = DB_TABLE
+        # create database if not exists
         # | No. | Lecture ID | Lecture No. | User Name | User ID | Result | Datetime | 
-        self.sql('CREATE TABLE ' + str(self.fname) + '''(
-            no INTERGER PRIMARY KEY AUTOINCREMENT
-            lecture_id INTERGER NOT NULL,
-            lecture_no INTERGER NOT NULL,
-            user_name TEXT,
-            user_idm INTEGER NOT NULL,
-            result TEXT NOT NULL,
-            datetime TEXT DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))
-        )''')
+        Path(self.fname).touch(exist_ok=True)
+        self.sql('CREATE TABLE IF NOT EXISTS ' + str(self.tname) + '('+\
+            'no INTEGER PRIMARY KEY AUTOINCREMENT, '+\
+            'lecture_id INTERGER NOT NULL, '+\
+            'lecture_no INTERGER NOT NULL, '+\
+            'user_name TEXT, '+\
+            'user_idm INTEGER NOT NULL, '+\
+            'result TEXT NOT NULL, '+\
+            "datetime TEXT)")
+            # "datetime TEXT DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))")
 
     def sql(self, q):
         connection = sqlite3.connect(self.fname)
         cur = connection.cursor()
+        # print(q) # クエリの表示
         cur.execute(q)
         # print(cur.fetchall())
         cur.close()
         connection.close()
 
     def add_at(self, lecture_id, lecture_no, user_name, user_idm, result, datetime): # add attendance
-        self.sql('INSERT INTO '+ str(self.fname) + '(\
-            lecture_id, lecture_no, user_name, user_idm, result, datetime\
-        ) values (\
-            '+lecture_id+','+lecture_no+',"'+user_name+'",'+user_idm+',"'+result+'","'+datetime+'")'\
+        self.sql('INSERT INTO '+ str(self.tname) + '(\
+            lecture_id, lecture_no, user_name, user_idm, result, datetime)\
+            values ('+lecture_id+','+lecture_no+',"'+user_name+'",'+user_idm+',"'+result+'","'+datetime+'")'\
         )
 
 # ----- Network -----

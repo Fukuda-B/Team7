@@ -31,6 +31,8 @@ const passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 const router = express.Router();
 const fs = require('fs');
+const xlsx = require('xlsx');
+const csv = require('csv');
 const CRYP = require('./cryp.js').CRYP;
 const get_key = require('./cryp.js').get_key;
 
@@ -98,72 +100,86 @@ router
     .get('/main', // メインページ
         isAuthenticated,
         (req, res) => {
-            switch(req.query.p) {
-                case 'course': // /main?p=course
+            if (check_user_admin(req.user)) { // 管理者の場合
+                switch(req.query.p) {
+                    case 'course': // /main?p=course
+                        var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
+                        var out_table = createTable(req.user, tx);
+                        res.render('course', {
+                            title: 'Team7 - コース',
+                            lecture_table: out_table,
+                            user_id: get_user_id(req.user),
+                            top_bar_link: '/main/logout',
+                            top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                            dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+                        });
+                        break;
+                    case 'edit': // /main?p=edit
+                        var tx = '<a href="/main?p=edit">編集<i class="fas fa-pencil-alt"></i></a>';
+                        var out_table = createTable(req.user, tx);
+                        res.render('edit', {
+                            title: 'Team7 - 編集',
+                            lecture_table: out_table,
+                            user_id: get_user_id(req.user),
+                            top_bar_link: '/main/logout',
+                            top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                            dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
+                        });
+                        break;
+                    case 'stat': // /main?p=stat
+                        res.render('stat', {
+                            title: 'Team7 - 統計',
+                            lecture_table: createTable(req.user, ''),
+                            lecture_graph_val: get_graph_val(req.user),
+                            user_id: get_user_id(req.user),
+                            top_bar_link: '/main/logout',
+                            top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                            dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li"]
+                        });
+                        break;
+                    case 'dev': // /main?p=dev
+                        var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+                        res.render('dev', {
+                            title: 'Team7 - 開発者向け',
+                            lecture_table: createTable(req.user, ''),
+                            user_id: get_user_id(req.user),
+                            top_bar_link: '/main/logout',
+                            top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                            dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
+                            webapi_key: get_key(user_list[req.user])
+                        });
+                        break;
+                    default: // default (main?p=home)
+                        var tx = '<a href="/main"><i class="fas fa-file-csv"></i>csv</a>'
+                        + '<a href="/main"><i class="fas fa-file-excel"></i>xlsx</a>';
+                        var out_table = createTable(req.user, tx)
+                        +'</td><td>一括保存</td><td></td><td></td><td></td><td></td>'
+                        +'<td id="td_dl">'
+                        +'<a href="/main"><i class="fas fa-file-download"></i>csv</a>'
+                        +'<a href="/main"><i class="fas fa-file-download"></i>xlsx</a>'
+                        +'</td></tr>';
+                        res.render('home', {
+                            title: 'Team7 - マイページ',
+                            lecture_table: out_table,
+                            user_id: get_user_id(req.user),
+                            top_bar_link: '/main/logout',
+                            top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                            dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
+                        });
+                        break;
+                }
+            } else {
                 var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
                 var out_table = createTable(req.user, tx);
-                res.render('course', {
-                        title: 'Team7 - コース',
-                        lecture_table: out_table,
-                        user_id: get_user_id(req.user),
-                        top_bar_link: '/main/logout',
-                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-                        dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
-                    });
-                    break;
-                case 'edit': // /main?p=edit
-                    var tx = '<a href="/main?p=edit">編集<i class="fas fa-pencil-alt"></i></a>';
-                    var out_table = createTable(req.user, tx);
-                    res.render('edit', {
-                        title: 'Team7 - 編集',
-                        lecture_table: out_table,
-                        user_id: get_user_id(req.user),
-                        top_bar_link: '/main/logout',
-                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-                        dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
-                    });
-                    break;
-                case 'stat': // /main?p=stat
-                    res.render('stat', {
-                        title: 'Team7 - 統計',
-                        lecture_table: createTable(req.user, ''),
-                        lecture_graph_val: get_graph_val(req.user),
-                        user_id: get_user_id(req.user),
-                        top_bar_link: '/main/logout',
-                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-                        dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li"]
-                    });
-                    break;
-                case 'dev': // /main?p=dev
-                    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-                    res.render('dev', {
-                        title: 'Team7 - 開発者向け',
-                        lecture_table: createTable(req.user, ''),
-                        user_id: get_user_id(req.user),
-                        top_bar_link: '/main/logout',
-                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-                        dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
-                        webapi_key: get_key(user_list[req.user])
-                    });
-                    break;
-                default: // default (main?p=home)
-                    var tx = '<a href="/main"><i class="fas fa-file-csv"></i>csv</a>'
-                    + '<a href="/main"><i class="fas fa-file-excel"></i>xlsx</a>';
-                    var out_table = createTable(req.user, tx)
-                    +'</td><td>一括保存</td><td></td><td></td><td></td><td></td>'
-                    +'<td id="td_dl">'
-                    +'<a href="/main"><i class="fas fa-file-download"></i>csv</a>'
-                    +'<a href="/main"><i class="fas fa-file-download"></i>xlsx</a>'
-                    +'</td></tr>';
-                    res.render('home', {
-                        title: 'Team7 - マイページ',
-                        lecture_table: out_table,
-                        user_id: get_user_id(req.user),
-                        top_bar_link: '/main/logout',
-                        top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-                        dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
-                    });
-                    break;
+                res.render('home_s', {
+                    title: 'Team7 - マイページ',
+                    lecture_table: out_table,
+                    user_id: get_user_id(req.user),
+                    top_bar_link: '/main/logout',
+                    top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                    dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
+                });
+
             }
     })
     .get('/main/logout', (req, res) => { // ログアウト処理
@@ -265,6 +281,12 @@ function get_user_id(user) {
     return user_list[user].UID;
 }
 
+// ----- ユーザが管理者かどうか確認する -----
+function check_user_admin(user) {
+    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+    return user_list[user].admin;    
+}
+
 // ----- ユーザ確認 -----
 function check_user(user, pass) {
     try {
@@ -274,6 +296,28 @@ function check_user(user, pass) {
     } catch {
         return false;
     }
+}
+
+// ----- xlsxファイル生成 -----
+function xlsx_gen(data, fname) {
+    var xutil = xlsx.utils;
+    (async() => {
+        let wb = xutil.book_new();
+        let ws = xutil.aoa_to_sheet(data);
+        let ws_name = fname;
+        xutil.book_append_sheet(wb, ws, ws_name);
+        xlsx.writeFile(wb, fname);
+        console.log('created: '+fname);
+    })();
+}
+
+// ----- csvファイル生成 -----
+function csv_gen(data, fname) {
+    csv.stringify(data, (error, output) => {
+        fs.writeFile(fname, output, (error) => {
+            console.log('created: '+fname);
+        })
+    })
 }
 
 // -----

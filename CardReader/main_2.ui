@@ -121,6 +121,7 @@
     </property>
     <addaction name="action"/>
     <addaction name="action_2"/>
+    <addaction name="action_4"/>
    </widget>
    <widget class="QMenu" name="menu_4">
     <property name="title">
@@ -184,6 +185,11 @@
   <action name="action_10">
    <property name="text">
     <string>終了</string>
+   </property>
+  </action>
+  <action name="action_4">
+   <property name="text">
+    <string>デバッグ機能</string>
    </property>
   </action>
  </widget>
