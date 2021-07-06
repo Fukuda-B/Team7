@@ -1,36 +1,39 @@
 <%#
-    Team7 client ejs - login | Update: 2021/05/24
+  Team7 client ejs - login | Update: 2021/05/24
 %>
 
 <%- include( './_header.ejs' ); %>
+
 <head>
-    <link rel="stylesheet" href="/public/css/style.css">
-    <title><%- title %></title>
+  <link rel="stylesheet" href="/public/css/style.css">
+  <title><%- title %></title>
 </head>
+
 <body>
-    <%- include( './_top_bar.ejs' ); %>
-    <div id="index_top">
-        <!-- <img src="/public/img/team7.svg" alt=""> -->
-        <h1>Team7</h1>
-        <p>Attendance Management System</p>
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="index_top">
+    <!-- <img src="/public/img/team7.svg" alt=""> -->
+    <h1>Team7</h1>
+    <p>Attendance Management System</p>
+  </div>
+  <div id="bottom">
+    <h3>Download Packages v0.2.9</h3>
+    <div id="dl_list">
+      <a class="dl" href="https://github.com/Fukuda-B/Team7/releases">
+        <i class="fas fa-id-card"></i> For Card Reader</a>
+      <a class="dl" href="https://github.com/Fukuda-B/Team7/releases">
+        <i class="fas fa-server"></i> For Server</a>
+      <a class="dl" href="https://github.com/Fukuda-B/Team7/releases">
+        <i class="fas fa-laptop"></i> For Client</a>
     </div>
-    <div id="bottom">
-        <h3>Download Packages v0.2.9</h3>
-        <div id="dl_list">
-            <a class="dl" href="https://github.com/Fukuda-B/Team7/releases">
-                <i class="fas fa-id-card"></i> For Card Reader</a>
-            <a class="dl" href="https://github.com/Fukuda-B/Team7/releases">
-                <i class="fas fa-server"></i> For Server</a>
-            <a class="dl" href="https://github.com/Fukuda-B/Team7/releases">
-                <i class="fas fa-laptop"></i> For Client</a>
-        </div>
-        <a id="dl_other" href="https://github.com/Fukuda-B/Team7/tags">Other versions</a>
-    </div>
-    <div id="footer">
-        <h3>Our project</h3>
-        <a href="https://github.com/Fukuda-B/Team7" target="_blank" rel="noopener noreferrer">
-            <i class="fab fa-github"></i> GitHub</a>
-        <p id="cp">© 2021 Team7</p>
-    </div>
+    <a id="dl_other" href="https://github.com/Fukuda-B/Team7/tags">Other versions</a>
+  </div>
+  <div id="footer">
+    <h3>Our project</h3>
+    <a href="https://github.com/Fukuda-B/Team7" target="_blank" rel="noopener noreferrer">
+      <i class="fab fa-github"></i> GitHub</a>
+    <p id="cp">© 2021 Team7</p>
+  </div>
 </body>
+
 </html>

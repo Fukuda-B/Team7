@@ -48,7 +48,7 @@ const session = require('express-session');
 const morgan = require('morgan');
 const path = require('path')
 const passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
+  LocalStrategy = require('passport-local').Strategy;
 
 // -----
 // Router module
@@ -58,7 +58,7 @@ var listenPort = 3000;
 
 // -----
 process.on('uncaughtException', (err) => {
-    console.error(err);
+  console.error(err);
 });
 
 var app = express();
@@ -71,23 +71,25 @@ var app = express();
 // }));
 
 // Cookie settings
-var expiryDate = new Date(Date.now() + 7*24*60*60*1000); // 1week
+var expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 1week
 app.use(session({
-    secret: 'hello_team7',
-    resave: true,
-    saveUninitialized: false,
-    cookie: {
-        // secure: true,
-        httpOnly: true,
-        expires: expiryDate,
-    }
+  secret: 'hello_team7',
+  resave: true,
+  saveUninitialized: false,
+  cookie: {
+    // secure: true,
+    httpOnly: true,
+    expires: expiryDate,
+  }
 }));
 
 // Engine & Req Middle
 app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+  extended: true
+}));
 app.use('/public', express.static(path.join(__dirname, '/public')));
 
 app.use(passport.initialize());
@@ -101,20 +103,22 @@ app.use('/', main);
 app.use('/api', api_root);
 
 // 404 Not Found
-app.use(function(req, res, next) {
-    next(createError(404));
+app.use(function (req, res, next) {
+  next(createError(404));
 });
 
 // 500 Internal Server Error
-app.use(function(err, req, res, next) {
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') == 'development' ? err : {};
+app.use(function (err, req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') == 'development' ? err : {};
 
-    res.status(err.status || 500);
-    res.render('error', {title: 'Server Error'});
+  res.status(err.status || 500);
+  res.render('error', {
+    title: 'Server Error'
+  });
 });
 
 // Listen port
 app.listen(listenPort, () => {
-    console.log('Welcome to Team7!')
+  console.log('Welcome to Team7!')
 })

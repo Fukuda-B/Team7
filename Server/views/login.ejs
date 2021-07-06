@@ -1,27 +1,32 @@
 <%#
-    Team7 client ejs - login | Update: 2021/05/23
+  Team7 client ejs - login | Update: 2021/05/23
 %>
 
 <%- include( './_header.ejs' ); %>
+
 <head>
-    <link rel="stylesheet" href="../public/css/style_login.css">
-    <title><%- title %></title>
+  <link rel="stylesheet" href="../public/css/style_login.css">
+  <title><%- title %></title>
 </head>
+
 <body>
-    <%- include( './_top_bar.ejs' ); %>
-    <div id="login_fie">
-        <p id="login_tit">ログイン - Team7</p>
-        <div id="login_fie_user">
-            <p class="login_fie_input">ユーザ名　</p>
-            <input class="login_fie_input" id="login_fie_input_user" name="username" type="text" placeholder="username" autocomplete="nickname">
-        </div>
-        <div id="login_fie_pass">
-            <p class="login_fie_input">パスワード</p>
-            <input class="login_fie_input" id="login_fie_input_pass" name="password" type="password" placeholder="password" autocomplete="current-password">
-        </div>
-        <button id="login_fie_button" onclick="ajax();">ログイン</button>
-        <p id="login_notice">ユーザ名またはパスワードが正しくありません</p>
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="login_fie">
+    <p id="login_tit">ログイン - Team7</p>
+    <div id="login_fie_user">
+      <p class="login_fie_input">ユーザ名　</p>
+      <input class="login_fie_input" id="login_fie_input_user" name="username" type="text" placeholder="username"
+        autocomplete="nickname">
     </div>
+    <div id="login_fie_pass">
+      <p class="login_fie_input">パスワード</p>
+      <input class="login_fie_input" id="login_fie_input_pass" name="password" type="password" placeholder="password"
+        autocomplete="current-password">
+    </div>
+    <button id="login_fie_button" onclick="ajax();">ログイン</button>
+    <p id="login_notice">ユーザ名またはパスワードが正しくありません</p>
+  </div>
 </body>
 <%- include( './login_ajax.ejs' ); %>
+
 </html>

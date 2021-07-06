@@ -22,62 +22,62 @@ const get_key = require('./cryp.js').get_key;
 var send_test = [] // リクエスト受け取りテスト
 
 router
-    // GET req
-    .get('/', isAuthenticated_nos, function (req, res) { // /api
+  // GET req
+  .get('/', isAuthenticated_nos, function (req, res) { // /api
     // .get('/', function (req, res) {
-        res.header('Content-Type', 'application/json; charset=utf-8');
-        // res.send('team7 - api');
-        res.send(JSON.stringify(send_test));
-    })
-    .get('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
-        var val = req.body;
-        val.x = '*****';
-        send_test.push(val);
-        console.log(send_test);
-        res.send('ok');
-    })
-    // .get('/v1/gkey', function (req, res) {
-    //     res.send(get_key(user_list.b));
-    // })
-    .get('/v1/argon2', function (req, res) { // argon2のハッシュ値導出
-        CRYP.argon2_h(req.query.x, bank_api).then((val) => {
-            console.log(val);
-            res.send(val);
-        });
-    })
-
-    // POST req
-    .post('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
-        var val = req.body;
-        val.x = '*****';
-        send_test.push(val);
-        console.log(send_test);
-        res.send('ok');
+    res.header('Content-Type', 'application/json; charset=utf-8');
+    // res.send('team7 - api');
+    res.send(JSON.stringify(send_test));
+  })
+  .get('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
+    var val = req.body;
+    val.x = '*****';
+    send_test.push(val);
+    console.log(send_test);
+    res.send('ok');
+  })
+  // .get('/v1/gkey', function (req, res) {
+  //     res.send(get_key(user_list.b));
+  // })
+  .get('/v1/argon2', function (req, res) { // argon2のハッシュ値導出
+    CRYP.argon2_h(req.query.x, bank_api).then((val) => {
+      console.log(val);
+      res.send(val);
     });
+  })
+
+  // POST req
+  .post('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
+    var val = req.body;
+    val.x = '*****';
+    send_test.push(val);
+    console.log(send_test);
+    res.send('ok');
+  });
 
 function isAuthenticated_nos(req, res, next) {
-    if (check_user_api(req)) {
-        return next();
-    } else {
-        res.send('bad request');
-    }
+  if (check_user_api(req)) {
+    return next();
+  } else {
+    res.send('bad request');
+  }
 }
 
 function check_user_api(req) {
-    try {
-        var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-        if (req.query.x) {
-            var dec = CRYP.decryptoo(req.query.x, bank_api);
-        } else if (req.body.x) {
-            var dec = CRYP.decryptoo(req.body.x, bank_api);
-        }
-        var dec_p = JSON.parse(dec);
-        // console.log(dec_p);
-        // return (dec_p.u === userB.username && dec_p.p === userB.password);
-        return (dec_p.u === user_list[dec_p.u].username && dec_p.p === user_list[dec_p.u].password);
-    } catch {
-        return false;
+  try {
+    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+    if (req.query.x) {
+      var dec = CRYP.decryptoo(req.query.x, bank_api);
+    } else if (req.body.x) {
+      var dec = CRYP.decryptoo(req.body.x, bank_api);
     }
+    var dec_p = JSON.parse(dec);
+    // console.log(dec_p);
+    // return (dec_p.u === userB.username && dec_p.p === userB.password);
+    return (dec_p.u === user_list[dec_p.u].username && dec_p.p === user_list[dec_p.u].password);
+  } catch {
+    return false;
+  }
 
 }
 

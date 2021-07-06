@@ -84,6 +84,7 @@ class Main(QtWidgets.QWidget):
         self.ui.statusbar.showMessage(text)
 
     def update_main(self, mtext, stext):
+        ''' 表示内容の更新 '''
         self.ui.label.setText(mtext)
         self.ui.label_2.setText(stext)
 
