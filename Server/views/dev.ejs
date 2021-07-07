@@ -3,33 +3,22 @@
 %>
 
 <%- include( './_header.ejs' ); %>
-
 <head>
   <link rel="preload" href="/public/css/style_dev.css" as="style">
   <link rel="stylesheet" href="/public/css/style_dev.css"">
-    <title><%- title %></title>
+  <title><%- title %></title>
 </head>
 <body>
-    <%- include( './_top_bar.ejs' ); %>
-    <div id=" wrap">
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="wrap">
   <div id="dashboard">
     <p id="dashboard_title">管理者<span>UID: <%- user_id %></span></p>
     <div id="dashboard_menu">
-      <a href="?p=home">
-        <p class="<%- dashboard_menu_class[0] %>"><i class="fas fa-table"></i>マイページ</p>
-      </a>
-      <a href="?p=course">
-        <p class="<%- dashboard_menu_class[1] %>"><i class="fas fa-chalkboard-teacher"></i>コース</p>
-      </a>
-      <a href="?p=edit">
-        <p class="<%- dashboard_menu_class[2] %>"><i class="fas fa-edit"></i>編集</p>
-      </a>
-      <a href="?p=stat">
-        <p class="<%- dashboard_menu_class[3] %>"><i class="fas fa-chart-bar"></i>統計</p>
-      </a>
-      <a href="?p=dev">
-        <p class="<%- dashboard_menu_class[4] %>"><i class="fas fa-wrench"></i>開発者向け</p>
-      </a>
+      <a href="?p=home"><p class="<%- dashboard_menu_class[0] %>"><i class="fas fa-table"></i>マイページ</p></a>
+      <a href="?p=course"><p class="<%- dashboard_menu_class[1] %>"><i class="fas fa-chalkboard-teacher"></i>コース</p></a>
+      <a href="?p=edit"><p class="<%- dashboard_menu_class[2] %>"><i class="fas fa-edit"></i>編集</p></a>
+      <a href="?p=stat"><p class="<%- dashboard_menu_class[3] %>"><i class="fas fa-chart-bar"></i>統計</p></a>
+      <a href="?p=dev"><p class="<%- dashboard_menu_class[4] %>"><i class="fas fa-wrench"></i>開発者向け</p></a>
     </div>
   </div>
   <div id="main">
@@ -39,8 +28,7 @@
         HTTPリクエストを送信することでWebAPIを利用することができます。</p>
       <textarea id="webapi_key" rows="32" cols="60"><%- webapi_key %></textarea>
     </div>
+    </div>
   </div>
-  </div>
-  </body>
-
-  </html>
+</body>
+</html>

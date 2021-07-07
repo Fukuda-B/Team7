@@ -21,7 +21,7 @@
   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/hash-wasm@4.7.0/dist/argon2.umd.min.js"></script>
 <script type='text/javascript'>
-  const bank = < % -JSON.stringify(crypto_bank) % > ;
+  const bank = <%-JSON.stringify(crypto_bank) %>;
   window.onload = function () { // 読み込み時実行
     window.addEventListener("keydown", function (event) {
       if (event.key === 'Enter') ajax(); // Enterが押されたら関数実行
