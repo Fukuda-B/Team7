@@ -4,8 +4,8 @@
 
 <%- include( './_header.ejs' ); %>
 <head>
-  <link rel="preload" href="/public/css/style_home.css" as="style">
-  <link rel="stylesheet" href="/public/css/style_home.css"">
+  <link rel="preload" href="/public/css/style_setting.css" as="style">
+  <link rel="stylesheet" href="/public/css/style_setting.css"">
   <title><%- title %></title>
 </head>
 <body>
@@ -15,11 +15,16 @@
   <div id="main">
     <div id="lecture_table">
       <h3>パスワード変更</h3>
-      <div><p>現在のパスワード</p><input type="password" id="old_pass" name="old_pass" required placeholder="Current password"></div>
-      <div><p>新しいパスワード</p><input type="password" id="new_pass" name="new_pass" required placeholder="New password"></div>
-      <div><p>新しいパスワード (確認用)</p><input type="password" id="new_pass2" name="new_pass2" required placeholder="New password"></div>
+      <div id="change_fie">
+        <div>
+          <p id="tx_1">現在のパスワード</p><input type="password" id="old_pass" name="old_pass" required placeholder="Current password">
+          <p id="tx_2">新しいパスワード</p><input type="password" id="new_pass" name="new_pass" required placeholder="New password">
+        </div>
+        <button id="pass_change" onclick="ajax();">適用</button>
+      </div>
     </div>
     </div>
   </div>
 </body>
+<%- include( './setting_ajax.ejs' ); %>
 </html>

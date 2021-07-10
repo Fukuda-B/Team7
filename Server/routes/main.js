@@ -57,16 +57,16 @@ passport.use(new LocalStrategy({
 			// pass = CRYP.decryptoo(password, bank);
 			pass = password
 
-		console.log('--------------------');
-		console.log({
-			"user": username,
-			"pass": password
-		});
-		console.log({
-			"user": user,
-			"pass": password
-		});
-		console.log('--------------------');
+		// console.log('--------------------');
+		// console.log({
+		// 	"user": username,
+		// 	"pass": password
+		// });
+		// console.log({
+		// 	"user": user,
+		// 	"pass": password
+		// });
+		// console.log('--------------------');
 
 		if (await database.check_user(user, pass)) {
 			return done(null, user);
@@ -164,6 +164,7 @@ router
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
+							crypto_bank: bank,
 						});
 						break;
 					default: // default (main?p=home)
@@ -194,6 +195,7 @@ router
 						top_bar_link: '/main/logout',
 						top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 						dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
+						crypto_bank: bank,
 					});
 					break;
 				default:
@@ -233,6 +235,20 @@ router
 	)
 
 	// POST req
+	.post('/update', isAuthenticated, async function(req, res) { // パスワードの更新
+		if (req.body.old_pass && req.body.new_pass) {
+			var op = decodeURIComponent(req.body.old_pass);
+			var np = decodeURIComponent(req.body.new_pass);
+			var result = await database.update_pass(req.user, op, np);
+			if (result) {
+				res.send('ok');
+			} else {
+				res.send('error');
+			}
+		} else {
+			res.send('error');
+		}
+	})
 	.post('/main/u', function (req, res) { // 認証用 iv
 		res.send(bank.iv);
 	})

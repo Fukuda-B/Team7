@@ -30,16 +30,11 @@ function db_query(tx, val) {
 // ----- ユーザ確認 -----
 async function check_user(user, pass) {
   try {
-		var res_t = await db_query('SELECT teacher_id, password_hash FROM team7.teacher_list WHERE teacher_id = ?', user);
-		var res_s = await db_query('SELECT student_id, password_hash FROM team7.student_list WHERE student_id = ?', user);
-    // console.log(res_t + res_s);
-    // console.log(res_t);
-    // console.log(res_s);
-    if (res_t.length > 0) {
+		var res_t = await db_query('SELECT teacher_id, password_hash FROM team7.teacher_list WHERE teacher_id = ? LIMIT 1', user);
+		var res_s = await db_query('SELECT student_id, password_hash FROM team7.student_list WHERE student_id = ? LIMIT 1', user);
+    if (res_t.length > 0) { // 管理者
       return (user == res_t[0].teacher_id && pass == res_t[0].password_hash);
-    } else if (res_s.length > 0)  {
-      // console.log(res_s[0].student_id);
-      // console.log(user);
+    } else if (res_s.length > 0)  { // 学生用
       return (user == res_s[0].student_id && pass == res_s[0].password_hash);
     }
   } catch {
@@ -50,7 +45,7 @@ async function check_user(user, pass) {
 // ----- ユーザが管理者かどうか確認する -----
 async function check_user_admin(user) {
   try {
-		var res_t = await db_query('SELECT teacher_id FROM team7.teacher_list WHERE teacher_id = ?', user);
+		var res_t = await db_query('SELECT teacher_id FROM team7.teacher_list WHERE teacher_id = ? LIMIT 1', user);
     // console.log(res_t);
     if (res_t.length > 0) return true;
     return false;
@@ -144,6 +139,29 @@ async function get_pass(user) {
   }
 }
 
+// ----- パスワードの更新 -----
+async function update_pass(user, old_pass, new_pass) {
+  try {
+		var res_t = await db_query('SELECT teacher_id, password_hash FROM team7.teacher_list WHERE teacher_id = ? LIMIT 1', user);
+		var res_s = await db_query('SELECT student_id, password_hash FROM team7.student_list WHERE student_id = ? LIMIT 1', user);
+    if (res_t.length > 0) { // 管理者
+      if (user == res_t[0].teacher_id && old_pass == res_t[0].password_hash) {
+        await bd_query('UPDATE team7.teacher_list SET password_hash = ? WHERE teacher_id = ? AND password_hash = ?',[new_pass, user, old_pass]);
+        return true;
+      }
+    } else if (res_s.length > 0)  { // 学生用
+      if (user == res_s[0].student_id && old_pass == res_s[0].password_hash) {
+        console.log(user);
+        await bd_query('UPDATE team7.student_list SET password_hash = ? WHERE student_id = ? AND password_hash = ?',[new_pass, user, old_pass]);
+        return true;
+      }
+    }
+    return false; // ユーザが存在しない場合
+  } catch {
+    return false;
+  }
+}
+
 // ----- テスト -----
 // (async () => {
 //   var ans = await check_user('S001', '$argon2id$v=19$m=10240,t=5,p=2$NGU3ZTc3ZmY0YWIzMGEyZWYyNjNjNjNlOTAzY2U0MDc2YTNiMWZlYjJhZmQ2MDI2NjgyMWM5MjhlNDdkODA4ZDIyNGM1YTMxYjFiOWExZmI0YzM5ZWFjMGFhMTRkMTIwMzFkZGY4MGIxMGU0NDhiODI5NmRlNzVlMjJiMmMxY2UwNDFkNzc4NDQ5ZjJhMWI2MGJiODQyOWVmN2ZkNDBkNDEzOTc1YTZlZGFjNTcwYzA2NThkZmZjMmIzYjU3ZDZlNjI5ODg2MmI1OTk3Y2M5MTdhMWZhZDQ5MGJiMjBhYzg1MzMxYWNjOWQxMDRiOTdmYTQzMmVkZTRjZDM1NTJmY2M2YjFmYjI1OWEzZmQ1NTg4OWVlNGViOGM0NmMyNjJhYTYzNzMzYmUyMmRhZGExMjg5OTUxNGVhY2RlOTk2ZTI1MzUwYTMzNTIyMWU4NGE0Mzg0OTJiMDQ1ZTU0NTMyZDA1YWE5OThiNzliMjkwOTc2OGNkYzAzMTVlMjkzMzA5OWY3NmRkODE1OGUzMzNhN2I3M2Q5YWI0ODE4NDRkZDhlMWEzOTFiYTRiMTdkMjc5NjlkNjNlZGIwMTY1NWRjNDEyNDhmOWUzMTNiNTJhNmNjN2JiOTkyYjc4ZmYxMmE1MGQ2ZjNlNGMyNzM2M2I3ZDkzOWQzNDlhYTQ0YjA4ZDA$MnDSRROuc5IhqMydpw5wwxY8SPG4OKdnsDncgzhqKPqNfnz9OIHOmXR3Vee8+/ijwixH3wmjNTyD1rmCusIUAoJYi9SW9XmRNPGcAi9oDCVz1IHEoBbzT4NdYGcf2qzUVALeXyEYHQysWIq+uc5Yr79lhXbFoN2a/bO0rOvG5G0');
@@ -158,3 +176,4 @@ exports.get_pass = get_pass;
 exports.check_user_api = check_user_api;
 exports.create_teacher_table = create_teacher_table;
 exports.create_student_table = create_student_table;
+exports.update_pass = update_pass;

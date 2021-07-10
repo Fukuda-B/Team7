@@ -29,6 +29,7 @@
     margin: 0 auto;
     border-collapse: collapse;
     font-family: 游ゴシック体, 'Yu Gothic', YuGothic, 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+    font-size: 0.9em;
 }
 #lecture_table_val th {
     background-color: var(--main-color);

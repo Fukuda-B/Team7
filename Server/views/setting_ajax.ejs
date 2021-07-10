@@ -1,0 +1,88 @@
+<%#
+  Team7 client ejs - update password ajax | Update: 2021/07/10
+%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
+  integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/hash-wasm@4.7.0/dist/argon2.umd.min.js"></script>
+<script type='text/javascript'>
+  const bank = <%-JSON.stringify(crypto_bank) %>;
+  var CRYP = { // 暗号化, ハッシュ値導出
+    // Encrypto
+    encryptoo: function (data, bank) {
+      var srcs = CryptoJS.enc.Utf8.parse(data);
+      var encrypted = CryptoJS.AES.encrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
+        iv: CryptoJS.enc.Utf8.parse(bank.iv),
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+      });
+      return encrypted.ciphertext.toString();
+    },
+    encryptoo2: function (data, bank) {
+      var srcs = CryptoJS.enc.Utf8.parse(data);
+      var encrypted = CryptoJS.AES.encrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
+        iv: CryptoJS.enc.Utf8.parse(bank.iv),
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+      });
+      return encrypted;
+    },
+
+    // Argon2
+    argon2_h: function (data, bank) {
+      var salt = bank.salt;
+      return hashwasm.argon2id({
+        password: data,
+        salt,
+        parallelism: 2,
+        iterations: 5,
+        memorySize: 1024 * 10, // memory (KB)
+        hashLength: 128, // byte
+        outputType: 'encoded',
+      });
+    },
+  }
+
+  function update_iv() { // ivの更新
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+      if (req.readyState == 4) {
+        if (req.status == 200) {
+          bank.iv = req.responseText;
+        }
+      }
+    }
+    req.open('POST', '/main/u', false); // 同期
+    req.send();
+  }
+
+  function ajax() { // xhrで送信
+    var req = new XMLHttpRequest();
+    var old_pass = document.getElementById('old_pass').value;
+    var new_pass = document.getElementById('new_pass').value;
+    if (old_pass.length <= 0 || new_pass.length <= 0) return;
+    req.onreadystatechange = function () {
+      if (req.readyState == 4) {
+        if (req.status == 200) {
+          if (req.responseText == 'error') {
+            console.log('error');
+          } else {
+            cosnole.log('ok');
+            old_pass = '';
+            new_pass = '';
+          }
+        }
+      }
+    }
+    update_iv(); // iv値更新
+    req.open('POST', '/update', true); // 非同期
+    req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+    CRYP.argon2_h(old_pass, bank).then((op) => {
+      CRYP.argon2_h(new_pass, bank).then((np) => {
+        var s_tx = 'old_pass='+encodeURIComponent(op)+'&new_pass='+encodeURIComponent(np);
+        console.log(s_tx);
+        req.send(s_tx);
+      });
+    });
+  }
+</script>

@@ -96,8 +96,7 @@
     req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
     CRYP.argon2_h(pass, bank).then((pp) => {
       // console.log(pp);
-      var s_tx = 'password=' + encodeURIComponent(pp) + '&username=' + encodeURIComponent(CRYP.encryptoo(user,
-        bank));
+      var s_tx = 'password=' + encodeURIComponent(pp) + '&username=' + encodeURIComponent(CRYP.encryptoo(user, bank));
       req.send(s_tx);
     });
   }

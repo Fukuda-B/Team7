@@ -2,7 +2,10 @@
   Team7 client ejs - _dashboard | Update: 2021/07/10
 %>
 
-<link rel="stylesheet" href="/public/css/_dashboard.css"">
+<head>
+  <link rel="preload" href="/public/css/_dashboard.css" as="style">
+  <link rel="stylesheet" href="/public/css/_dashboard.css"">
+</head>
 <div id="dashboard">
   <p id="dashboard_title">管理者<span>UID: <%- user_id %></span></p>
   <div id="dashboard_menu">
