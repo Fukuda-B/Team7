@@ -103,6 +103,30 @@ async function create_teacher_table(user, tx) {
   }
 }
 
+// ----- 学生用のテーブル生成 -----
+async function create_student_table(user, tx) {
+  try {
+    var res_list = await db_query('SELECT * FROM team7.lecture_rules WHERE teacher_id = ?', user);
+    var table = '';
+    var row;
+    for (var row of res_list) {
+      table += '<tr><td>' + row.lecture_id +
+      '</td><td>' + row.lecture_name +
+      '</td><td>' + row.day_of_week +
+      '</td><td>' + row.start_time +
+      '</td><td>' + row.end_time +
+      '</td><td>' + row.attend_limit +
+      '</td><td>' + row.late_limit +
+      '</td><td>' + row.exam +
+			'</td><td id="td_dl"> ' +
+      tx + '</td></tr>'; // end
+    }
+    return table;
+  } catch {
+    return 'error';
+  }
+}
+
 // ----- ユーザのパスワードハッシュを取得 -----
 async function get_pass(user) {
   try {
