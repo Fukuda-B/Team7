@@ -81,8 +81,7 @@ async function create_teacher_table(user, tx) {
     var table = '';
     var row;
     for (var row of res_list) {
-      table += '<tr><td>' + row.lecture_id +
-      '</td><td>' + row.lecture_name +
+      table += '<tr><td>' + row.lecture_name +
       '</td><td>' + row.day_of_week +
       '</td><td>' + row.start_time +
       '</td><td>' + row.end_time +
@@ -107,8 +106,7 @@ async function create_student_table(user, tx) {
     for (var stdl of res_list) {
       stdl2 = await db_query('SELECT * FROM team7.lecture_rules WHERE lecture_id = ?', stdl.lecture_id);
       row = stdl2[0];
-      table += '<tr><td>' + row.lecture_id +
-      '</td><td>' + row.lecture_name +
+      table += '<tr><td>' + row.lecture_name +
       '</td><td>' + row.day_of_week +
       '</td><td>' + row.start_time +
       '</td><td>' + row.end_time +

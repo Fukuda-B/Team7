@@ -48,6 +48,9 @@
   margin-top: 30px;
   font-size: 0.9em;
 }
+#old_pass, #new_pass {
+  text-align: center;
+}
 #error {
   color: orangered;
   font-size: 0.8em;

@@ -21,6 +21,9 @@
 #lecture_table {
     margin-top: 60px;
 }
+#webapi_key {
+    padding: 10px;
+}
 
 /* 画面の幅が1000px以上 */
 @media screen and (min-width:1400px) {

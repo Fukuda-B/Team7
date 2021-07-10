@@ -112,7 +112,7 @@ router
 			if (adm) { // 管理者の場合
 				switch (req.query.p) {
 					case 'course': // /main?p=course
-						var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
+						var tx = '<a href="/main?p=course">詳細<i class="fas fa-file-alt"></i></i></a>';
 						var out_table = await database.create_teacher_table(req.user, tx);
 						res.render('course', {
 							title: 'Team7 - コース',
@@ -171,7 +171,7 @@ router
 						var tx = '<a href="/main"><i class="fas fa-file-csv"></i>csv</a>' +
 							'<a href="/main"><i class="fas fa-file-excel"></i>xlsx</a>';
 						var out_table = await database.create_teacher_table(req.user, tx) +
-							'</td><td>一括保存</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>' +
+							'</td><td>一括保存</td><td></td><td></td><td></td><td></td><td></td><td></td>' +
 							'<td id="td_dl">' +
 							'<a href="/main"><i class="fas fa-file-download"></i>csv</a>' +
 							'<a href="/main"><i class="fas fa-file-download"></i>xlsx</a>' +
@@ -199,7 +199,7 @@ router
 					});
 					break;
 				default:
-					var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
+					var tx = '<a href="/main?p=course">詳細<i class="fas fa-file-alt"></i></i></a>';
 					var out_table = await database.create_student_table(req.user, tx);
 					res.render('home_s', {
 						title: 'Team7 - マイページ',
