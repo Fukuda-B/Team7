@@ -3,21 +3,18 @@
 %>
 
 <%- include( './_header.ejs' ); %>
-
 <head>
   <link rel="preload" href="/public/css/style_home.css" as="style">
   <link rel="stylesheet" href="/public/css/style_home.css"">
-    <title><%- title %></title>
+  <title><%- title %></title>
 </head>
 <body>
-    <%- include( './_top_bar.ejs' ); %>
-    <div id=" wrap">
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="wrap">
   <div id="dashboard">
     <p id="dashboard_title">学生用<span>UID: <%- user_id %></span></p>
     <div id="dashboard_menu">
-      <a href="?p=home">
-        <p class="<%- dashboard_menu_class[0] %>"><i class="fas fa-table"></i>マイページ</p>
-      </a>
+      <a href="?p=home"><p class="<%- dashboard_menu_class[0] %>"><i class="fas fa-table"></i>マイページ</p></a>
     </div>
   </div>
   <div id="main">
@@ -25,18 +22,20 @@
       <h3>講義一覧</h3>
       <table id="lecture_table_val">
         <tr>
-          <th>講義名 - ID</th>
+          <th>講義ID</th>
+          <th>講義名</th>
           <th>曜日・時限</th>
-          <th>担当</th>
-          <th>出席数</th>
-          <th>詳細</th>
+          <th>開始時間</th>
+          <th>終了時間</th>
+          <th>-</th>
+          <th>-</th>
+          <th>-</th>
           <th>保存</th>
         </tr>
         <%- lecture_table %>
       </table>
     </div>
+    </div>
   </div>
-  </div>
-  </body>
-
-  </html>
+</body>
+</html>

@@ -4,6 +4,7 @@
 const crypto = require('crypto');
 const CryptoJS = require('crypto-js');
 const hashwasm = require('hash-wasm');
+const database = require('./database.js');
 
 var key_size = 2 << 7; // 2<<7=2^8=256, key.length=512
 var bank_api = {
@@ -12,8 +13,9 @@ var bank_api = {
   "salt": "4e7e77ff4ab30a2ef263c63e903ce4076a3b1feb2afd60266821c928e47d808d224c5a31b1b9a1fb4c39eac0aa14d12031ddf80b10e448b8296de75e22b2c1ce041d778449f2a1b60bb8429ef7fd40d413975a6edac570c0658dffc2b3b57d6e6298862b5997cc917a1fad490bb20ac85331acc9d104b97fa432ede4cd3552fcc6b1fb259a3fd55889ee4eb8c46c262aa63733be22dada12899514eacde996e25350a335221e84a438492b045e54532d05aa998b79b2909768cdc0315e2933099f76dd8158e333a7b73d9ab481844dd8e1a391ba4b17d27969d63edb01655dc41248f9e313b52a6cc7bb992b78ff12a50d6f3e4c27363b7d939d349aa44b08d0",
 };
 
-function get_key(user) {
-  return (encodeURIComponent(CRYP.encryptoo('{"u":"' + user.username + '","p":"' + user.password + '"}', bank_api)));
+async function get_key(user) {
+  var pass = await database.get_pass(user);
+  return (encodeURIComponent(CRYP.encryptoo('{"u":"' + user + '","p":"' + pass + '"}', bank_api)));
 }
 
 var CRYP = {

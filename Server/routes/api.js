@@ -18,6 +18,7 @@ var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
 const bank_api = require('./cryp.js').bank_api;
 const CRYP = require('./cryp.js').CRYP;
 const get_key = require('./cryp.js').get_key;
+const database = require('./database.js');
 
 var send_test = [] // リクエスト受け取りテスト
 
@@ -26,7 +27,6 @@ router
   .get('/', isAuthenticated_nos, function (req, res) { // /api
     // .get('/', function (req, res) {
     res.header('Content-Type', 'application/json; charset=utf-8');
-    // res.send('team7 - api');
     res.send(JSON.stringify(send_test));
   })
   .get('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
@@ -61,24 +61,6 @@ function isAuthenticated_nos(req, res, next) {
   } else {
     res.send('bad request');
   }
-}
-
-function check_user_api(req) {
-  try {
-    var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-    if (req.query.x) {
-      var dec = CRYP.decryptoo(req.query.x, bank_api);
-    } else if (req.body.x) {
-      var dec = CRYP.decryptoo(req.body.x, bank_api);
-    }
-    var dec_p = JSON.parse(dec);
-    // console.log(dec_p);
-    // return (dec_p.u === userB.username && dec_p.p === userB.password);
-    return (dec_p.u === user_list[dec_p.u].username && dec_p.p === user_list[dec_p.u].password);
-  } catch {
-    return false;
-  }
-
 }
 
 module.exports = router;
