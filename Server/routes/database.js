@@ -106,10 +106,12 @@ async function create_teacher_table(user, tx) {
 // ----- 学生用のテーブル生成 -----
 async function create_student_table(user, tx) {
   try {
-    var res_list = await db_query('SELECT * FROM team7.lecture_rules WHERE teacher_id = ?', user);
+    var res_list = await db_query('SELECT lecture_id FROM team7.student_timetable WHERE student_id = ?', user);
     var table = '';
-    var row;
-    for (var row of res_list) {
+    var stdl2, row;
+    for (var stdl of res_list) {
+      stdl2 = await db_query('SELECT * FROM team7.lecture_rules WHERE lecture_id = ?', stdl.lecture_id);
+      row = stdl2[0];
       table += '<tr><td>' + row.lecture_id +
       '</td><td>' + row.lecture_name +
       '</td><td>' + row.day_of_week +
@@ -155,3 +157,4 @@ exports.get_user_id = get_user_id;
 exports.get_pass = get_pass;
 exports.check_user_api = check_user_api;
 exports.create_teacher_table = create_teacher_table;
+exports.create_student_table = create_student_table;

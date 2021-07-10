@@ -11,16 +11,7 @@
 <body>
   <%- include( './_top_bar.ejs' ); %>
   <div id="wrap">
-  <div id="dashboard">
-    <p id="dashboard_title">管理者<span>UID: <%- user_id %></span></p>
-    <div id="dashboard_menu">
-      <a href="?p=home"><p class="<%- dashboard_menu_class[0] %>"><i class="fas fa-table"></i>マイページ</p></a>
-      <a href="?p=course"><p class="<%- dashboard_menu_class[1] %>"><i class="fas fa-chalkboard-teacher"></i>コース</p></a>
-      <a href="?p=edit"><p class="<%- dashboard_menu_class[2] %>"><i class="fas fa-edit"></i>編集</p></a>
-      <a href="?p=stat"><p class="<%- dashboard_menu_class[3] %>"><i class="fas fa-chart-bar"></i>統計</p></a>
-      <a href="?p=dev"><p class="<%- dashboard_menu_class[4] %>"><i class="fas fa-wrench"></i>開発者向け</p></a>
-    </div>
-  </div>
+    <%- include( './_dashboard.ejs' ); %>
   <div id="main">
     <div id="lecture_table">
       <h3>講義一覧</h3>
@@ -28,7 +19,7 @@
         <tr>
           <th>講義ID</th>
           <th>講義名</th>
-          <th>曜日・時限</th>
+          <th>曜日</th>
           <th>開始時間</th>
           <th>終了時間</th>
           <th>-</th>

@@ -108,7 +108,7 @@ router
 		isAuthenticated,
 		async (req, res) => {
 			var adm = await database.check_user_admin(req.user);
-			// console.log(adm);
+			// console.log(adm);  // admin
 			if (adm) { // 管理者の場合
 				switch (req.query.p) {
 					case 'course': // /main?p=course
@@ -120,7 +120,7 @@ router
 							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+							dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
 						});
 						break;
 					case 'edit': // /main?p=edit
@@ -132,7 +132,7 @@ router
 							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
+							dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
 						});
 						break;
 					case 'stat': // /main?p=stat
@@ -143,19 +143,27 @@ router
 							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li"]
+							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
 						});
 						break;
 					case 'dev': // /main?p=dev
-						var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
 						res.render('dev', {
 							title: 'Team7 - 開発者向け',
 							lecture_table: await database.create_teacher_table(req.user, ''),
 							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
+							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li"],
 							webapi_key: await get_key(req.user),
+						});
+						break;
+						case 'setting': // /main?p=setting
+						res.render('setting', {
+							title: 'Team7 - 個人設定',
+							user_id: database.get_user_id(req.user),
+							top_bar_link: '/main/logout',
+							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
 						});
 						break;
 					default: // default (main?p=home)
@@ -173,22 +181,34 @@ router
 							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
+							dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
 						});
 						break;
 				}
 			} else {
-				var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
-				var out_table = await database.create_teacher_table(req.user, tx);
-				res.render('home_s', {
-					title: 'Team7 - マイページ',
-					lecture_table: out_table,
-					user_id: database.get_user_id(req.user),
-					top_bar_link: '/main/logout',
-					top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-					dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
-				});
-
+				switch (req.query.p) {
+					case 'setting': // /main?p=setting
+					res.render('setting_s', {
+						title: 'Team7 - 個人設定',
+						user_id: database.get_user_id(req.user),
+						top_bar_link: '/main/logout',
+						top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+						dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
+					});
+					break;
+				default:
+					var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
+					var out_table = await database.create_student_table(req.user, tx);
+					res.render('home_s', {
+						title: 'Team7 - マイページ',
+						lecture_table: out_table,
+						user_id: database.get_user_id(req.user),
+						top_bar_link: '/main/logout',
+						top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+						dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
+					});
+					break
+				}
 			}
 		})
 	.get('/main/logout', (req, res) => { // ログアウト処理

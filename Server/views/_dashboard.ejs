@@ -1,0 +1,16 @@
+<%#
+  Team7 client ejs - _dashboard | Update: 2021/07/10
+%>
+
+<link rel="stylesheet" href="/public/css/_dashboard.css"">
+<div id="dashboard">
+  <p id="dashboard_title">管理者<span>UID: <%- user_id %></span></p>
+  <div id="dashboard_menu">
+    <a href="?p=home"><p class="<%- dashboard_menu_class[0] %>"><i class="fas fa-table"></i>マイページ</p></a>
+    <a href="?p=course"><p class="<%- dashboard_menu_class[1] %>"><i class="fas fa-chalkboard-teacher"></i>コース</p></a>
+    <a href="?p=edit"><p class="<%- dashboard_menu_class[2] %>"><i class="fas fa-edit"></i>編集</p></a>
+    <a href="?p=stat"><p class="<%- dashboard_menu_class[3] %>"><i class="fas fa-chart-bar"></i>統計</p></a>
+    <a href="?p=dev"><p class="<%- dashboard_menu_class[4] %>"><i class="fas fa-wrench"></i>開発者向け</p></a>
+    <a href="?p=setting"><p class="<%- dashboard_menu_class[5] %>"><i class="fas fa-user-cog"></i>個人設定</p></a>
+  </div>
+</div>

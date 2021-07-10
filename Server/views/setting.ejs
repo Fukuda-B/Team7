@@ -1,0 +1,25 @@
+<%#
+  Team7 client ejs - home | Update: 2021/07/10
+%>
+
+<%- include( './_header.ejs' ); %>
+<head>
+  <link rel="preload" href="/public/css/style_home.css" as="style">
+  <link rel="stylesheet" href="/public/css/style_home.css"">
+  <title><%- title %></title>
+</head>
+<body>
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="wrap">
+    <%- include( './_dashboard.ejs' ); %>
+  <div id="main">
+    <div id="lecture_table">
+      <h3>パスワード変更</h3>
+      <div><p>現在のパスワード</p><input type="password" id="old_pass" name="old_pass" required placeholder="Current password"></div>
+      <div><p>新しいパスワード</p><input type="password" id="new_pass" name="new_pass" required placeholder="New password"></div>
+      <div><p>新しいパスワード (確認用)</p><input type="password" id="new_pass2" name="new_pass2" required placeholder="New password"></div>
+    </div>
+    </div>
+  </div>
+</body>
+</html>
