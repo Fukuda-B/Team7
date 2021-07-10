@@ -52,7 +52,7 @@ passport.use(new LocalStrategy({
 		usernameField: "username",
 		passwordField: "password",
 	},
-	(username, password, done) => {
+	async (username, password, done) => {
 		var user = CRYP.decryptoo(username, bank),
 			// pass = CRYP.decryptoo(password, bank);
 			pass = password
@@ -68,7 +68,7 @@ passport.use(new LocalStrategy({
 		});
 		console.log('--------------------');
 
-		if (database.check_user(user, pass)) {
+		if (await database.check_user(user, pass)) {
 			return done(null, user);
 		} else {
 			return done(null, false);
@@ -106,8 +106,8 @@ router
 
 	.get('/main', // メインページ
 		isAuthenticated,
-		(req, res) => {
-			if (database.check_user_admin(req.user)) { // 管理者の場合
+		async (req, res) => {
+			if (await database.check_user_admin(req.user)) { // 管理者の場合
 				switch (req.query.p) {
 					case 'course': // /main?p=course
 						var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
