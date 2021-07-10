@@ -35,6 +35,7 @@ const xlsx = require('xlsx');
 const csv = require('csv');
 const CRYP = require('./cryp.js').CRYP;
 const get_key = require('./cryp.js').get_key;
+const database = require('./database.js');
 
 var key_timeout = 7777; // ms
 
@@ -67,7 +68,7 @@ passport.use(new LocalStrategy({
 		});
 		console.log('--------------------');
 
-		if (check_user(user, pass)) {
+		if (database.check_user(user, pass)) {
 			return done(null, user);
 		} else {
 			return done(null, false);
@@ -106,7 +107,7 @@ router
 	.get('/main', // メインページ
 		isAuthenticated,
 		(req, res) => {
-			if (check_user_admin(req.user)) { // 管理者の場合
+			if (database.check_user_admin(req.user)) { // 管理者の場合
 				switch (req.query.p) {
 					case 'course': // /main?p=course
 						var tx = '<a href="/main?p=course">個別ページへ<i class="fas fa-file-alt"></i></i></a>';
@@ -114,7 +115,7 @@ router
 						res.render('course', {
 							title: 'Team7 - コース',
 							lecture_table: out_table,
-							user_id: get_user_id(req.user),
+							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
@@ -126,7 +127,7 @@ router
 						res.render('edit', {
 							title: 'Team7 - 編集',
 							lecture_table: out_table,
-							user_id: get_user_id(req.user),
+							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
@@ -137,7 +138,7 @@ router
 							title: 'Team7 - 統計',
 							lecture_table: createTable(req.user, ''),
 							lecture_graph_val: get_graph_val(req.user),
-							user_id: get_user_id(req.user),
+							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li"]
@@ -148,7 +149,7 @@ router
 						res.render('dev', {
 							title: 'Team7 - 開発者向け',
 							lecture_table: createTable(req.user, ''),
-							user_id: get_user_id(req.user),
+							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
@@ -167,7 +168,7 @@ router
 						res.render('home', {
 							title: 'Team7 - マイページ',
 							lecture_table: out_table,
-							user_id: get_user_id(req.user),
+							user_id: database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
@@ -180,7 +181,7 @@ router
 				res.render('home_s', {
 					title: 'Team7 - マイページ',
 					lecture_table: out_table,
-					user_id: get_user_id(req.user),
+					user_id: database.get_user_id(req.user),
 					top_bar_link: '/main/logout',
 					top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 					dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
@@ -283,29 +284,6 @@ function get_graph_val(user) {
 		}
 	}
 	return data;
-}
-
-// ----- ユーザ名からUIDを取得する -----
-function get_user_id(user) {
-	var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-	return user_list[user].UID;
-}
-
-// ----- ユーザが管理者かどうか確認する -----
-function check_user_admin(user) {
-	var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-	return user_list[user].admin;
-}
-
-// ----- ユーザ確認 -----
-function check_user(user, pass) {
-	try {
-		var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-		return (user === user_list[user].username && pass === user_list[user].password);
-		// return (user === userB.username);
-	} catch {
-		return false;
-	}
 }
 
 // ----- xlsxファイル生成 -----
