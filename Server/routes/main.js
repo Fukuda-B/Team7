@@ -112,28 +112,60 @@ router
 			if (adm) { // 管理者の場合
 				switch (req.query.p) {
 					case 'course': // /main?p=course
-						var tx = '<a href="/main?p=course">詳細<i class="fas fa-file-alt"></i></i></a>';
-						var out_table = await database.create_teacher_table(req.user, tx);
-						res.render('course', {
-							title: 'Team7 - コース',
-							lecture_table: out_table,
-							user_id: database.get_user_id(req.user),
-							top_bar_link: '/main/logout',
-							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
-						});
+						if (req.query.l) { // 講義ごとの詳細表示
+							var check_lecture = await database.check_lecture(req.user, req.query.l);
+							if (check_lecture) {
+								var lecture_student = await database.create_lec_student_table(req.query.l);
+								res.render('course_more', {
+									title: 'Team7 - '+req.query.l,
+									lecture_table: lecture_student,
+									user_id: database.get_user_id(req.user),
+									top_bar_link: '/main/logout',
+									top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+									dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
+								});
+							} else {
+								res.send('error');
+							}
+						} else { // 講義一覧の表示
+							var out_table = await database.create_teacher_table(req.user, 'course');
+							res.render('course', {
+								title: 'Team7 - コース',
+								lecture_table: out_table,
+								user_id: database.get_user_id(req.user),
+								top_bar_link: '/main/logout',
+								top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+								dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
+							});
+						}
 						break;
 					case 'edit': // /main?p=edit
-						var tx = '<a href="/main?p=edit">編集<i class="fas fa-pencil-alt"></i></a>';
-						var out_table = await database.create_teacher_table(req.user, tx);
-						res.render('edit', {
-							title: 'Team7 - 編集',
-							lecture_table: out_table,
-							user_id: database.get_user_id(req.user),
-							top_bar_link: '/main/logout',
-							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
-						});
+						if (req.query.l) { // 講義ごとの詳細表示
+							var check_lecture = await database.check_lecture(req.user, req.query.l);
+							if (check_lecture) {
+								var lecture_student = await database.create_lec_student_table(req.query.l);
+								res.render('course_more', {
+									title: 'Team7 - '+req.query.l,
+									lecture_table: lecture_student,
+									user_id: database.get_user_id(req.user),
+									top_bar_link: '/main/logout',
+									top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+									dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+								});
+							} else {
+								res.send('error');
+							}
+						} else { // 講義一覧の表示
+							var out_table = await database.create_teacher_table(req.user, 'edit');
+							res.render('edit', {
+								title: 'Team7 - 編集',
+								lecture_table: out_table,
+								user_id: database.get_user_id(req.user),
+								top_bar_link: '/main/logout',
+								top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+								dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+							});
+						}
 						break;
 					case 'stat': // /main?p=stat
 						res.render('stat', {
@@ -168,8 +200,7 @@ router
 						});
 						break;
 					default: // default (main?p=home)
-						var tx = '<a href="/main"><i class="fas fa-file-csv"></i>csv</a>' +
-							'<a href="/main"><i class="fas fa-file-excel"></i>xlsx</a>';
+						var tx = 'home';
 						var out_table = await database.create_teacher_table(req.user, tx) +
 							'</td><td>一括保存</td><td></td><td></td><td></td><td></td><td></td><td></td>' +
 							'<td id="td_dl">' +
@@ -199,8 +230,7 @@ router
 					});
 					break;
 				default:
-					var tx = '<a href="/main?p=course">詳細<i class="fas fa-file-alt"></i></i></a>';
-					var out_table = await database.create_student_table(req.user, tx);
+					var out_table = await database.create_student_table(req.user, 'home');
 					res.render('home_s', {
 						title: 'Team7 - マイページ',
 						lecture_table: out_table,

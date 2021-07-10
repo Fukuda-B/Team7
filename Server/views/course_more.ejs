@@ -1,0 +1,43 @@
+<%#
+  Team7 client ejs - course_more | Update: 2021/07/11
+%>
+
+<%- include( './_header.ejs' ); %>
+<head>
+  <link rel="preload" href="/public/css/style_course.css" as="style">
+  <link rel="stylesheet" href="/public/css/style_course.css"">
+  <title><%- title %></title>
+</head>
+<body>
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="wrap">
+    <%- include( './_dashboard.ejs' ); %>
+  <div id="main">
+    <div id="lecture_table">
+      <h3>講義一覧</h3>
+      <table id="lecture_table_val">
+        <tr>
+          <th>履修者ID</th>
+          <th>1</th>
+          <th>2</th>
+          <th>3</th>
+          <th>4</th>
+          <th>5</th>
+          <th>6</th>
+          <th>7</th>
+          <th>8</th>
+          <th>9</th>
+          <th>10</th>
+          <th>11</th>
+          <th>12</th>
+          <th>13</th>
+          <th>14</th>
+          <th>15</th>
+        </tr>
+        <%- lecture_table %>
+      </table>
+    </div>
+    </div>
+  </div>
+</body>
+</html>
