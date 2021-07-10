@@ -65,11 +65,13 @@
       if (req.readyState == 4) {
         if (req.status == 200) {
           if (req.responseText == 'error') {
+            document.getElementById('error').style.display = 'block';
             console.log('error');
           } else {
-            cosnole.log('ok');
-            old_pass = '';
-            new_pass = '';
+            console.log('ok');
+            document.getElementById('old_pass').value = '';
+            document.getElementById('new_pass').value = '';
+            document.getElementById('success').style.display = 'block';
           }
         }
       }
@@ -80,7 +82,7 @@
     CRYP.argon2_h(old_pass, bank).then((op) => {
       CRYP.argon2_h(new_pass, bank).then((np) => {
         var s_tx = 'old_pass='+encodeURIComponent(op)+'&new_pass='+encodeURIComponent(np);
-        console.log(s_tx);
+        // console.log(s_tx);
         req.send(s_tx);
       });
     });

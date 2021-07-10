@@ -146,13 +146,14 @@ async function update_pass(user, old_pass, new_pass) {
 		var res_s = await db_query('SELECT student_id, password_hash FROM team7.student_list WHERE student_id = ? LIMIT 1', user);
     if (res_t.length > 0) { // 管理者
       if (user == res_t[0].teacher_id && old_pass == res_t[0].password_hash) {
-        await bd_query('UPDATE team7.teacher_list SET password_hash = ? WHERE teacher_id = ? AND password_hash = ?',[new_pass, user, old_pass]);
+        var data = [new_pass, user, old_pass];
+        await db_query('UPDATE team7.teacher_list SET password_hash = ? WHERE teacher_id = ? AND password_hash = ?', data);
         return true;
       }
     } else if (res_s.length > 0)  { // 学生用
       if (user == res_s[0].student_id && old_pass == res_s[0].password_hash) {
-        console.log(user);
-        await bd_query('UPDATE team7.student_list SET password_hash = ? WHERE student_id = ? AND password_hash = ?',[new_pass, user, old_pass]);
+        var data = [new_pass, user, old_pass];
+        await db_query('UPDATE team7.student_list SET password_hash = ? WHERE student_id = ? AND password_hash = ?', data);
         return true;
       }
     }
