@@ -10,14 +10,14 @@ class MyCardReader(object):
         self.idm = binascii.hexlify(tag.idm).decode().upper()
         return True
 
-    def read=id(self):
+    def read_id(self):
         clf = nfc.ContactlessFronted('usb')
         try:
             clf.connect(rdwr={'on-connect':self.on_connect})
-            finally:
-                clf.close()
+        finally:
+            clf.close()
 
-if_name_=='_main_':
+if __name__ == '__main__':
     cr = MyCardReader()
     start_time = time()
     while True:
