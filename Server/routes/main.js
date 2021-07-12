@@ -144,7 +144,7 @@ router
 							var check_lecture = await database.check_lecture(req.user, req.query.l);
 							if (check_lecture) {
 								var lecture_student = await database.create_lec_student_table(req.query.l);
-								res.render('course_more', {
+								res.render('edit_more', {
 									title: await database.get_lecture_name(req.query.l),
 									lecture_table: lecture_student,
 									user_id: database.get_user_id(req.user),
@@ -230,15 +230,32 @@ router
 					});
 					break;
 				default:
-					var out_table = await database.create_student_table(req.user, 'course');
-					res.render('home_s', {
-						title: 'Team7 - マイページ',
-						lecture_table: out_table,
-						user_id: database.get_user_id(req.user),
-						top_bar_link: '/main/logout',
-						top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-						dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
-					});
+          if (req.query.l) { // 講義ごとの詳細表示
+            var check_lecture = await database.check_lecture_major(req.user, req.query.l);
+            if (check_lecture) {
+              var lecture_student = await database.create_lec_lecture_table(req.user, req.query.l);
+              res.render('course_more', {
+                title: await database.get_lecture_name(req.query.l),
+                lecture_table: lecture_student,
+                user_id: database.get_user_id(req.user),
+                top_bar_link: '/main/logout',
+                top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
+            });
+          } else {
+              res.send('履修していない講義です。');
+            }
+        } else {
+            var out_table = await database.create_student_table(req.user, 'course');
+            res.render('home_s', {
+              title: 'Team7 - マイページ',
+              lecture_table: out_table,
+              user_id: database.get_user_id(req.user),
+              top_bar_link: '/main/logout',
+              top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+              dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
+            });
+          }
 					break
 				}
 			}

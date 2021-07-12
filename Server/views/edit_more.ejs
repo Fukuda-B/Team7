@@ -1,11 +1,11 @@
 <%#
-  Team7 client ejs - course_more (& student - default) | Update: 2021/07/11
+  Team7 client ejs - course_more | Update: 2021/07/11
 %>
 
 <%- include( './_header.ejs' ); %>
 <head>
-  <link rel="preload" href="/public/css/style_course_more.css" as="style">
-  <link rel="stylesheet" href="/public/css/style_course_more.css"">
+  <link rel="preload" href="/public/css/style_edit_more.css" as="style">
+  <link rel="stylesheet" href="/public/css/style_edit_more.css"">
   <title><%- title %></title>
 </head>
 <body>
@@ -15,6 +15,9 @@
   <div id="main">
     <div id="lecture_table">
       <h3><a id="prev_link" href="/main?p=course">コース</a> > <%- title %> 出欠一覧</h3>
+      <p>開始時間 / 終了時間</p>
+      <p>出席限度（分）/ 遅刻限度（分）</p>
+      <p>試験 / 曜日 / 講義回数</p>
       <table id="lecture_table_val">
         <%- lecture_table %>
       </table>

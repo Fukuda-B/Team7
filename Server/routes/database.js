@@ -97,12 +97,12 @@ async function create_teacher_table(user, page) {
           break;
       }
 
-      table += '<tr><td>' + row.lecture_name +
+      table += '<tr><td>' + row.lecture_name + ' ('+ row.lecture_id + ')' +
       '</td><td>' + row.day_of_week +
       '</td><td>' + row.start_time +
       '</td><td>' + row.end_time +
-      '</td><td>' + row.attend_limit +
-      '</td><td>' + row.late_limit +
+      '</td><td>' + row.attend_limit + '分' +
+      '</td><td>' + row.late_limit + '分' +
       '</td><td>' + exx +
 			'</td><td id="td_dl"> ' +
       tx + '</td></tr>'; // end
@@ -185,18 +185,20 @@ async function update_pass(user, old_pass, new_pass) {
   }
 }
 
-// ----- 履修者リスト取得 ----- (lecture_id)
-async function create_lec_student_table(lec) {
+// ----- 履修者の出欠リスト取得 ----- (lecture_id)
+async function create_lec_student_table(lecture_id) {
   try {
-    var weeks = 15;
-    var res_list = await db_query('SELECT student_id FROM team7.student_timetable WHERE lecture_id = ?', lec);
-    var std_list = await db_query('SELECT student_id, week, result, datetime FROM team7.attendance WHERE lecture_id = ?', lec);
+    var week_val = await db_query('SELECT weeks FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id); // 何週目までか
+    var weeks = week_val[0].weeks;
+    var res_list = await db_query('SELECT student_id FROM team7.student_timetable WHERE lecture_id = ?', lecture_id);
+    var std_list = await db_query('SELECT student_id, week, result, datetime FROM team7.attendance WHERE lecture_id = ?', lecture_id);
     var table = '';
 
     var std_list_arr = {}; // 出欠状況を連想配列として入れておく
     for (var row of std_list) {
       if (!std_list_arr[row.student_id]) std_list_arr[row.student_id] = {};
       std_list_arr[row.student_id][row.week] = 1;
+      if (row.week > weeks) weeks = row.week; // 最終週の更新
     }
 
     // テーブルのヘッダ部分
@@ -220,7 +222,7 @@ async function create_lec_student_table(lec) {
           table += '</td><td id="td_0">' + '×';
         }
       }
-      if (sum <= weeks - 5) { // 欠席が多い
+      if (sum <= weeks - 5) { // 欠席が多い場合
         table += '</td><td id="td_many">' + sum;
       } else {
         table += '</td><td>' + sum;
@@ -233,10 +235,59 @@ async function create_lec_student_table(lec) {
   }
 }
 
+// ----- 履修している科目の出席リスト取得 ----- (user_id, lecture_id)
+async function create_lec_lecture_table(user_id, lecture_id) {
+  try {
+    var week_val = await db_query('SELECT weeks FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id); // 何週目までか
+    var weeks = week_val[0].weeks;
+    var res_list = await db_query('SELECT student_id, week, result, datetime FROM team7.attendance WHERE lecture_id = ? AND student_id = ?', [lecture_id, user_id]);
+    var table = '';
+    var lec_list_arr = {};
+    for (var row of res_list) {
+      lec_list_arr[row.week] = 1;
+      if (row.week > weeks) weeks = row.week;
+    }
+
+    // テーブルのヘッダ部分
+    table += '<tr><th>履修者ID</th> <th>履修者名</th>';
+    for (var i = 0; i < weeks; i++) {
+      table += '<th>' + (i+1) + '</th>'; 
+    }
+    table += '<th>出席回数</th></tr>';
+
+    // テーブルのデータ部分
+    table += '<tr><td>'+ user_id +'</td><td>' + await get_name(user_id);
+    sum = 0;
+    for (var i = 0; i < weeks; i++) {
+      if (lec_list_arr[i+1] == 1) {
+        table += '</td><td id="td_1">' + '〇';
+        sum++;
+      } else {
+        table += '</td><td id="td_0">' + '×';
+      }
+    }
+    table += '</td><td>'+ sum +'</td></tr>';
+    return table;
+  } catch {
+    return 'error';
+  }
+}
+
 // ----- 講義の担当か確認 ----- (user_id, lecture_id)
 async function check_lecture(user, lec) {
   try {
     var res_list = await db_query('SELECT * FROM team7.lecture_rules WHERE lecture_id = ? AND teacher_id = ? LIMIT 1', [lec, user]);
+    if (res_list.length > 0) return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// ----- 講義を履修しているか確認 ----- (user_id, lecture_id)
+async function check_lecture_major(user, lec) {
+  try {
+    var res_list = await db_query('SELECT * FROM team7.student_timetable WHERE lecture_id = ? AND student_id = ? LIMIT 1', [lec, user]);
     if (res_list.length > 0) return true;
     return false;
   } catch {
@@ -295,5 +346,7 @@ exports.create_teacher_table = create_teacher_table;
 exports.create_student_table = create_student_table;
 exports.update_pass = update_pass;
 exports.create_lec_student_table = create_lec_student_table;
+exports.create_lec_lecture_table = create_lec_lecture_table;
 exports.check_lecture = check_lecture;
+exports.check_lecture_major = check_lecture_major;
 exports.get_lecture_name = get_lecture_name;
