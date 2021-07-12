@@ -79,7 +79,7 @@ async function create_teacher_table(user, page) {
   try {
     var res_list = await db_query('SELECT * FROM team7.lecture_rules WHERE teacher_id = ?', user);
     var table = '';
-    var row, exx;
+    var row, exx, tx;
     for (var row of res_list) {
       if (row.exam == 1) exx = 'あり';
       else exx = 'なし';
@@ -114,22 +114,28 @@ async function create_teacher_table(user, page) {
 }
 
 // ----- 学生用のテーブル生成 -----
-async function create_student_table(user, tx) {
+async function create_student_table(user, page) {
   try {
     var res_list = await db_query('SELECT lecture_id FROM team7.student_timetable WHERE student_id = ?', user);
     var table = '';
-    var stdl2, row, exx;
+    var stdl2, row, exx, tx;
     for (var stdl of res_list) {
       stdl2 = await db_query('SELECT * FROM team7.lecture_rules WHERE lecture_id = ?', stdl.lecture_id);
       row = stdl2[0];
       if (row.exam == 1) exx = 'あり';
       else exx = 'なし';
+
+      switch (page) {
+        case 'course':
+          tx = '<a href="/main?p=course&l='+row.lecture_id+'">詳細<i class="fas fa-file-alt"></i></a>';
+          break;
+      }
       table += '<tr><td>' + row.lecture_name +
       '</td><td>' + row.day_of_week +
       '</td><td>' + row.start_time +
       '</td><td>' + row.end_time +
-      '</td><td>' + row.attend_limit +
-      '</td><td>' + row.late_limit +
+      // '</td><td>' + row.attend_limit +
+      // '</td><td>' + row.late_limit +
       '</td><td>' + exx +
 			'</td><td id="td_dl"> ' +
       tx + '</td></tr>'; // end

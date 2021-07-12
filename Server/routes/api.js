@@ -56,7 +56,7 @@ router
   });
 
 function isAuthenticated_nos(req, res, next) {
-  if (check_user_api(req)) {
+  if (database.check_user_api(req)) {
     return next();
   } else {
     res.send('bad request');

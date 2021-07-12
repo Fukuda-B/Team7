@@ -230,7 +230,7 @@ router
 					});
 					break;
 				default:
-					var out_table = await database.create_student_table(req.user, 'home');
+					var out_table = await database.create_student_table(req.user, 'course');
 					res.render('home_s', {
 						title: 'Team7 - マイページ',
 						lecture_table: out_table,
