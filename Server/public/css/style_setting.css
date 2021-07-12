@@ -13,10 +13,11 @@
 }
 
 #main {
-    margin-left: 5%;
-    /* margin-left: calc(50% - 28.5%); */
-    width: 70%;
-    text-align: center;
+  margin-top: 40px;
+  margin-left: calc(5% + 160px);
+  /* margin-left: calc(50% - 28.5%); */
+  width: 70%;
+  text-align: center;
 }
 #change_fie {
   padding: 30px 0;
