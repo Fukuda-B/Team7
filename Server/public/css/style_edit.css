@@ -44,7 +44,7 @@
     background: #eee;
 }
 #lecture_table_val td, th {
-    padding: 5px 15px;
+    padding: 5px 12px;
 }
 #lecture_table_val tr {
     border: solid 1px var(--sub-color);

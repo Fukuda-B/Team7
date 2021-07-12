@@ -44,7 +44,7 @@
     background: #eee;
 }
 #lecture_table_val td, th {
-    padding: 5px 12px;
+    padding: 5px 8px;
 }
 #lecture_table_val tr {
     border: solid 1px var(--sub-color);
@@ -53,17 +53,26 @@
 #lecture_table i {
     padding-left: 10px;
     padding-right: 3px;
-    color: #666;
 }
 #lecture_table #td_dl {
     border-left: 1px solid #ddd;
 }
 #td_dl a {
     text-decoration: none;
-    color: #444;
+    color: #888;
 }
 #td_dl a:hover {
     text-decoration: underline;
+    color: #222;
+}
+#td_1 {
+    /* background: rgb(231, 255, 195) !important; */
+}
+#td_0 {
+    background: rgb(255, 222, 162) !important;
+}
+#td_many {
+    background: orange !important;
 }
 
 

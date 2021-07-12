@@ -188,10 +188,44 @@ async function update_pass(user, old_pass, new_pass) {
 // ----- 履修者リスト取得 ----- (lecture_id)
 async function create_lec_student_table(lec) {
   try {
+    var weeks = 15;
     var res_list = await db_query('SELECT student_id FROM team7.student_timetable WHERE lecture_id = ?', lec);
-    table = '';
+    var std_list = await db_query('SELECT student_id, week, result, datetime FROM team7.attendance WHERE lecture_id = ?', lec);
+    var table = '';
+
+    var std_list_arr = {}; // 出欠状況を連想配列として入れておく
+    for (var row of std_list) {
+      if (!std_list_arr[row.student_id]) std_list_arr[row.student_id] = {};
+      std_list_arr[row.student_id][row.week] = 1;
+    }
+
+    // テーブルのヘッダ部分
+    table += '<tr><th>履修者ID</th> <th>履修者名</th>';
+    for (var i = 0; i < weeks; i++) {
+      table += '<th>' + (i+1) + '</th>'; 
+    }
+    table += '<th>出席回数</th></tr>';
+
+    // テーブルのデータ部分
+    var sum = 0; // 合計出席回数を計算するために使う一時的な変数
     for (var row of res_list) {
-      table += '<tr><td>' + row.student_id + '</td></tr>';
+      table += '<tr><td>' + row.student_id;
+      table += '</td><td>' + await get_name(row.student_id);
+      sum = 0;
+      for (var i = 0; i < weeks; i++) {
+        if (std_list_arr[row.student_id][i+1] == 1) {
+          sum++;
+          table += '</td><td id="td_1">' + '〇';
+        } else {
+          table += '</td><td id="td_0">' + '×';
+        }
+      }
+      if (sum <= weeks - 5) { // 欠席が多い
+        table += '</td><td id="td_many">' + sum;
+      } else {
+        table += '</td><td>' + sum;
+      }
+      table += '</td></tr>';
     }
     return table;
   } catch {
@@ -207,6 +241,41 @@ async function check_lecture(user, lec) {
     return false;
   } catch {
     return false;
+  }
+}
+
+// ----- 履修者IDから名前を取得 ----- (user_id)
+async function get_name(user_id) {
+  try {
+    var res_list = await db_query('SELECT student_name FROM team7.student_list WHERE student_id = ? LIMIT 1', user_id);
+    if (res_list[0].student_name) return res_list[0].student_name;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// ----- 出席登録 ----- (lecture_id, user_id, week)
+
+// ----- IDmからユーザIDを取得 ----- (IDm)
+async function check_idm_user(idm) {
+  try {
+    var res_list = await db_query('SELECT student_id FROM team7.student_list WHERE idm = ? LIMIT 1', idm);
+    if (res_list.length > 0) return res_list.student_id;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// ----- 講義ID から講義名取得 ----- (lecture_id)
+async function get_lecture_name(lecture_id) {
+  try {
+    var res_list = await db_query('SELECT lecture_name FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id);
+    if (res_list[0].lecture_name) return res_list[0].lecture_name;
+    return 'error';
+  } catch {
+    return 'error';
   }
 }
 
@@ -227,3 +296,4 @@ exports.create_student_table = create_student_table;
 exports.update_pass = update_pass;
 exports.create_lec_student_table = create_lec_student_table;
 exports.check_lecture = check_lecture;
+exports.get_lecture_name = get_lecture_name;
