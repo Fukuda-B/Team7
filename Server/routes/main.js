@@ -31,11 +31,10 @@ const passport = require('passport'),
 	LocalStrategy = require('passport-local').Strategy;
 const router = express.Router();
 const fs = require('fs');
-const xlsx = require('xlsx');
-const csv = require('csv');
 const CRYP = require('./cryp.js').CRYP;
 const get_key = require('./cryp.js').get_key;
 const database = require('./database.js');
+const output = require('./output.js');
 
 var key_timeout = 7777; // ms
 
@@ -225,7 +224,7 @@ router
 						});
 						break;
 				}
-			} else {
+			} else { // 管理者ではない場合
 				switch (req.query.p) {
 					case 'setting': // /main?p=setting
 					res.render('setting_s', {
@@ -264,7 +263,7 @@ router
               dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
             });
           }
-					break
+					break;
 				}
 			}
 		})
@@ -362,28 +361,6 @@ function get_graph_val(user) {
 		}
 	}
 	return data;
-}
-
-// ----- xlsxファイル生成 -----
-function xlsx_gen(data, fname) {
-	var xutil = xlsx.utils;
-	(async () => {
-		let wb = xutil.book_new();
-		let ws = xutil.aoa_to_sheet(data);
-		let ws_name = fname;
-		xutil.book_append_sheet(wb, ws, ws_name);
-		xlsx.writeFile(wb, fname);
-		console.log('created: ' + fname);
-	})();
-}
-
-// ----- csvファイル生成 -----
-function csv_gen(data, fname) {
-	csv.stringify(data, (error, output) => {
-		fs.writeFile(fname, output, (error) => {
-			console.log('created: ' + fname);
-		})
-	})
 }
 
 // -----
