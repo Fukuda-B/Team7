@@ -28,6 +28,7 @@
 }
 #lecture_table_val {
     margin: 0 auto;
+    margin-top: 30px;
     border-collapse: collapse;
     font-family: 游ゴシック体, 'Yu Gothic', YuGothic, 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
     font-size: 0.9em;
@@ -76,12 +77,36 @@
     background: orange !important;
 }
 #prev_link {
-    color: #666;
+    color: var(--prev_link-color);
     text-decoration: none;
 }
 #prev_link:hover {
     color: #000;
     text-decoration: underline;
+}
+#start_time, #end_time {
+    width: 200px;
+}
+#attend_time, #late_time {
+    padding: 2px 2px;
+    width: 200px;
+}
+#exam, #day_of_week {
+    padding: 3px 10px;
+}
+#weeks {
+    width: 200px;
+}
+#edit_fie {
+    max-width: 720px;
+    margin-left: calc(50% - 360px);
+    margin-top: 40px;
+    padding: 15px 0;
+    border: 1px solid #888;
+    border-radius: 4px;
+}
+#apply {
+    padding: 5px 30px;
 }
 
 /* 画面の幅が1000px以上 */

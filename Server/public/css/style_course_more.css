@@ -76,7 +76,7 @@
     background: orange !important;
 }
 #prev_link {
-    color: #666;
+    color: var(--prev_link-color);
     text-decoration: none;
 }
 #prev_link:hover {
