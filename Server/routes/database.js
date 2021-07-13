@@ -183,8 +183,8 @@ async function update_pass(user, old_pass, new_pass) {
   }
 }
 
-// ----- 履修者の出欠リスト取得 ----- (lecture_id)
-async function create_lec_student_table(lecture_id) {
+// ----- 履修者の出欠リスト取得 ----- (lecture_id, 強調表示する条件(休み), 強調表示する条件(遅刻))
+async function create_lec_student_table(lecture_id, limit_absence, limit_lateness) {
   try {
     var week_val = await db_query('SELECT weeks FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id); // 何週目までか
     var weeks = week_val[0].weeks;
@@ -220,7 +220,7 @@ async function create_lec_student_table(lecture_id) {
           table += '</td><td id="td_0">' + '×';
         }
       }
-      if (sum <= weeks - 5) { // 欠席が多い場合
+      if (weeks - sum >= limit_absence) { // 欠席が多い場合
         table += '</td><td id="td_many">' + sum;
       } else {
         table += '</td><td>' + sum;
@@ -328,6 +328,36 @@ async function get_lecture_name(lecture_id) {
   }
 }
 
+// ----- 編集ページの初期値取得 -----
+async function get_lecture_edit_info(lecture_id) {
+  try {
+    var res_list = await db_query('SELECT * FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id);
+    if (res_list) {
+      var res = {
+        "attend_limit": res_list[0].attend_limit,
+        "late_limit": res_list[0].late_limit,
+        "weeks": res_list[0].weeks,
+      };
+      res["start_time"] = res_list[0].start_time.slice(0, -3); // 秒のところを消して代入
+      res["end_time"] = res_list[0].end_time.slice(0, -3); // 秒のところを消して代入
+      if (res_list[0].exam == 1) { // 試験
+        res["exam"] = ['selected', ''];
+      } else {
+        res["exam"] = ['', 'selected'];
+      }
+      res["day_of_week"] = ['', '', '', '', '', '', ''];
+      var wk_list = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      for (var i = 0; i < wk_list.length; i++) {
+        if (res_list[0].day_of_week == wk_list[i]) res["day_of_week"][i] = 'selected';
+      }
+      return res;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 // ----- テスト -----
 // (async () => {
 //   var ans = await check_user('S001', '$argon2id$v=19$m=10240,t=5,p=2$NGU3ZTc3ZmY0YWIzMGEyZWYyNjNjNjNlOTAzY2U0MDc2YTNiMWZlYjJhZmQ2MDI2NjgyMWM5MjhlNDdkODA4ZDIyNGM1YTMxYjFiOWExZmI0YzM5ZWFjMGFhMTRkMTIwMzFkZGY4MGIxMGU0NDhiODI5NmRlNzVlMjJiMmMxY2UwNDFkNzc4NDQ5ZjJhMWI2MGJiODQyOWVmN2ZkNDBkNDEzOTc1YTZlZGFjNTcwYzA2NThkZmZjMmIzYjU3ZDZlNjI5ODg2MmI1OTk3Y2M5MTdhMWZhZDQ5MGJiMjBhYzg1MzMxYWNjOWQxMDRiOTdmYTQzMmVkZTRjZDM1NTJmY2M2YjFmYjI1OWEzZmQ1NTg4OWVlNGViOGM0NmMyNjJhYTYzNzMzYmUyMmRhZGExMjg5OTUxNGVhY2RlOTk2ZTI1MzUwYTMzNTIyMWU4NGE0Mzg0OTJiMDQ1ZTU0NTMyZDA1YWE5OThiNzliMjkwOTc2OGNkYzAzMTVlMjkzMzA5OWY3NmRkODE1OGUzMzNhN2I3M2Q5YWI0ODE4NDRkZDhlMWEzOTFiYTRiMTdkMjc5NjlkNjNlZGIwMTY1NWRjNDEyNDhmOWUzMTNiNTJhNmNjN2JiOTkyYjc4ZmYxMmE1MGQ2ZjNlNGMyNzM2M2I3ZDkzOWQzNDlhYTQ0YjA4ZDA$MnDSRROuc5IhqMydpw5wwxY8SPG4OKdnsDncgzhqKPqNfnz9OIHOmXR3Vee8+/ijwixH3wmjNTyD1rmCusIUAoJYi9SW9XmRNPGcAi9oDCVz1IHEoBbzT4NdYGcf2qzUVALeXyEYHQysWIq+uc5Yr79lhXbFoN2a/bO0rOvG5G0');
@@ -348,3 +378,4 @@ exports.create_lec_lecture_table = create_lec_lecture_table;
 exports.check_lecture = check_lecture;
 exports.check_lecture_major = check_lecture_major;
 exports.get_lecture_name = get_lecture_name;
+exports.get_lecture_edit_info = get_lecture_edit_info;

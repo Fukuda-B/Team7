@@ -115,8 +115,14 @@ router
 						if (req.query.l) { // 講義ごとの詳細表示
 							var check_lecture = await database.check_lecture(req.user, req.query.l);
 							if (check_lecture) {
-								var lecture_student = await database.create_lec_student_table(req.query.l);
+                var absence = req.query.absence;
+                var lateness = req.query.lateness;
+                if (!req.query.absence) absence = 3; // 強調表示の初期値(欠席)
+                if (!req.query.lateness) lateness = 5; // 強調表示の初期値(遅刻)
+								var lecture_student = await database.create_lec_student_table(req.query.l, absence, lateness);
 								res.render('course_more', {
+                  absence_v: absence,
+                  lateness_v: lateness,
 									title: await database.get_lecture_name(req.query.l),
 									lecture_table: lecture_student,
 									user_id: database.get_user_id(req.user),
@@ -143,8 +149,10 @@ router
 						if (req.query.l) { // 講義ごとの詳細表示
 							var check_lecture = await database.check_lecture(req.user, req.query.l);
 							if (check_lecture) {
-								var lecture_student = await database.create_lec_student_table(req.query.l);
+								var lecture_student = await database.create_lec_student_table(req.query.l, 15, 15);
+                var res_list = await database.get_lecture_edit_info(req.query.l);
 								res.render('edit_more', {
+                  res_list: res_list,
 									title: await database.get_lecture_name(req.query.l),
 									lecture_table: lecture_student,
 									user_id: database.get_user_id(req.user),

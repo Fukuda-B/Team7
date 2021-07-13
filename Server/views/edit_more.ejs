@@ -14,28 +14,28 @@
     <%- include( './_dashboard.ejs' ); %>
   <div id="main">
     <div id="lecture_table">
-      <h3><a id="prev_link" href="/main?p=course">コース</a> > <%- title %> 出欠一覧</h3>
+      <h3><a id="prev_link" href="/main?p=course">コース</a> > <%- title %> 情報修正</h3>
       <div id="edit_fie">
-        <p>開始時間 <input type="time" name="example" value="14:40" id="start_time"> &emsp; &emsp; 終了時間 <input type="time" name="example" value="16:10" id="end_time"> &emsp;</p>
-        <p>出席限度 <input type="number" name="sample" id="attend_time"/> 分 &emsp; 遅刻限度 <input type="number" name="sample" id="late_time"/> 分</p>
+        <p>開始時間 <input type="time" name="example" value="<%- res_list['start_time'] %>" id="start_time"> &emsp; &emsp; 終了時間 <input type="time" name="example" value="<%- res_list['end_time'] %>" id="end_time"> &emsp;</p>
+        <p>出席限度 <input type="number" name="sample" id="attend_time" value="<%- res_list['attend_limit']%>"/> 分 &emsp; 遅刻限度 <input type="number" name="sample" id="late_time" value="<%- res_list['late_limit'] %>"/> 分</p>
         <p>試験
           <select name="exam" id="exam">
             <option>- 試験 -</option>
-            <option value="false">なし</option>
-            <option value="true">あり</option>
+            <option value="false" <%- res_list['exam'][0] %>>なし</option>
+            <option value="true"  <%- res_list['exam'][1] %>>あり</option>
           </select>&emsp;
           曜日
           <select name="week" id="day_of_week">
             <option>- 曜日 -</option>
-            <option value="Sun">日</option>
-            <option value="Man">月</option>
-            <option value="Tue">火</option>
-            <option value="Wed">水</option>
-            <option value="Thu">木</option>
-            <option value="Fri">金</option>
-            <option value="Sat">土</option>
+            <option value="Sun" <%- res_list['day_of_week'][0] %>>日</option>
+            <option value="Mon" <%- res_list['day_of_week'][1] %>>月</option>
+            <option value="Tue" <%- res_list['day_of_week'][2] %>>火</option>
+            <option value="Wed" <%- res_list['day_of_week'][3] %>>水</option>
+            <option value="Thu" <%- res_list['day_of_week'][4] %>>木</option>
+            <option value="Fri" <%- res_list['day_of_week'][5] %>>金</option>
+            <option value="Sat" <%- res_list['day_of_week'][6] %>>土</option>
           </select>&emsp; &emsp;
-          講義回数 <input type="number" name="sample" id="weeks"/> &emsp;</p>
+          講義回数 <input type="number" name="sample" id="weeks" value="<%- res_list['weeks'] %>"/> &emsp;</p>
           <button id="apply">適用</button>
         </div>
       <table id="lecture_table_val">
@@ -45,4 +45,8 @@
     </div>
   </div>
 </body>
+<script>
+  function send_update() {
+  }
+</script>
 </html>

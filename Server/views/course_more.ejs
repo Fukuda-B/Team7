@@ -15,11 +15,40 @@
   <div id="main">
     <div id="lecture_table">
       <h3><a id="prev_link" href="/main?p=course">コース</a> > <%- title %> 出欠一覧</h3>
-      <table id="lecture_table_val">
+        <div id="edit_fie">
+          <p>強調表示する条件<br><br>
+            欠席 <input type="number" name="sample" id="absence" value="<%- absence_v %>"/> 回&emsp;&emsp;&emsp;
+            遅刻 <input type="number" name="sample" id="lateness" value="<%- lateness_v %>"/> 回</p>
+            <button id="apply" onclick="update();">適用</button>
+          </div>
+        <table id="lecture_table_val">
         <%- lecture_table %>
       </table>
     </div>
     </div>
   </div>
 </body>
+<script>
+  function getParam(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+  function update() {
+    var absence_val = document.getElementById('absence').value;
+    var lateness_val = document.getElementById('lateness').value;
+    if (absence_val || lateness_val) {
+      var absence = absence_val;
+      var lateness = lateness_val;
+      if (!absence) absence = 0;
+      if (!lateness) lateness = 0;
+      var lec = getParam('l', location.href);
+      location.href = "?p=course"+'&l='+lec+"&absence="+absence+"&lateness="+lateness;
+    }
+  }
+</script>
 </html>

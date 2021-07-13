@@ -28,6 +28,7 @@
 }
 #lecture_table_val {
     margin: 0 auto;
+    margin-top: 30px;
     border-collapse: collapse;
     font-family: 游ゴシック体, 'Yu Gothic', YuGothic, 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
     font-size: 0.9em;
@@ -82,6 +83,28 @@
 #prev_link:hover {
     color: #000;
     text-decoration: underline;
+}
+#edit_fie {
+    max-width: 720px;
+    margin-left: calc(50% - 360px);
+    margin-top: 40px;
+    padding: 10px 0;
+    border: 1px solid #888;
+    border-radius: 4px;
+}
+#edit_fie p {
+    margin: 0;
+}
+#absence, #lateness {
+    text-align: center;
+    padding: 3px 0 3px 10px;
+    width: 60px;
+    margin-top: 5px;
+    font-size: 1.2em;
+}
+#apply {
+    margin-top: 20px;
+    padding: 5px 30px;
 }
 
 /* 画面の幅が1000px以上 */
