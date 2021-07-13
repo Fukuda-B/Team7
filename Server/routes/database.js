@@ -116,12 +116,10 @@ async function create_teacher_table(user, page) {
 // ----- 学生用のテーブル生成 -----
 async function create_student_table(user, page) {
   try {
-    var res_list = await db_query('SELECT lecture_id FROM team7.student_timetable WHERE student_id = ?', user);
+    var res_list = await db_query('SELECT student_id, team7.student_timetable.lecture_id, lecture_name, teacher_id, teacher_name, start_time, end_time, attend_limit, late_limit, exam, day_of_week, weeks FROM team7.student_timetable LEFT OUTER JOIN team7.lecture_rules ON team7.student_timetable.lecture_id = team7.lecture_rules.lecture_id WHERE student_id = ?;', user);
     var table = '';
-    var stdl2, row, exx, tx;
-    for (var stdl of res_list) {
-      stdl2 = await db_query('SELECT * FROM team7.lecture_rules WHERE lecture_id = ?', stdl.lecture_id);
-      row = stdl2[0];
+    var exx, tx;
+    for (var row of res_list) {
       if (row.exam == 1) exx = 'あり';
       else exx = 'なし';
 
@@ -190,7 +188,7 @@ async function create_lec_student_table(lecture_id) {
   try {
     var week_val = await db_query('SELECT weeks FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id); // 何週目までか
     var weeks = week_val[0].weeks;
-    var res_list = await db_query('SELECT student_id FROM team7.student_timetable WHERE lecture_id = ?', lecture_id);
+    var res_list = await db_query('SELECT team7.student_list.student_id, student_name FROM team7.student_timetable LEFT JOIN team7.student_list ON team7.student_timetable.student_id = team7.student_list.student_id WHERE lecture_id = ?;', lecture_id);
     var std_list = await db_query('SELECT student_id, week, result, datetime FROM team7.attendance WHERE lecture_id = ?', lecture_id);
     var table = '';
 
@@ -212,7 +210,7 @@ async function create_lec_student_table(lecture_id) {
     var sum = 0; // 合計出席回数を計算するために使う一時的な変数
     for (var row of res_list) {
       table += '<tr><td>' + row.student_id;
-      table += '</td><td>' + await get_name(row.student_id);
+      table += '</td><td>' + row.student_name;
       sum = 0;
       for (var i = 0; i < weeks; i++) {
         if (std_list_arr[row.student_id][i+1] == 1) {
