@@ -14,29 +14,29 @@
     <%- include( './_dashboard.ejs' ); %>
   <div id="main">
     <div id="lecture_table">
-      <h3><a id="prev_link" href="/main?p=course">コース</a> > <%- title %> 情報修正</h3>
+      <h3><a id="prev_link" href="/main?p=edit">コース</a> > <%- title %> 情報修正</h3>
       <div id="edit_fie">
         <p>開始時間 <input type="time" name="example" value="<%- res_list['start_time'] %>" id="start_time"> &emsp; &emsp; 終了時間 <input type="time" name="example" value="<%- res_list['end_time'] %>" id="end_time"> &emsp;</p>
         <p>出席限度 <input type="number" name="sample" id="attend_time" value="<%- res_list['attend_limit']%>"/> 分 &emsp; 遅刻限度 <input type="number" name="sample" id="late_time" value="<%- res_list['late_limit'] %>"/> 分</p>
         <p>試験
           <select name="exam" id="exam">
-            <option>- 試験 -</option>
-            <option value="false" <%- res_list['exam'][0] %>>なし</option>
-            <option value="true"  <%- res_list['exam'][1] %>>あり</option>
+            <option value="0" <%- res_list['exam'][0] %>>&emsp;なし&emsp;</option>
+            <option value="1"  <%- res_list['exam'][1] %>>&emsp;あり&emsp;</option>
           </select>&emsp;
           曜日
           <select name="week" id="day_of_week">
-            <option>- 曜日 -</option>
-            <option value="Sun" <%- res_list['day_of_week'][0] %>>日</option>
-            <option value="Mon" <%- res_list['day_of_week'][1] %>>月</option>
-            <option value="Tue" <%- res_list['day_of_week'][2] %>>火</option>
-            <option value="Wed" <%- res_list['day_of_week'][3] %>>水</option>
-            <option value="Thu" <%- res_list['day_of_week'][4] %>>木</option>
-            <option value="Fri" <%- res_list['day_of_week'][5] %>>金</option>
-            <option value="Sat" <%- res_list['day_of_week'][6] %>>土</option>
+            <option value="Sun" <%- res_list['day_of_week'][0] %>>&emsp;日&emsp;</option>
+            <option value="Mon" <%- res_list['day_of_week'][1] %>>&emsp;月&ensp;</option>
+            <option value="Tue" <%- res_list['day_of_week'][2] %>>&emsp;火&ensp;</option>
+            <option value="Wed" <%- res_list['day_of_week'][3] %>>&emsp;水&ensp;</option>
+            <option value="Thu" <%- res_list['day_of_week'][4] %>>&emsp;木&ensp;</option>
+            <option value="Fri" <%- res_list['day_of_week'][5] %>>&emsp;金&ensp;</option>
+            <option value="Sat" <%- res_list['day_of_week'][6] %>>&emsp;土&ensp;</option>
           </select>&emsp; &emsp;
           講義回数 <input type="number" name="sample" id="weeks" value="<%- res_list['weeks'] %>"/> &emsp;</p>
-          <button id="apply">適用</button>
+          <button id="apply" onclick="send_update();">適用</button>
+          <p id="success"><i class="far fa-check-circle"></i> 正常に処理が完了しました</p>
+          <p id="error"><i class="fas fa-times"></i> エラーが発生しました</p>
         </div>
       <table id="lecture_table_val">
         <%- lecture_table %>
@@ -46,7 +46,54 @@
   </div>
 </body>
 <script>
+  function getParam(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
   function send_update() {
+    var start_time = document.getElementById('start_time').value;
+    var end_time = document.getElementById('end_time').value;
+    var attend_time = document.getElementById('attend_time').value;
+    var late_time = document.getElementById('late_time').value;
+    var exam = document.getElementById('exam').value;
+    var day_of_week = document.getElementById('day_of_week').value;
+    var weeks = document.getElementById('weeks').value;
+    document.getElementById('success').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    var l = getParam('l', location.href); // 科目を表すクエリ
+    if (start_time && end_time && attend_time && late_time && exam && day_of_week && weeks && l) {
+      var send_data = {
+        "start_time": start_time+':00',
+        "end_time": end_time+':00',
+        "attend_limit": attend_time,
+        "late_limit": late_time,
+        "exam": exam,
+        "day_of_week": day_of_week,
+        "weeks": weeks,
+      }
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+          if (req.status == 200) {
+            if (req.responseText == 'error') { // エラー
+              document.getElementById('error').style.display = 'block';
+            } else { // 正常終了
+              document.getElementById('success').style.display = 'block';
+            }
+          } else {
+            document.getElementById('error').style.display = 'block';
+          }
+        }
+      }
+      req.open('POST', '/edit', true);
+      req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+      req.send('data='+JSON.stringify(send_data)+'&l='+l);
+    }
   }
 </script>
 </html>

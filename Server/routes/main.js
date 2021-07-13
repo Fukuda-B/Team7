@@ -304,6 +304,20 @@ router
 			res.send('error');
 		}
 	})
+  .post('/edit', isAuthenticated, async function(req, res) { // 講義情報の更新
+    if (req.body.data && req.body.l) {
+        var check_lecture = await database.check_lecture(req.user, req.body.l); // 講義の担当か確認
+        var data = JSON.parse(req.body.data);
+        var result = await database.update_lecture(req.body.l, data);
+        if (result && check_lecture) {
+          res.send('ok')
+        } else {
+          res.send('error');
+        }
+      } else {
+        res.send('error');
+      }
+    })
 	.post('/main/u', function (req, res) { // 認証用 iv
 		res.send(bank.iv);
 	})

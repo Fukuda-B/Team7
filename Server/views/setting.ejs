@@ -1,5 +1,5 @@
 <%#
-  Team7 client ejs - home | Update: 2021/07/10
+  Team7 client ejs - home | Update: 2021/07/14
 %>
 
 <%- include( './_header.ejs' ); %>
@@ -17,10 +17,12 @@
       <h3>パスワード変更</h3>
       <div id="change_fie">
         <div>
-          <p id="tx_1">現在のパスワード</p><input type="password" id="old_pass" name="old_pass" required placeholder="Current password">
-          <p id="tx_2">新しいパスワード</p><input type="password" id="new_pass" name="new_pass" required placeholder="New password">
+          <p id="tx_1">現在のパスワード&emsp;&emsp;&emsp;<input type="password" id="old_pass" name="old_pass" required placeholder="現在のパスワード"></p>
+          <p id="tx_2">新規パスワード&emsp;&emsp;&emsp;&emsp;<input type="password" id="new_pass" name="new_pass" required placeholder="新規パスワード"></p>
+          <p id="tx_3">新規パスワード（確認）<input type="password" id="new_pass2" name="new_pass2" required placeholder="新規パスワード（確認）"></p>
         </div>
         <button id="pass_change" onclick="ajax();">適用</button>
+        <p id="not_same"><i class="fas fa-times"></i> 新規パスワード（確認）を正しく入力してください</p>
         <p id="error"><i class="fas fa-times"></i> エラーが発生しました</p>
         <p id="success"><i class="far fa-check-circle"></i> 正しくパスワードが変更されました</p>
       </div>

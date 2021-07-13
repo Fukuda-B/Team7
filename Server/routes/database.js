@@ -328,7 +328,7 @@ async function get_lecture_name(lecture_id) {
   }
 }
 
-// ----- 編集ページの初期値取得 -----
+// ----- 編集ページの初期値取得 ----- (lecture_id)
 async function get_lecture_edit_info(lecture_id) {
   try {
     var res_list = await db_query('SELECT * FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id);
@@ -340,7 +340,7 @@ async function get_lecture_edit_info(lecture_id) {
       };
       res["start_time"] = res_list[0].start_time.slice(0, -3); // 秒のところを消して代入
       res["end_time"] = res_list[0].end_time.slice(0, -3); // 秒のところを消して代入
-      if (res_list[0].exam == 1) { // 試験
+      if (res_list[0].exam == 0) { // 試験
         res["exam"] = ['selected', ''];
       } else {
         res["exam"] = ['', 'selected'];
@@ -353,6 +353,17 @@ async function get_lecture_edit_info(lecture_id) {
       return res;
     }
     return false;
+  } catch {
+    return false;
+  }
+}
+
+// ----- 講義情報の修正 ----- (lecture_id, json)
+async function update_lecture(lecture_id, data) {
+  try {
+    var unpack = [data.start_time, data.end_time, data.attend_limit, data.late_limit, data.exam, data.day_of_week, data.weeks, lecture_id];
+    await db_query('UPDATE team7.lecture_rules SET start_time = ?, end_time = ?, attend_limit = ?, late_limit = ?, exam = ?, day_of_week = ?, weeks = ? WHERE lecture_id = ?', unpack);
+    return true;
   } catch {
     return false;
   }
@@ -379,3 +390,4 @@ exports.check_lecture = check_lecture;
 exports.check_lecture_major = check_lecture_major;
 exports.get_lecture_name = get_lecture_name;
 exports.get_lecture_edit_info = get_lecture_edit_info;
+exports.update_lecture = update_lecture;

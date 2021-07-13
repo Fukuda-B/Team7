@@ -17,7 +17,7 @@ let mainWindow; // main window | gc (garbage collection) measures
 let tray = null; // task tray  | gc (garbage collection) measures
 
 var icon = __dirname + '/icon.ico';
-var default_zoom = 0.9;
+var default_zoom = 0.85;
 var start_page = 'http://localhost:8080/';
 var issue_page = 'https://github.com/Fukuda-B/Team7/issues';
 app.disableHardwareAcceleration(); // disable gpu render and save memory
@@ -129,7 +129,7 @@ app.on('ready', function () {
 
   mainWindow = new BrowserWindow({
     // titleBarStyle: 'hidden',
-    width: 1000,
+    width: 1100,
     height: 720,
     webPreferences: {
       nodeIntegration: false

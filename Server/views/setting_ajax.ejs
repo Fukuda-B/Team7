@@ -60,7 +60,15 @@
     var req = new XMLHttpRequest();
     var old_pass = document.getElementById('old_pass').value;
     var new_pass = document.getElementById('new_pass').value;
+    var new_pass2 = document.getElementById('new_pass2').value;
+    document.getElementById('not_same').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('success').style.display = 'none';
     if (old_pass.length <= 0 || new_pass.length <= 0) return;
+    if (new_pass != new_pass2) {
+      document.getElementById('not_same').style.display = 'block';
+      return;
+    }
     req.onreadystatechange = function () {
       if (req.readyState == 4) {
         if (req.status == 200) {
