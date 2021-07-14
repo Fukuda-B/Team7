@@ -42,7 +42,7 @@ Team7
 　│　└ nginx.conf  
 　│
 　├ Server    (サーバ)  
-　│　└ app    (ルーティング)  
+　│　└ app.js    (ルーティング)  
 　│　└ routes  
 　│　　　└ main.js     (メイン処理)  
 　│　　　└ api.js      (webapi処理モジュール)  
