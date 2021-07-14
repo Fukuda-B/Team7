@@ -92,8 +92,8 @@ async function create_teacher_table(user, page) {
           tx = '<a href="/main?p=edit&l='+row.lecture_id+'">編集<i class="fas fa-pencil-alt"></i></a>';
           break;
         case 'home':
-          tx = '<a href="/main"><i class="fas fa-file-csv"></i>csv</a>' +
-          '<a href="/main"><i class="fas fa-file-excel"></i>xlsx</a>';
+          tx = '<a href="/main?dl='+row.lecture_id+'&format=csv" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-csv"></i>csv</a>' +
+          '<a href="/main?dl='+row.lecture_id+'&format=xlsx" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-excel"></i>xlsx</a>';
           break;
       }
 
@@ -369,6 +369,53 @@ async function update_lecture(lecture_id, data) {
   }
 }
 
+// ----- 講義の出欠一覧(2次元リスト)を返す(csv/xlsx出力用) ----- (lecture_id)
+async function get_lecture_table(lecture_id) {
+  try {
+    var week_val = await db_query('SELECT weeks FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id); // 何週目までか
+    var weeks = week_val[0].weeks;
+    var res_list = await db_query('SELECT team7.student_list.student_id, student_name FROM team7.student_timetable LEFT JOIN team7.student_list ON team7.student_timetable.student_id = team7.student_list.student_id WHERE lecture_id = ?;', lecture_id);
+    var std_list = await db_query('SELECT student_id, week, result, datetime FROM team7.attendance WHERE lecture_id = ?', lecture_id);
+
+    var std_list_arr = {}; // 出欠状況を連想配列として入れておく
+    for (var row of std_list) {
+      if (!std_list_arr[row.student_id]) std_list_arr[row.student_id] = {};
+      std_list_arr[row.student_id][row.week] = 1;
+      if (row.week > weeks) weeks = row.week; // 最終週の更新
+    }
+
+    // テーブルのヘッダ部分
+    var table = [['履修者ID', '履修者名']];
+    for (var i = 0; i < weeks; i++) {
+      table[0].push(i+1);
+    }
+    table[0].push('出席回数');
+
+    // テーブルのデータ部分
+    var sum = 0; // 合計出席回数を計算するために使う一時的な変数
+    var arr_p = []; // 一時的なデータを入れる配列
+    for (var row of res_list) {
+      arr_p = [];
+      arr_p.push(row.student_id);
+      arr_p.push(row.student_name);
+      sum = 0;
+      for (var i = 0; i < weeks; i++) {
+        if (std_list_arr[row.student_id][i+1] == 1) {
+          sum++;
+          arr_p.push('〇');
+        } else {
+          arr_p.push('×');
+        }
+      }
+      arr_p.push(sum);
+      table.push(arr_p);
+    }
+    return table;
+  } catch {
+    return false;    
+  }
+}
+
 // ----- テスト -----
 // (async () => {
 //   var ans = await check_user('S001', '$argon2id$v=19$m=10240,t=5,p=2$NGU3ZTc3ZmY0YWIzMGEyZWYyNjNjNjNlOTAzY2U0MDc2YTNiMWZlYjJhZmQ2MDI2NjgyMWM5MjhlNDdkODA4ZDIyNGM1YTMxYjFiOWExZmI0YzM5ZWFjMGFhMTRkMTIwMzFkZGY4MGIxMGU0NDhiODI5NmRlNzVlMjJiMmMxY2UwNDFkNzc4NDQ5ZjJhMWI2MGJiODQyOWVmN2ZkNDBkNDEzOTc1YTZlZGFjNTcwYzA2NThkZmZjMmIzYjU3ZDZlNjI5ODg2MmI1OTk3Y2M5MTdhMWZhZDQ5MGJiMjBhYzg1MzMxYWNjOWQxMDRiOTdmYTQzMmVkZTRjZDM1NTJmY2M2YjFmYjI1OWEzZmQ1NTg4OWVlNGViOGM0NmMyNjJhYTYzNzMzYmUyMmRhZGExMjg5OTUxNGVhY2RlOTk2ZTI1MzUwYTMzNTIyMWU4NGE0Mzg0OTJiMDQ1ZTU0NTMyZDA1YWE5OThiNzliMjkwOTc2OGNkYzAzMTVlMjkzMzA5OWY3NmRkODE1OGUzMzNhN2I3M2Q5YWI0ODE4NDRkZDhlMWEzOTFiYTRiMTdkMjc5NjlkNjNlZGIwMTY1NWRjNDEyNDhmOWUzMTNiNTJhNmNjN2JiOTkyYjc4ZmYxMmE1MGQ2ZjNlNGMyNzM2M2I3ZDkzOWQzNDlhYTQ0YjA4ZDA$MnDSRROuc5IhqMydpw5wwxY8SPG4OKdnsDncgzhqKPqNfnz9OIHOmXR3Vee8+/ijwixH3wmjNTyD1rmCusIUAoJYi9SW9XmRNPGcAi9oDCVz1IHEoBbzT4NdYGcf2qzUVALeXyEYHQysWIq+uc5Yr79lhXbFoN2a/bO0rOvG5G0');
@@ -391,3 +438,4 @@ exports.check_lecture_major = check_lecture_major;
 exports.get_lecture_name = get_lecture_name;
 exports.get_lecture_edit_info = get_lecture_edit_info;
 exports.update_lecture = update_lecture;
+exports.get_lecture_table = get_lecture_table;

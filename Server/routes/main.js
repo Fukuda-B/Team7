@@ -35,6 +35,7 @@ const CRYP = require('./cryp.js').CRYP;
 const get_key = require('./cryp.js').get_key;
 const database = require('./database.js');
 const output = require('./output.js');
+const { response } = require('express');
 
 var key_timeout = 7777; // ms
 
@@ -207,21 +208,56 @@ router
 						});
 						break;
 					default: // default (main?p=home)
-						var tx = 'home';
-						var out_table = await database.create_teacher_table(req.user, tx) +
-							'</td><td>一括保存</td><td></td><td></td><td></td><td></td><td></td><td></td>' +
-							'<td id="td_dl">' +
-							'<a href="/main"><i class="fas fa-file-download"></i>csv</a>' +
-							'<a href="/main"><i class="fas fa-file-download"></i>xlsx</a>' +
-							'</td></tr>';
-						res.render('home', {
-							title: 'Team7 - マイページ',
-							lecture_table: out_table,
-							user_id: database.get_user_id(req.user),
-							top_bar_link: '/main/logout',
-							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
-						});
+            if (req.query.format) { // ファイルダウンロード
+              if (req.query.dl == false) { // 一括ダウンロード
+
+              } else { // 1科目だけダウンロード
+                var check_lecture = await database.check_lecture(req.user, req.query.dl);
+                if (check_lecture) { // 担当の講義か
+                  var lecture_table = await database.get_lecture_table(req.query.dl);
+                  if (lecture_table) { // テーブルが存在するか
+                    if (req.query.format == 'csv') {
+                      var fname = req.query.dl+'_csv.csv';
+                      var send_callback = function() {
+                        var raw = fs.createReadStream(fname);
+                        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+                        raw.pipe(res);
+                      }
+                      output.csv_gen(lecture_table, fname, send_callback);
+                    } else {
+                      var fname = req.query.dl+'_xlsx.xlsx';
+                      var send_callback = function() {
+                        var raw = fs.createReadStream(fname);
+                        res.writeHead(200, {'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','Content-disposition': 'attachment; filename = '+fname});
+                        raw.pipe(res);
+                      }
+                      output.xlsx_gen(lecture_table, fname, send_callback);
+                    }
+                  } else {
+                    res.send('error');
+                  }
+                } else {
+                  res.send('担当していない講義です。');
+                }
+              }
+
+            } else { // 通常
+              var tx = 'home';
+              var out_table = await database.create_teacher_table(req.user, tx) +
+                '</td><td>一括保存</td><td></td><td></td><td></td><td></td><td></td><td></td>' +
+                '<td id="td_dl">' +
+                '<a href="/main?dl=fasle&format=csv" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-download"></i>csv</a>' +
+                '<a href="/main?dl=false&format=xlsx" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-download"></i>xlsx</a>' +
+                '</td></tr>';
+              res.render('home', {
+                title: 'Team7 - マイページ',
+                lecture_table: out_table,
+                user_id: database.get_user_id(req.user),
+                top_bar_link: '/main/logout',
+                top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+                dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
+              });
+            }
 						break;
 				}
 			} else { // 管理者ではない場合

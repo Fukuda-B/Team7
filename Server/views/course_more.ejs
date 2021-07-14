@@ -17,8 +17,8 @@
       <h3><a id="prev_link" href="/main?p=course">コース</a> > <%- title %> 出欠一覧</h3>
         <div id="edit_fie">
           <p>表示を強調する条件<br><br>
-            欠席 <input type="number" name="sample" id="absence" value="<%- absence_v %>"/> 回&emsp;&emsp;&emsp;
-            遅刻 <input type="number" name="sample" id="lateness" value="<%- lateness_v %>"/> 回</p>
+            欠席 <input type="number" name="sample" id="absence" value="<%- absence_v %>"/> 回以上&emsp;&emsp;&emsp;
+            遅刻 <input type="number" name="sample" id="lateness" value="<%- lateness_v %>"/> 回以上</p>
             <button id="apply" onclick="update();">適用</button>
           </div>
         <table id="lecture_table_val">

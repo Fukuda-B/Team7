@@ -2,11 +2,12 @@
     Team7 server js - output module | Update: 2021/07/14
 */
 
+const fs = require('fs');
 const xlsx = require('xlsx');
 const csv = require('csv');
 
 // ----- xlsxファイル生成 -----
-function xlsx_gen(data, fname) {
+async function xlsx_gen(data, fname, callback) {
 	var xutil = xlsx.utils;
 	(async () => {
 		let wb = xutil.book_new();
@@ -15,14 +16,31 @@ function xlsx_gen(data, fname) {
 		xutil.book_append_sheet(wb, ws, ws_name);
 		xlsx.writeFile(wb, fname);
 		console.log('created: ' + fname);
+		callback();
+		try {
+			fs.unlinkSync(fname);
+		} catch {
+			console.log('Failed to delete '+fname);
+		}
 	})();
 }
 
 // ----- csvファイル生成 -----
-function csv_gen(data, fname) {
+async function csv_gen(data, fname, callback) {
 	csv.stringify(data, (error, output) => {
 		fs.writeFile(fname, output, (error) => {
-			console.log('created: ' + fname);
+			if (error) {
+				console.log(error);
+			} else {
+				console.log('created: ' + fname);
+				callback();
+				try {
+					fs.unlinkSync(fname);
+				} catch {
+					console.log('Failed to delete '+fname);
+				}
+			}
+			return;
 		})
 	})
 }
