@@ -277,7 +277,7 @@ router
             var check_lecture = await database.check_lecture_major(req.user, req.query.l);
             if (check_lecture) {
               var lecture_student = await database.create_lec_lecture_table(req.user, req.query.l);
-              res.render('course_more', {
+              res.render('course_more_s', {
                 title: await database.get_lecture_name(req.query.l),
                 lecture_table: lecture_student,
                 user_id: database.get_user_id(req.user),
