@@ -29,30 +29,30 @@ cd Electron
 ```
 
 ## Directory  
-```py
+```
 Team7  
 　├ CardReader (カードリーダ)  
 　│　└ main.py, modules  
 　│
-　├ Electron (クライアントアプリ)  
+　├ Electron   (クライアントアプリ)  
 　│　└ main.js  
 　│
 　├ Nginx  
 　│　└ nginx.conf  
 　│
-　├ Server (サーバ)  
-　│　└ app (ルーティング)  
+　├ Server    (サーバ)  
+　│　└ app    (ルーティング)  
 　│　└ routes  
-　│　　　└ main (メイン処理)  
-　│　　　└ api (webapi処理モジュール)  
-　│　　　└ database (データベースモジュール)  
-　│　　　└ cryp (暗号化モジュール)  
-　│　　　└ output (csv, xlsx 処理モジュール)  
+　│　　　└ main.js     (メイン処理)  
+　│　　　└ api.js      (webapi処理モジュール)  
+　│　　　└ database.js (データベースモジュール)  
+　│　　　└ cryp.js     (暗号化モジュール)  
+　│　　　└ output.js   (csv, xlsx 処理モジュール)  
 　│　└ public (表示用ファイル)  
 　│　　　└ css  
 　│　　　└ img  
 　│　　　└ js  
-　│　└ view (ejs レンダリングファイル)  
+　│　└ view   (ejs レンダリングファイル)  
   
 ```
 
