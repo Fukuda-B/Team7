@@ -27,3 +27,32 @@ Build electron package for Windows, Linux, MacOS :
 cd Electron
 ./electron_build.bat
 ```
+
+## Directory  
+```py
+Team7  
+　├ CardReader (カードリーダ)  
+　│　└ main.py, modules  
+　│
+　├ Electron (クライアントアプリ)  
+　│　└ main.js  
+　│
+　├ Nginx  
+　│　└ nginx.conf  
+　│
+　├ Server (サーバ)  
+　│　└ app (ルーティング)  
+　│　└ routes  
+　│　　　└ main (メイン処理)  
+　│　　　└ api (webapi処理モジュール)  
+　│　　　└ database (データベースモジュール)  
+　│　　　└ cryp (暗号化モジュール)  
+　│　　　└ output (csv, xlsx 処理モジュール)  
+　│　└ public (表示用ファイル)  
+　│　　　└ css  
+　│　　　└ img  
+　│　　　└ js  
+　│　└ view (ejs レンダリングファイル)  
+  
+```
+
