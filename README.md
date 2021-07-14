@@ -32,7 +32,8 @@ cd Electron
 ```
 Team7  
 　├ CardReader (カードリーダ)  
-　│　└ main.py, modules  
+　│　└ main.py  
+　│　└ main_window.py  
 　│
 　├ Electron   (クライアントアプリ)  
 　│　└ main.js  
