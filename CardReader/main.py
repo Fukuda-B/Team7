@@ -178,19 +178,21 @@ class IC():
 
         lecture_id = 'W3_1' # 講義のID
         lecture_no = '11' # 講義の第何回目か
-        user_name = self.rand_hex_gen(10) # 出席した人の名前
+        # user_name = self.rand_hex_gen(10) # 出席した人の名前
+        student_id = self.rand_hex_gen(10) # 出席した人の名前
         user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
         result = '出席' # 出席/遅刻/欠席
         # now_date = now_date # 現在の時刻
-        self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
+        self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
 
         send_data = {
             "lecture_id": lecture_id,
-            "lecture_no": lecture_no,
-            "user_name": user_name,
-            "user_idm": user_idm,
+            "week": lecture_no,
+            # "user_name": user_name,
+            "student_id": student_id,
             "result": result,
-            "date": now_date
+            "date": now_date,
+            "user_idm": user_idm,
         }
         asyncio.run(self.net.send(send_data)) # データの送信
         # self.sound()

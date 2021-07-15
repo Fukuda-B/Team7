@@ -39,12 +39,12 @@ router
   // .get('/v1/gkey', function (req, res) {
   //     res.send(get_key(user_list.b));
   // })
-  .get('/v1/argon2', function (req, res) { // argon2のハッシュ値導出
-    CRYP.argon2_h(req.query.x, bank_api).then((val) => {
-      console.log(val);
-      res.send(val);
-    });
-  })
+  // .get('/v1/argon2', function (req, res) { // argon2のハッシュ値導出
+  //   CRYP.argon2_h(req.query.x, bank_api).then((val) => {
+  //     console.log(val);
+  //     res.send(val);
+  //   });
+  // })
 
   // POST req
   .post('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
