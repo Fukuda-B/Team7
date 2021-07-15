@@ -40,6 +40,7 @@ from passlib.hash import argon2
 from pathlib import Path
 from io import BytesIO
 import random
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 # モジュールの読み込み
 import main_window # メインウィンドウを表示するモジュール
@@ -110,6 +111,8 @@ class Sub():
         self.thread_handle=threading.Thread(target=ic_card.start) # 別スレッドとして生成
         self.thread_handle.setDaemon(True)
         self.thread_handle.start()
+        # ec = Encryption()
+        # print(ec.aes_d(ec.aes_e('B')))
 
     def interval(self):
         ''' 定期実行 '''
@@ -305,20 +308,27 @@ class Encryption():
         self.key = 'hi_Team7'.encode('utf-8')
         self.iv = 'hi_Team7'.encode('utf-8')
         self.salt = 'hi_Team7'.encode('utf-8')
-        self.k_aes = '$argon2id$v=19$m=10240,t=5,p=2$aGlfVGVhbTc$DRHCMsKSR6ACYFzC6Vrk69JuglH+bHLkPJQT76cDNIHhnoUMTTtmOI5K4e2AufEzMBvgOyZLtKECgEyjvnGcD+BpBR1wksLwtrrGyg+iOubPV4QjOPfqzttI/HcsyRQfNaNogZUaVu3SALqxXDkUEbNKRKVnHGVcxgoy+/+Zu5E' # TeamB
+        # $argon2id$v=19$m=10240,t=5,p=2$aGlfVGVhbTc$DRHCMsKSR6ACYFzC6Vrk69JuglH+bHLkPJQT76cDNIHhnoUMTTtmOI5K4e2AufEzMBvgOyZLtKECgEyjvnGcD+BpBR1wksLwtrrGyg+iOubPV4QjOPfqzttI/HcsyRQfNaNogZUaVu3SALqxXDkUEbNKRKVnHGVcxgoy+/+Zu5E # TeamB
+        self.iv_aes = 'aGlfVGVhbTc$DRHC'.encode('utf-8') # TeamB
+        self.key_aes = 'SALqxXDkUEbNKRKVnHGVcxgoy+/+Zu5E'.encode('utf-8')
 
     def argon2(self, data):
-        ''' ハッシュ化 '''
-        data = argon2.using(type="ID", salt=self.salt, parallelism=2, rounds=5, memory_cost=1024*10, digest_size=128).hash(data)
-        return data
+        ''' ハッシュ化 (nodejsと同じパラメータでも、出力は異なることに注意) '''
+        return argon2.using(type="ID", salt=self.salt, parallelism=2, rounds=5, memory_cost=1024*10, digest_size=128).hash(data)
 
     def aes_e(self, data):
         ''' AES暗号化 '''
-        return data
-    
-    def aes_d(self, data):
+        cipher = Cipher(algorithms.AES(self.key_aes), modes.CBC(self.iv_aes))
+        encryptor = cipher.encryptor()
+        ct = encryptor.update(data) + encryptor.finalize()
+        return ct
+
+
+    def aes_d(self, ct):
         ''' AES復号 '''
-        return data
+        cipher = Cipher(algorithms.AES(self.key_aes), modes.CBC(self.iv_aes))
+        decryptor = cipher.decryptor()
+        return decryptor.update(ct) + decryptor.finalize()
 
 # 実行
 if __name__ == "__main__":

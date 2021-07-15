@@ -9,3 +9,4 @@ passlib
 argon2_cffi
 aiohttp
 pathlib
+cryptography
