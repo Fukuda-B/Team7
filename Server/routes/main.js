@@ -58,16 +58,16 @@ passport.use(new LocalStrategy({
   	var pass = CRYP.decryptoo(password, tmp_p);
     //var pass = password;
 
-		console.log('--------------------');
-		console.log({
-			"user": username,
-			"pass": password
-		});
-		console.log({
-			"user": user,
-			"pass": pass
-		});
-		console.log('--------------------');
+		// console.log('--------------------');
+		// console.log({
+		// 	"user": username,
+		// 	"pass": password
+		// });
+		// console.log({
+		// 	"user": user,
+		// 	"pass": pass
+		// });
+		// console.log('--------------------');
 
 		if (await database.check_user(user, pass)) {
 			return done(null, user);
@@ -328,9 +328,12 @@ router
 	// POST req
 	.post('/update', isAuthenticated, async function(req, res) { // パスワードの更新
 		if (req.body.old_pass && req.body.new_pass) {
+      var tmp_p = bank; // 処理中に更新されても大丈夫なように
 			var op = decodeURIComponent(req.body.old_pass);
 			var np = decodeURIComponent(req.body.new_pass);
-			var result = await database.update_pass(req.user, op, np);
+      op = CRYP.decryptoo(op, tmp_p);
+      np = CRYP.decryptoo(np, tmp_p);
+        var result = await database.update_pass(req.user, op, np);
 			if (result) {
 				res.send('ok');
 			} else {
