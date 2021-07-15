@@ -53,20 +53,21 @@ passport.use(new LocalStrategy({
 		passwordField: "password",
 	},
 	async (username, password, done) => {
-		var user = CRYP.decryptoo(username, bank),
-			// pass = CRYP.decryptoo(password, bank);
-			pass = password
+    var tmp_p = bank; // 処理中に更新されても大丈夫なように
+		var user = CRYP.decryptoo(username, tmp_p);
+  	var pass = CRYP.decryptoo(password, tmp_p);
+    //var pass = password;
 
-		// console.log('--------------------');
-		// console.log({
-		// 	"user": username,
-		// 	"pass": password
-		// });
-		// console.log({
-		// 	"user": user,
-		// 	"pass": password
-		// });
-		// console.log('--------------------');
+		console.log('--------------------');
+		console.log({
+			"user": username,
+			"pass": password
+		});
+		console.log({
+			"user": user,
+			"pass": pass
+		});
+		console.log('--------------------');
 
 		if (await database.check_user(user, pass)) {
 			return done(null, user);

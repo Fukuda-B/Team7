@@ -305,6 +305,7 @@ class Encryption():
         self.key = 'hi_Team7'.encode('utf-8')
         self.iv = 'hi_Team7'.encode('utf-8')
         self.salt = 'hi_Team7'.encode('utf-8')
+        self.k_aes = '$argon2id$v=19$m=10240,t=5,p=2$aGlfVGVhbTc$DRHCMsKSR6ACYFzC6Vrk69JuglH+bHLkPJQT76cDNIHhnoUMTTtmOI5K4e2AufEzMBvgOyZLtKECgEyjvnGcD+BpBR1wksLwtrrGyg+iOubPV4QjOPfqzttI/HcsyRQfNaNogZUaVu3SALqxXDkUEbNKRKVnHGVcxgoy+/+Zu5E' # TeamB
 
     def argon2(self, data):
         ''' ハッシュ化 '''
