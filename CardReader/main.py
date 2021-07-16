@@ -41,6 +41,7 @@ from pathlib import Path
 from io import BytesIO
 import random
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
 
 # モジュールの読み込み
 import main_window # メインウィンドウを表示するモジュール
@@ -111,8 +112,9 @@ class Sub():
         self.thread_handle=threading.Thread(target=ic_card.start) # 別スレッドとして生成
         self.thread_handle.setDaemon(True)
         self.thread_handle.start()
-        # ec = Encryption()
-        # print(ec.aes_d(ec.aes_e('B')))
+
+        ec = Encryption()
+        print(ec.aes_d(ec.aes_e("test")))
 
     def interval(self):
         ''' 定期実行 '''
@@ -318,17 +320,26 @@ class Encryption():
 
     def aes_e(self, data):
         ''' AES暗号化 '''
+        if (type(data) is not bytes): # bytes型に変換して暗号化する
+            data = data.encode("shift-jis")
+        padder = padding.PKCS7(256).padder() # change padding
+        padded_data = padder.update(data)
+        padded_data += padder.finalize()
+
         cipher = Cipher(algorithms.AES(self.key_aes), modes.CBC(self.iv_aes))
         encryptor = cipher.encryptor()
-        ct = encryptor.update(data) + encryptor.finalize()
+        ct = encryptor.update(padded_data) + encryptor.finalize()
         return ct
-
 
     def aes_d(self, ct):
         ''' AES復号 '''
         cipher = Cipher(algorithms.AES(self.key_aes), modes.CBC(self.iv_aes))
         decryptor = cipher.decryptor()
-        return decryptor.update(ct) + decryptor.finalize()
+        data = decryptor.update(ct) + decryptor.finalize()
+
+        unpadder = padding.PKCS7(256).unpadder()
+        data = unpadder.update(data)
+        return (data + unpadder.finalize()).decode("shift-jis")
 
 # 実行
 if __name__ == "__main__":
