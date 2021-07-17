@@ -34,6 +34,3 @@ for g in range(0,2):
 
             #ここから時間比較
             #if not(df_IDm.empty):
-
-
-        

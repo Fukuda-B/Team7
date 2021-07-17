@@ -138,6 +138,49 @@ class Sub():
             res = asyncio.create_task(self.nc.netstat())
             self.nws = await res
 
+# ----- Attendance -----
+# 出席の判定、履修確認など
+class Attendance():
+    def __init__(self):
+        # self.teacher_id = "P001"
+        pass
+
+    def check_taking_lecture(self, lectrue, idm):
+        ''' 履修しているか確認する '''
+        return
+
+    def check_lecture(self, youbi, dt):
+        ''' 指定された曜日,時間の科目を取得 '''
+        before_time = 10 # 開始時間前の範囲 (分)
+        csv_file = open("./lecture_rules.csv", "r", encoding="utf-8", errors="", newline="" )
+        f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
+        next(f) # header
+        arr = []
+        dt_time = list(map(int, [datetime.datetime.strftime(dt,'%H'), datetime.datetime.strftime(dt, '%M'), datetime.datetime.strftime(dt, '%S')]))
+        for row in f:
+            arr.append(row)
+
+        res = []
+        for i in range(len(arr)):
+            if str(arr[i][10]) != str(youbi): continue
+            cp_stime = list(map(int, arr[i][4].split(':'))) # 開始時刻
+            cp_etime = list(map(int, arr[i][5].split(':'))) # 終了時刻
+            if int(cp_stime[0]) != 0 or int(cp_stime[1]) > before_time: # 開始時間前の範囲を計算
+                cp_stime[0] = int((cp_stime[0]*60+cp_stime[1]-before_time)/60)
+                cp_stime[1] = int((cp_stime[0]*60+cp_stime[1]-before_time)%60)
+            else:
+                cp_stime[0] = int((24*60-(before_time%1440))/60)
+                cp_stime[1] = int((24*60-(before_time%1440))%60)
+
+            if datetime.time(dt_time[0], dt_time[1], 0) > datetime.time(cp_stime[0], cp_stime[1], 0)\
+            and datetime.time(dt_time[0], dt_time[1], 0) < datetime.time(cp_etime[0], cp_etime[1], 0):
+                res.append(arr[i])
+        return res
+
+    def check_attend(self, idm, dt):
+        ''' 指定された時刻で出欠を判定 '''
+        return
+
 # ----- IC -----
 # ICカードのidm読み取り
 class IC():
@@ -159,11 +202,15 @@ class IC():
             now_date = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
             asyncio.run(self.net.send({"idm":self.idm, "date":now_date})) # データの送信
 
-            lecture_id = 'W3_1' # 講義のID
+            t = '2021-07-16 14:50:00'
+            dt = datetime.datetime.strptime(t, '%Y-%m-%d %H:%M:%S')
+            youbi = datetime.datetime.strftime(dt, '%a')
+
+            lecture_id = check_lecture() # 講義のID
             lecture_no = '11' # 講義の第何回目か
             user_name = self.rand_hex_gen(10) # 出席した人の名前
-            user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
-            result = '出席' # 出席/遅刻/欠席
+            user_idm = self.idm # 出席した人のidm
+            result = check_attend() # 出席/遅刻/欠席
             # now_date = now_date # 現在の時刻
             self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
 
@@ -302,7 +349,6 @@ class Network():
         except:
             return False
 
-
 # ----- Encryption -----
 # 暗号化/復号、ハッシュ導出
 class Encryption():
@@ -319,7 +365,7 @@ class Encryption():
         return argon2.using(type="ID", salt=self.salt, parallelism=2, rounds=5, memory_cost=1024*10, digest_size=128).hash(data)
 
     def aes_e(self, data):
-        ''' AES暗号化 '''
+        ''' AES暗号化 パディングはPKCS7-256'''
         if (type(data) is not bytes): # bytes型に変換して暗号化する
             data = data.encode("shift-jis")
         padder = padding.PKCS7(256).padder() # change padding
@@ -332,7 +378,7 @@ class Encryption():
         return ct
 
     def aes_d(self, ct):
-        ''' AES復号 '''
+        ''' AES復号 パディングはPKCS7-256'''
         cipher = Cipher(algorithms.AES(self.key_aes), modes.CBC(self.iv_aes))
         decryptor = cipher.decryptor()
         data = decryptor.update(ct) + decryptor.finalize()
