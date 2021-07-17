@@ -142,17 +142,36 @@ class Sub():
 # 出席の判定、履修確認など
 class Attendance():
     def __init__(self):
+        self.lecture_rules = "./lecture_rules.csv" # サーバから受け取った科目ルールのcsv (utf-8)
+        self.student_timetable = "./student_timetable.csv" # 履修状況のcsv (utf-8)
         # self.teacher_id = "P001"
-        pass
 
-    def check_taking_lecture(self, lectrue, idm):
+    def check_taking_lecture(self, lecture_id, idm):
         ''' 履修しているか確認する '''
-        return
+        before_time = 10 # 開始時間前の範囲 (分)
+        csv_file = open(self.student_timetable, "r", encoding="utf-8", errors="", newline="" )
+        f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
+        head_list = next(f) # header
+        try: lecture_index = head_list.index(lecture_id) # 指定された科目の列
+        except ValueError: return False # lecture_id の 講義がない場合
+        arr = []
+        idm_list = [] # idmだけ
+        print(f)
+        res = False
+        for row in f:
+            arr.append(row)
+            idm_list.append(row[3])
+            if str(row[3]) == str(idm): break
+        student_index = idm_list.index(str(idm)) # idmのインデックス取得
+        try: result_val = arr[student_index][lecture_index] # 履修状況の値を取得してみる
+        except ValueError: return False # 値が存在しない場合
+        if result_val == "履修": return True # 履修者
+        else: return False
 
     def check_lecture(self, youbi, dt):
         ''' 指定された曜日,時間の科目を取得 '''
         before_time = 10 # 開始時間前の範囲 (分)
-        csv_file = open("./lecture_rules.csv", "r", encoding="utf-8", errors="", newline="" )
+        csv_file = open(self.lecture_rules, "r", encoding="utf-8", errors="", newline="" )
         f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         next(f) # header
         arr = []
