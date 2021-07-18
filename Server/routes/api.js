@@ -30,12 +30,31 @@ router
     res.header('Content-Type', 'application/json; charset=utf-8');
     res.send(JSON.stringify(send_test));
   })
-  .get('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
+  .get('/v1/team7', isAuthenticated_nos, async function (req, res) { // APIエンドポイント
     var val = req.body;
     val.x = '*****';
     send_test.push(val);
     console.log(send_test);
-    res.send('ok');
+    var result = await database.add_attendance_api(req.body);
+    if (result) {
+      res.send('ok');
+    } else {
+      res.send('error');
+    }
+  })
+  .get('/v1/lecture_date', isAuthenticated_nos, async function (req, res) {
+    var val = await database.create_lecture_date_api();
+    if (val) {
+      var fname = 'lecture_date.csv';
+      var send_callback = function() {
+        var raw = fs.createReadStream(fname);
+        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+        raw.pipe(res);
+      }
+      output.csv_gen(val, fname, send_callback);
+    } else {
+      res.send('error');
+    }
   })
   .get('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_student_list_api();
@@ -76,14 +95,32 @@ router
   // })
 
   // POST req
-  .post('/v1/team7', isAuthenticated_nos, function (req, res) { // APIエンドポイント
+  .post('/v1/team7', isAuthenticated_nos, async function (req, res) { // APIエンドポイント
     var val = req.body;
     val.x = '*****';
     send_test.push(val);
     console.log(send_test);
-    res.send('ok');
+    var result = await database.add_attendance_api(req.body);
+    if (result) {
+      res.send('ok');
+    } else {
+      res.send('error');
+    }
   })
-  .post('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
+  .post('/v1/lecture_date', isAuthenticated_nos, async function (req, res) {
+    var val = await database.create_lecture_date_api();
+    if (val) {
+      var fname = 'lecture_date.csv';
+      var send_callback = function() {
+        var raw = fs.createReadStream(fname);
+        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+        raw.pipe(res);
+      }
+      output.csv_gen(val, fname, send_callback);
+    } else {
+      res.send('error');
+    }
+  })  .post('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_lecture_rules_api();
     if (val) {
       var fname = 'lecture_rules.csv';

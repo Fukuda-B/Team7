@@ -474,6 +474,54 @@ async function create_student_timetable_api() {
   }
 }
 
+// ----- WebAPI lecture_dateのcsv -----
+async function create_lecture_date_api() {
+  var lecture_val = await db_query('SELECT lecture_id, weeks FROM team7.lecture_rules');
+  var lecture_list = []; // 講義リスト
+  var max_week = 0;
+  for (var row of lecture_val) {
+    if (max_week < row.weeks) max_week = row.weeks;
+    lecture_list.push(row.lecture_id);
+  }
+  var ix;
+  var arr = [];
+  var lecture_date_val = await db_query('SELECT * FROM team7.lecture_date');
+  var week_arr = ["lecture_id"];
+  var week_arr_c = [];
+  for (var i = 0; i < max_week; i++) {
+    week_arr.push(i+1);
+    week_arr_c.push('');
+  }
+  for (var row of lecture_list) {
+    arr.push([row].concat(week_arr_c));
+  }
+  var date, tmp, year, month, day;
+  for (var row of lecture_date_val) {
+    ix = lecture_list.indexOf(row.lecture_id);
+    date = Date.parse(row.date); // パース
+    tmp = new Date(date); // date型に
+    date = tmp.toISOString();
+    arr[ix][row.week] = date.slice(0,10);
+  }
+  return [week_arr].concat(arr);
+}
+
+// ----- WebAPI lecture_dateのcsv -----
+async function add_attendance_api(req_body) {
+  try {
+    var rb = req_body;
+    var pre_pack = [rb.lecture_id, rb.week, rb.user_idm];
+    var ck = await db_query('SELECT * FROM team7.attendance WHERE lecture_id = ? AND `week` = ? AND idm = ?', pre_pack);
+    if (ck.length == 0) { // 重複して追加しないように..
+      var pack = [rb.lecture_id, rb.student_id, rb.week, rb.result, rb.date, rb.user_idm, rb.lecture_id, rb.weekm, rb.idm];
+      await db_query('INSERT INTO team7.attendance (lecture_id, student_id, `week`, result, `datetime`, idm) SELECT ?, ?, ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS(SELECT "x" FROM team7.attendance WHERE lecture_id=? AND `week`=? AND idm=?);', pack);
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // ----- テスト -----
 // (async () => {
 //   var ans = await check_user('S001', '$argon2id$v=19$m=10240,t=5,p=2$NGU3ZTc3ZmY0YWIzMGEyZWYyNjNjNjNlOTAzY2U0MDc2YTNiMWZlYjJhZmQ2MDI2NjgyMWM5MjhlNDdkODA4ZDIyNGM1YTMxYjFiOWExZmI0YzM5ZWFjMGFhMTRkMTIwMzFkZGY4MGIxMGU0NDhiODI5NmRlNzVlMjJiMmMxY2UwNDFkNzc4NDQ5ZjJhMWI2MGJiODQyOWVmN2ZkNDBkNDEzOTc1YTZlZGFjNTcwYzA2NThkZmZjMmIzYjU3ZDZlNjI5ODg2MmI1OTk3Y2M5MTdhMWZhZDQ5MGJiMjBhYzg1MzMxYWNjOWQxMDRiOTdmYTQzMmVkZTRjZDM1NTJmY2M2YjFmYjI1OWEzZmQ1NTg4OWVlNGViOGM0NmMyNjJhYTYzNzMzYmUyMmRhZGExMjg5OTUxNGVhY2RlOTk2ZTI1MzUwYTMzNTIyMWU4NGE0Mzg0OTJiMDQ1ZTU0NTMyZDA1YWE5OThiNzliMjkwOTc2OGNkYzAzMTVlMjkzMzA5OWY3NmRkODE1OGUzMzNhN2I3M2Q5YWI0ODE4NDRkZDhlMWEzOTFiYTRiMTdkMjc5NjlkNjNlZGIwMTY1NWRjNDEyNDhmOWUzMTNiNTJhNmNjN2JiOTkyYjc4ZmYxMmE1MGQ2ZjNlNGMyNzM2M2I3ZDkzOWQzNDlhYTQ0YjA4ZDA$MnDSRROuc5IhqMydpw5wwxY8SPG4OKdnsDncgzhqKPqNfnz9OIHOmXR3Vee8+/ijwixH3wmjNTyD1rmCusIUAoJYi9SW9XmRNPGcAi9oDCVz1IHEoBbzT4NdYGcf2qzUVALeXyEYHQysWIq+uc5Yr79lhXbFoN2a/bO0rOvG5G0');
@@ -498,3 +546,5 @@ exports.update_lecture = update_lecture;
 exports.get_lecture_table = get_lecture_table;
 exports.create_lecture_rules_api = create_lecture_rules_api;
 exports.create_student_timetable_api = create_student_timetable_api;
+exports.create_lecture_date_api = create_lecture_date_api;
+exports.add_attendance_api = add_attendance_api;

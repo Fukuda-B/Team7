@@ -49,10 +49,16 @@ import main_window # メインウィンドウを表示するモジュール
 
 # ----- 定数宣言 -----
 SERVER_URI = 'http://localhost:3000/api/v1/team7'
+WebAPI_URI = [
+    "http://localhost:3000/api/v1/lecture_rules",
+    "http://localhost:3000/api/v1/student_timetable",
+    "http://localhost:3000/api/v1/lecture_date"
+]
 # SERVER_URI = 'http://172.28.92.72:8080/api/v1/team7' # 実習用PC Team7-sub IP
 try:
     f = open('WebAPI_Key.txt', 'r', encoding='utf-8')
     API_KEY = f.read()
+    f.close()
 except:
     # API_KEY = 'ee038e2b7542dcfa599e96aefccd33cdc199adf5f061274689aa0b9341f5cef890884b03c9641338f7dd7bd2e791e43f5a26b7639a828f54a49738b751163a08a8e7f74ba21f90de8ca1de10edd91bf67169839c10bc0359cad86b70887aa887b046f0c63582f6f63612d12033ca856fe28db812ab1cb8e2b00c1b40c6a72b350f93f4691f0b3c008c174cb8465fccd6c75989047965804ec8d283ea71144e935ec35b2e40a59819c6a55b0d504549b7685dfaabb06bc19a3a8ba1964f34258be47569686ce26cabef94cd0c0dc318253c28ac4785fdd0b05f2b27345f74ed0a9e710ed5312f1a072e4b1397145877bf1e272104449ba76531208462e9bd525891b10169bfbaf63108728e9b133c7bba4cfdaa891cd593c5d1348ae3f4111372a8efb48dec8c2b19e9216ca5563a92142a14e12d49e9e8456860f9c4589f2b7cca4bbc48c76f2b16e679ba0a8a30636af08ac3041cb40ba1bfd9e15f751adf31ddee18397604730eb5de5c187c492385c4d030358ca5ad6ed8ef710dacd209b92159abd87790a4f4a34b12d419feea50cc664900f5d2a40c72596fe4d1a897636d74d89ffb0017adde134d086041312181ca5de8ddee8b3b7d0bc73c2a68c9562b16820665cc1633122a55f88024e8f6e4e07c9c430d589ca23c435391cd7bf61e3fc7edc1ecc177110edbe0a02c0116d1e4902e36d762b35875691fcba3694eaee8376030f57b9aeb31d7470021bd1985cc16a2e084aae867aa7664dab724687782f88d1afff9c7940b154f18ccaecfcdb50af38284d60156d649c9e48a5b6602fa0590e830d07168f923e09d125fd04aaa8a8925bffbac472a4b0a1729c9b8d27ebd5ce9337901d68449e7e7930e70e70726a9bbf99a8bf95c8e6220592edb6d120a51f8ee7386412a6f8976e14cdd6b67ff19c13021d51f22c402d5430d5c7d15ee68719ccddeb5daebe62768205e8f430d314094e9e107e704b3fed730238c25151e1c02fb5be9cb66462f0475aadab607a199a7f9cb1294046e7cdfb186735f4df67317e2aa4d11b12bfbe81ac49352267397851161cef30418c5051eb51e80c35a819f38b79e340dc7ff8c2945aad4b86bc5ad9186467dc9dfd9ab32875a67aca78d0c55f2a6fcb5bc2cb03a11b7253adc17a7fcf54c24ddb5c99262ac425268c4ee5efcff09f835368ecd038ae704b6c6af163e88ae6a168f2c0b367b471a10692330df5c5d8dd8ee337965ea7812ec2d647c20680a8c0ef26262e4881341155678ca74aa77aa80ebc795ad59'
     print('WebAPI_Key.txt が存在しません。\n管理者 - 開発者向けページからコピーしてWebAPI_Key.txtを作成してください。')
@@ -107,6 +113,7 @@ class Sub():
         self.fps = 60 # update frame rate
         # network
         self.nc_check = 3 # network check interval (s)
+        self.db_check = 6 # database check interval (s)
         self.nc = Network()
         self.nws = '-' # network status
         # timer
@@ -119,8 +126,8 @@ class Sub():
         self.thread_handle.setDaemon(True)
         self.thread_handle.start()
 
-        ec = Encryption()
-        print(ec.aes_d(ec.aes_e("test")))
+        # ec = Encryption()
+        # print(ec.aes_d(ec.aes_e("test")))
 
     def interval(self):
         ''' 定期実行 '''
@@ -139,10 +146,14 @@ class Sub():
         asyncio.create_task(self.cs.update_i(current_time, self.nws)) # 画面の更新
 
     async def update_n(self):
-        ''' ネットワークの接続状況の確認 '''
+        ''' ネットワークの接続状況の確認, データベース更新 '''
         if (self.cnt%(self.fps*self.nc_check) == 0):
             res = asyncio.create_task(self.nc.netstat())
             self.nws = await res
+
+        if (self.cnt%(self.fps*self.db_check) == 0):
+            asyncio.create_task(self.nc.get(0))
+
 
 # ----- Attendance -----
 # 出席の判定、履修確認など
@@ -247,6 +258,34 @@ class Attendance():
         else: return '時間外です' # 時間外
         return False
 
+    def get_username(self, idm):
+        ''' idmからユーザ名取得 '''
+        csv_file = open(self.student_timetable, "r", encoding="utf-8", errors="", newline="" )
+        f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
+        next(f) # header
+        arr = []
+        for row in f:
+            arr.append(row)
+        for i in range(len(arr)):
+            if arr[i][3] == idm: return arr[i][1]
+        return False # リストに存在しない
+
+    def get_weeks(self, dt, lecture_id):
+        # dtはdatetime型であることに注意
+        ''' 何回目の講義か取得 '''
+        csv_file = open(self.lecture_date, "r", encoding="utf-8", errors="", newline="" )
+        f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
+        next(f) # header
+        arr = []
+        for row in f:
+            arr.append(row)
+        dt_date = str(datetime.datetime.strftime(dt, '%Y-%m-%d'))
+        for i in range(len(arr)):
+            if arr[i][0] == lecture_id:
+                for j in range(len(arr[i])): # とりあえず1000まで探索
+                    if arr[i][j] == dt_date: return j
+        return False
+
 # ----- IC -----
 # ICカードのidm読み取り
 class IC():
@@ -258,6 +297,7 @@ class IC():
         self.last = '' # last idm
         self.min_doubled = 10 # 重複するidmの一定時間読み込み禁止時間 (s)
         self.cs.ui.pushButton.clicked.connect(self.on_connect_dummy) # デバッグ用ボタンをクリックした時のイベント
+        self.attendance = Attendance() # class Attendance
 
     def on_connect(self, tag):
         ''' タッチされたときの動作 '''
@@ -268,15 +308,24 @@ class IC():
             now_date = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
             asyncio.run(self.net.send({"idm":self.idm, "date":now_date})) # データの送信
 
-            t = '2021-07-16 14:50:00'
-            dt = datetime.datetime.strptime(t, '%Y-%m-%d %H:%M:%S')
+            dt = datetime.datetime.now() # 現在時刻
             youbi = datetime.datetime.strftime(dt, '%a')
 
-            lecture_id = check_lecture() # 講義のID
-            lecture_no = '11' # 講義の第何回目か
-            user_name = self.rand_hex_gen(10) # 出席した人の名前
+            lecture_id = self.attendance.check_lecture(youbi, dt) # 講義のID
+            if len(lecture_id) > 1:
+                f = open('Subjects_Priority.txt', 'r', encoding='utf-8')
+                sp = f.read()
+                sp_l = sp.split('\n')
+                for i in range(len(sp_l)):
+                    if sp_l[i] == lecture_id[1]:
+                        lecture_id = lecture_id[1] # 置き換え
+                        break
+                if len(lecture_id) > 1: lecture_id = lecture_id[0] # 置き換えられてない = lecture_id[0]
+
+            lecture_no = self.attendance.get_weeks(dt, lecture_id) # 講義の第何回目か
+            user_name =  self.attendance.get_username(self.idm) # 出席した人の名前
             user_idm = self.idm # 出席した人のidm
-            result = check_attend() # 出席/遅刻/欠席
+            result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席
             # now_date = now_date # 現在の時刻
             self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
 
@@ -294,11 +343,12 @@ class IC():
         ''' デバッグ用 '''
         now_date = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
 
-        lecture_id = 'W3_1' # 講義のID
-        lecture_no = '11' # 講義の第何回目か
+        lecture_id = 'M2' # 講義のID
+        lecture_no = '1' # 講義の第何回目か
         # user_name = self.rand_hex_gen(10) # 出席した人の名前
-        student_id = self.rand_hex_gen(10) # 出席した人の名前
-        user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
+        user_idm = '012E44A7A5187429'
+        student_id = 'S001' # 出席した人の名前
+        # user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
         result = '出席' # 出席/遅刻/欠席
         # now_date = now_date # 現在の時刻
         self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
@@ -385,6 +435,7 @@ class Network():
         self.netCheckT = 3 # connection timeout
         self.server = SERVER_URI
         self.apiKey = API_KEY
+        self.apiuri = WebAPI_URI
         self.stat = False
 
     async def netstat(self):
@@ -414,6 +465,19 @@ class Network():
                     return resp.text() == 'ok'
         except:
             return False
+
+    async def get(self, opt):
+        data = {}
+        data["x"] = self.apiKey # 送信データにAPIの暗号鍵追加
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(self.apiurl[opt], data=data) as resp:
+                    async with open('lecture_rules_.csv', mode='w') as f:
+                        f.write(resp)
+                    return
+        except:
+            return False
+
 
 # ----- Encryption -----
 # 暗号化/復号、ハッシュ導出
