@@ -27,6 +27,7 @@ from asyncio.tasks import gather
 from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 import datetime
+import csv
 import sqlite3
 import binascii
 import nfc
@@ -144,11 +145,10 @@ class Attendance():
     def __init__(self):
         self.lecture_rules = "./lecture_rules.csv" # サーバから受け取った科目ルールのcsv (utf-8)
         self.student_timetable = "./student_timetable.csv" # 履修状況のcsv (utf-8)
-        # self.teacher_id = "P001"
+        self.before_time = 10 # 開始時間前の許容範囲 (分)
 
     def check_taking_lecture(self, lecture_id, idm):
         ''' 履修しているか確認する '''
-        before_time = 10 # 開始時間前の範囲 (分)
         csv_file = open(self.student_timetable, "r", encoding="utf-8", errors="", newline="" )
         f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         head_list = next(f) # header
@@ -169,36 +169,78 @@ class Attendance():
         else: return False
 
     def check_lecture(self, youbi, dt):
+        # dtはdatetime型であることに注意
         ''' 指定された曜日,時間の科目を取得 '''
-        before_time = 10 # 開始時間前の範囲 (分)
         csv_file = open(self.lecture_rules, "r", encoding="utf-8", errors="", newline="" )
         f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         next(f) # header
         arr = []
-        dt_time = list(map(int, [datetime.datetime.strftime(dt,'%H'), datetime.datetime.strftime(dt, '%M'), datetime.datetime.strftime(dt, '%S')]))
         for row in f:
             arr.append(row)
+
+        dt_time = datetime.time( # 指定時刻
+            int(datetime.datetime.strftime(dt,'%H')),
+            int(datetime.datetime.strftime(dt, '%M')),
+            int(datetime.datetime.strftime(dt, '%S'))
+        )
+        dt_time = datetime.datetime.combine(datetime.date.today(), dt_time)
 
         res = []
         for i in range(len(arr)):
             if str(arr[i][10]) != str(youbi): continue
-            cp_stime = list(map(int, arr[i][4].split(':'))) # 開始時刻
-            cp_etime = list(map(int, arr[i][5].split(':'))) # 終了時刻
-            if int(cp_stime[0]) != 0 or int(cp_stime[1]) > before_time: # 開始時間前の範囲を計算
-                cp_stime[0] = int((cp_stime[0]*60+cp_stime[1]-before_time)/60)
-                cp_stime[1] = int((cp_stime[0]*60+cp_stime[1]-before_time)%60)
-            else:
-                cp_stime[0] = int((24*60-(before_time%1440))/60)
-                cp_stime[1] = int((24*60-(before_time%1440))%60)
+            cp_stmp = list(map(int, arr[i][4].split(':'))) # 開始時刻の取り出し
+            cp_stime_base = datetime.time(cp_stmp[0], cp_stmp[1], 0) # time型にする
+            cp_stime_base = datetime.datetime.combine(datetime.date.today(), cp_stime_base) # time deltaはtime型では計算できないので今日の日付を加える
+            cp_stime = cp_stime_base - datetime.timedelta(minutes=self.before_time) # 開始時間前の範囲を計算
 
-            if datetime.time(dt_time[0], dt_time[1], 0) > datetime.time(cp_stime[0], cp_stime[1], 0)\
-            and datetime.time(dt_time[0], dt_time[1], 0) < datetime.time(cp_etime[0], cp_etime[1], 0):
+            cp_etmp = list(map(int, arr[i][5].split(':'))) # 終了時刻の取り出し
+            cp_etime = datetime.time(cp_etmp[0], cp_etmp[1], 59) # time型にする
+            cp_etime = datetime.datetime.combine(datetime.date.today(), cp_etime)
+
+            if dt_time >= cp_stime and dt_time < cp_etime:
                 res.append(arr[i])
         return res
 
-    def check_attend(self, idm, dt):
+    def check_attend(self, dt, lecture_id):
+        # dtはdatetime型であることに注意
         ''' 指定された時刻で出欠を判定 '''
-        return
+        csv_file = open(self.lecture_rules, "r", encoding="utf-8", errors="", newline="" )
+        f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
+        next(f) # header
+        arr = []
+        lecture_index_list = []
+        for row in f:
+            arr.append(row)
+            lecture_index_list.append(row[0])
+        try: lecture_index = lecture_index_list.index(lecture_id) # 指定された科目の列
+        except ValueError: return False # lecture_id の 講義がない場合
+        lecture_arr = arr[lecture_index]
+
+        dt_time = datetime.time( # 指定時刻
+            int(datetime.datetime.strftime(dt,'%H')),
+            int(datetime.datetime.strftime(dt, '%M')),
+            int(datetime.datetime.strftime(dt, '%S'))
+        )
+        dt_time = datetime.datetime.combine(datetime.date.today(), dt_time)
+
+        cp_stmp = list(map(int, lecture_arr[4].split(':'))) # 開始時刻の取り出し
+        cp_stime_base = datetime.time(cp_stmp[0], cp_stmp[1], 0) # datetime型にする
+        cp_stime_base = datetime.datetime.combine(datetime.date.today(), cp_stime_base)
+        cp_stime = cp_stime_base - datetime.timedelta(minutes=self.before_time) # 開始時間前の範囲を計算
+
+        cp_etmp = list(map(int, lecture_arr[5].split(':'))) # 終了時刻の取り出し
+        cp_etime = datetime.time(cp_etmp[0], cp_etmp[1], 59) # datetime型にする
+        cp_etime = datetime.datetime.combine(datetime.date.today(), cp_etime)
+
+        cp_atime = cp_stime_base + datetime.timedelta(minutes=int(lecture_arr[6])) # 出席限度時刻の計算
+        cp_ltime = cp_stime_base + datetime.timedelta(minutes=int(lecture_arr[7])) # 遅刻限度時刻の計算
+
+        if dt_time >= cp_stime and dt_time < cp_etime: # 開始時間より後 & 終了時間前 か判定
+            if dt_time < cp_atime : return '出席' # 出席判定
+            elif dt_time < cp_ltime : return '遅刻' # 遅刻判定
+            else: return '欠席' # 欠席判定
+        else: return '時間外です' # 時間外
+        return False
 
 # ----- IC -----
 # ICカードのidm読み取り
