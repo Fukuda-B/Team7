@@ -47,12 +47,13 @@ var CRYP = {
     return encrypted.ciphertext.toString();
   },
   // Decrypt
-  decryptoo: function (data, bank_api) {
+  decryptoo: function (data, bank) {
     var word = decodeURIComponent(data);
+    if (!bank) var bank = bank_api;
     var encryptedHexStr = CryptoJS.enc.Hex.parse(word);
     var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
-    var decrypted = CryptoJS.AES.decrypt(srcs, CryptoJS.enc.Utf8.parse(bank_api.key), {
-      iv: CryptoJS.enc.Utf8.parse(bank_api.iv),
+    var decrypted = CryptoJS.AES.decrypt(srcs, CryptoJS.enc.Utf8.parse(bank.key), {
+      iv: CryptoJS.enc.Utf8.parse(bank.iv),
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7
     });
@@ -70,7 +71,7 @@ var CRYP = {
     return decrypted.toString(CryptoJS.enc.Utf8).toString();
   },
   // Argon2
-  argon2_h: function (data, bank_api) {
+  argon2_h: function (data) {
     // var salt = bank_api.salt;
     return hashwasm.argon2id({
       password: data,

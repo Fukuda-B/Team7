@@ -19,6 +19,7 @@ const bank_api = require('./cryp.js').bank_api;
 const CRYP = require('./cryp.js').CRYP;
 const get_key = require('./cryp.js').get_key;
 const database = require('./database.js');
+const output = require('./output.js');
 
 var send_test = [] // リクエスト受け取りテスト
 
@@ -35,6 +36,24 @@ router
     send_test.push(val);
     console.log(send_test);
     res.send('ok');
+  })
+  .get('/v1/student_list', isAuthenticated_nos, async function (req, res) {
+    var val = await database.create_student_list_api();
+    if (val) {
+      var fname = 'student_list.csv';
+      var send_callback = function() {
+        var raw = fs.createReadStream(fname);
+        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+        raw.pipe(res);
+      }
+      output.csv_gen(val, fname, send_callback);
+    } else {
+      res.send('error');
+    }
+  })
+  .get('/v1/lecture_rules', isAuthenticated_nos, function (req, res) {
+  })
+  .get('/v1/student_timetable', isAuthenticated_nos, function (req, res) {
   })
   // .get('/v1/gkey', function (req, res) {
   //     res.send(get_key(user_list.b));
@@ -53,12 +72,40 @@ router
     send_test.push(val);
     console.log(send_test);
     res.send('ok');
-  });
+  })
+  .post('/v1/student_list', isAuthenticated_nos, async function (req, res) {
+    var val = await database.create_student_list_api();
+    if (val) {
+      var fname = 'student_list.csv';
+      var send_callback = function() {
+        var raw = fs.createReadStream(fname);
+        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+        raw.pipe(res);
+      }
+      output.csv_gen(val, fname, send_callback);
+    } else {
+      res.send('error');
+    }
+  })
+  .post('/v1/lecture_rules', isAuthenticated_nos, function (req, res) {
+  })
+  .post('/v1/student_timetable', isAuthenticated_nos, function (req, res) {
+  })
 
-function isAuthenticated_nos(req, res, next) {
-  if (database.check_user_api(req)) {
-    return next();
-  } else {
+async function isAuthenticated_nos(req, res, next) {
+  try {
+    if (req.query.x) {
+      var dec = CRYP.decryptoo(req.query.x, false);
+    } else if (req.body.x) {
+      var dec = CRYP.decryptoo(req.body.x, false);
+    }
+    var dec_p = JSON.parse(dec);
+    if (await database.check_user(dec_p.u, dec_p.p) && await database.check_user_admin(dec_p.u, dec_p.p)) {
+      return next(); // パスワードが合っていて、管理者
+    } else {
+      res.send('bad request');
+    }
+  } catch {
     res.send('bad request');
   }
 }

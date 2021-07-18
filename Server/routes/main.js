@@ -15,10 +15,9 @@
 
 	CSRF: Cross-Site Request Forgeries
 	CORS: Cross-Origin Resource Sharing
-		XSS: Cross Site Scripting
-
-		iv: 初期化ベクトル (initialization vector)
-		key: 暗号鍵 (key)
+	XSS: Cross Site Scripting
+	iv: 初期化ベクトル (initialization vector)
+	key: 暗号鍵 (key)
 
 	暗号化 ⇔ 復号 (復号化ではない)
 	パティング: 暗号アルゴリズムによるが、データ長はある値の倍長である必要があるときに余分な追加される
