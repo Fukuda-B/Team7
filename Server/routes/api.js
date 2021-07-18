@@ -37,10 +37,10 @@ router
     console.log(send_test);
     res.send('ok');
   })
-  .get('/v1/student_list', isAuthenticated_nos, async function (req, res) {
+  .get('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_student_list_api();
     if (val) {
-      var fname = 'student_list.csv';
+      var fname = 'lecture_rules.csv';
       var send_callback = function() {
         var raw = fs.createReadStream(fname);
         res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
@@ -51,9 +51,19 @@ router
       res.send('error');
     }
   })
-  .get('/v1/lecture_rules', isAuthenticated_nos, function (req, res) {
-  })
-  .get('/v1/student_timetable', isAuthenticated_nos, function (req, res) {
+  .get('/v1/student_timetable', isAuthenticated_nos, async function (req, res) {
+    var val = await database.create_student_timetable_api();
+    if (val) {
+      var fname = 'studnet_timetable.csv';
+      var send_callback = function() {
+        var raw = fs.createReadStream(fname);
+        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+        raw.pipe(res);
+      }
+      output.csv_gen(val, fname, send_callback);
+    } else {
+      res.send('error');
+    }
   })
   // .get('/v1/gkey', function (req, res) {
   //     res.send(get_key(user_list.b));
@@ -73,10 +83,10 @@ router
     console.log(send_test);
     res.send('ok');
   })
-  .post('/v1/student_list', isAuthenticated_nos, async function (req, res) {
-    var val = await database.create_student_list_api();
+  .post('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
+    var val = await database.create_lecture_rules_api();
     if (val) {
-      var fname = 'student_list.csv';
+      var fname = 'lecture_rules.csv';
       var send_callback = function() {
         var raw = fs.createReadStream(fname);
         res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
@@ -87,9 +97,19 @@ router
       res.send('error');
     }
   })
-  .post('/v1/lecture_rules', isAuthenticated_nos, function (req, res) {
-  })
-  .post('/v1/student_timetable', isAuthenticated_nos, function (req, res) {
+  .post('/v1/student_timetable', isAuthenticated_nos, async function (req, res) {
+    var val = await database.create_student_timetable_api();
+    if (val) {
+      var fname = 'studnet_timetable.csv';
+      var send_callback = function() {
+        var raw = fs.createReadStream(fname);
+        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+        raw.pipe(res);
+      }
+      output.csv_gen(val, fname, send_callback);
+    } else {
+      res.send('error');
+    }
   })
 
 async function isAuthenticated_nos(req, res, next) {

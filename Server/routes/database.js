@@ -400,18 +400,16 @@ async function get_lecture_table(lecture_id) {
   }
 }
 
-// ----- WebAPI student_listのcsv -----
-async function create_student_list_api() {
+// ----- WebAPI lecture_rulesのcsv -----
+async function create_lecture_rules_api() {
   try {
     var res_list = await db_query('SELECT * FROM team7.lecture_rules',);
     if (res_list) {
       var arr = [];
-      var row = [];
+      // var row = [];
       arr.push(["講義ID", "科目名", "ID", "教員名", "開始時間", "終了時間", "出席限度", "遅刻限度", "試験", "履修者", "曜日", "weeks"]);
-      for (var vv of res_list) {
-        row = vv[0];
-        console.log(vv[0]);
-        arr.push(
+      for (var row of res_list) {
+        arr.push([
           row.lecture_id,
           row.lecture_name,
           row.teacher_id,
@@ -424,9 +422,50 @@ async function create_student_list_api() {
           row.number_of_students,
           row.day_of_week,
           row.weeks
-        );
+        ]);
       }
       return arr;
+    } else {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+}
+
+// ----- WebAPI student_timetableのcsv -----
+async function create_student_timetable_api() {
+  try {
+    var lecture_val = await db_query('SELECT lecture_id FROM team7.lecture_rules');
+    var lecture_list = []; // 講義リスト
+    for (var row of lecture_val) {
+      lecture_list.push(row.lecture_id);
+    }
+
+    var studnet_val = await db_query('SELECT student_id, student_name, gender, idm FROM team7.student_list');
+    var student_list  = []; // 学生リスト
+    var studnet_index = []; // インデックス探索用
+    var miri = []; // 全部未履修にしておく
+    for (var row of lecture_list) {
+      miri.push('未履修');
+    }
+    for (var row of studnet_val) {
+      student_list.push([row.student_id, row.student_name, row.gender, row.idm].concat(miri));
+      studnet_index.push(row.student_id);
+    }
+
+    // var res_list = await db_query('SELECT team7.student_list.student_id, student_name, gender, idm, lecture_id FROM team7.student_timetable LEFT JOIN team7.student_list ON team7.student_timetable.student_id = team7.student_list.student_id');
+    var res_list = await db_query('SELECT * FROM team7.student_timetable WHERE student_id != "学籍番号"'); // なんか studnet_id = 学籍番号 が含まれているからのぞく
+    if (res_list) {
+      var arr = [["学籍番号", "名前", "性別", "IDm"].concat(lecture_list)]; // ヘッダー
+      var x, y;
+      var arr_cc = arr.concat(student_list);
+      for (var row of res_list) {
+        x = 4 + lecture_list.indexOf(row.lecture_id);
+        y = 1 + studnet_index.indexOf(row.student_id);
+        arr_cc[y][x] = '履修';
+      }
+      return arr_cc;
     } else {
       return false;
     }
@@ -457,4 +496,5 @@ exports.get_lecture_name = get_lecture_name;
 exports.get_lecture_edit_info = get_lecture_edit_info;
 exports.update_lecture = update_lecture;
 exports.get_lecture_table = get_lecture_table;
-exports.create_student_list_api = create_student_list_api;
+exports.create_lecture_rules_api = create_lecture_rules_api;
+exports.create_student_timetable_api = create_student_timetable_api;

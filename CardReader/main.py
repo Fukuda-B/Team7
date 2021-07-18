@@ -161,7 +161,7 @@ class Attendance():
         except ValueError: return False # lecture_id の 講義がない場合
         arr = []
         idm_list = [] # idmだけ
-        print(f)
+        # print(f)
         res = False
         for row in f:
             arr.append(row)
