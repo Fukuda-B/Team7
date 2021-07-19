@@ -1,34 +1,58 @@
 ## Team7
-Attendance Management with Python + Node.js  
-The database of the child unit is SQLite3 and the main database is MySQL  
-Encryption: AES / Hashing: Argon2
-  
-## Usage
-Download & Install Node.js -> [Node.js - Download](https://nodejs.org/ja/download/)  
+出席管理システム Team7  
+- 新しい鍵導出関数(Argon2)と、暗号化(AES)により安全な通信/処理  
+- ネットワークが一時的に使えなくても、カードリーダ内部のデータベースで処理を行える
+- 定期的にサーバとカードリーダ内のデータの同期  
+- ユーザ名とパスワードを使って個人のPCからアクセスできる  
+- 講義情報の変更もブラウザまたは、クライアントアプリで簡単にできる  
+- .csv / .xlsx フォーマットで出力可能  
+
+## 使い方
+PythonとNode.JSをダウンロードし、インストールしてください  
+-> [Python - Download](https://www.python.org/downloads/)  
+-> [Node.js - Download](https://nodejs.org/ja/download/)  
 
 \-\-\-  
 \[ [Team7/Server](./Server) \]  
-Install nodejs-module and start the server ( Windows - powershell ) :  
+`npm install`でnodejs-moduleをインストールし、`node app.js`でServer/app.jsを実行します。  
+Windows向けですが、起動までの処理を一括で行うバッチファイル Server/server_start.batがあります。  
+バッチファイルの実行方法は以下の通りです。  
 ```cmd
 cd Server
 ./server_start.bat
 ```
+現在 MySQLのデータベースは、プライベートレポジトリで管理しています。
+
+\-\-\-    
+\[ [Team7/CardReader](./CardRader) \]  
+初めて実行する場合は、`pip install -r requirements.txt`で実行に必要なライブラリをインストールしてください。  
+実行方法は、以下の通りです。
+```cmd
+cd CardReader
+python main.py
+```
+WebAPI_Key.txtには、管理者に与えられたWebAPI_Keyの値をコピーして貼り付けてください。
+現在 カードリーダ内部のデータは、プライベートレポジトリで管理しています。
 
 \-\-\-    
 \[ [Team7/Electron](./Electron) \]  
-Install nodejs-module and start ( Windows - powershell ) :  
+`npm install`でnodejs-moduleをインストールし、`npm start`でElectron/main.jsを実行します。  
+
+Windows向けですが、起動までの処理を一括で行うバッチファイル Electron/electron_start.batがあります。  
+バッチファイルの実行方法は以下の通りです。  
 ```cmd
 cd Electron
 ./electron_start.bat
 ```
   
-Build electron package for Windows, Linux, MacOS :  
+Windows, Linux, MacOS向けにアプリケーション化するバッチファイルもあります。
+バッチファイルの実行方法は以下の通りです。  
 ```cmd
 cd Electron
 ./electron_build.bat
 ```
 
-## Directory  
+## ディレクトリ構造 (簡易)  
 ```
 Team7  
 　├ CardReader (カードリーダ)  
