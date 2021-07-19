@@ -1,4 +1,4 @@
-## Team7
+# Team7
 出席管理システム Team7の概要  
 - 新しい鍵導出関数(Argon2)と、暗号化(AES)により安全な通信/処理  
 - ネットワークが一時的に使えなくても、カードリーダ内部のデータベースで処理を行える
@@ -9,9 +9,10 @@
 - WebAPI鍵の認証により不正な出席情報の追加を防ぐ  
 
 ## 使い方
-最新版のPythonとNode.JSをダウンロードし、インストールしてください  
+最新版のPythonとNode.JS、nginxをダウンロードし、インストールしてください  
 -> [Python - Download](https://www.python.org/downloads/)  
 -> [Node.js - Download](https://nodejs.org/ja/download/)  
+-> [nginx - Download](https://nginx.org/en/download.html)
 
 \-\-\-  
 \[ [Team7/Server](./Server) \]  
@@ -22,7 +23,10 @@ Windows向けですが、起動までの処理を一括で行うバッチファ�
 cd Server
 ./server_start.bat
 ```
-現在 MySQLのデータベースは、プライベートレポジトリで管理しています。
+現在 MySQLのデータベースは、プライベートレポジトリで管理しています。  
+  
+nginxのnginx.confファイルを編集または、nginx/nginx.confで置き換えてください。  
+nodeは[localhost:3000](http://localhost:3000)、nginxは[localhost:8080](http://localhost:8080)からnodeへリバースプロキシを行っています。
 
 \-\-\-    
 \[ [Team7/CardReader](./CardReader) \]  
@@ -32,8 +36,8 @@ cd Server
 cd CardReader
 python main.py
 ```
-WebAPI_Key.txtには、管理者に与えられたWebAPI_Keyの値をコピーして貼り付けてください。
-現在 カードリーダ内部のデータは、プライベートレポジトリで管理しています。
+WebAPI_Key.txtには、管理者に与えられたWebAPI_Keyの値をコピーして貼り付けてください。  
+現在 カードリーダ内部のデータは、プライベートレポジトリで管理しています。  
 
 \-\-\-    
 \[ [Team7/Electron](./Electron) \]  
@@ -46,7 +50,7 @@ cd Electron
 ./electron_start.bat
 ```
   
-Windows, Linux, MacOS向けにアプリケーション化するバッチファイルもあります。
+Windows, Linux, MacOS向けにアプリケーション化するバッチファイルもあります。  
 バッチファイルの実行方法は以下の通りです。  
 ```cmd
 cd Electron
