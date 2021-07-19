@@ -557,14 +557,14 @@ class Network():
                             data.student_id,
                             data.result,
                             data.date,
-                            data.user_idm) # データベースに追加
+                            data.user_idm) # 内部データベースに追加
                         return False
         except:
             return False
 
     async def send_multi(self, datas):
         data = {}
-        data["datas"] = datas
+        data["datas"] = json.dumps(datas)
         data["multiple"] = "True"
         data["x"] = self.apiKey # 送信データにAPIの暗号鍵追加
         try:
@@ -573,8 +573,10 @@ class Network():
                     # print(resp)
                     # res = resp.text()
                     # return True
+                    print(resp.text())
+                    print(resp.status)
                     if (resp.text() == 'ok' and resp.status == 200): # 正常終了
-                        self.db.del_all() # 正常に送信したら、一時的なデータベースを更新
+                        self.db.del_all() # 正常に送信したら、内部データベースを更新
                         return True
                     else: return False
         except:

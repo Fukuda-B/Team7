@@ -99,12 +99,29 @@ router
     var val = req.body;
     val.x = '*****';
     send_test.push(val);
-    console.log(send_test);
-    if (req.body.multiple == "False") {
-      var result = await database.add_attendance_api(req.body);
+    // console.log(send_test);
+    if (val.multiple == "False") {
+      var result = await database.add_attendance_api(val);
     } else {
-      var datas = req.body.datas;
-      console.log(datas);
+      var datas = JSON.parse(val.datas);
+      try {
+        var tmp_jj = {};
+        for (var row of datas) {
+          tmp_jj = {
+            "lecture_id": row[0],
+            "week": row[1],
+            "student_id": row[2],
+            "user_idm": row[3],
+            "result": row[4],
+            "date": row[5]
+          };
+          // console.log(tmp_jj);
+          await database.add_attendance_api(tmp_jj);
+        }
+        var result = true;
+      } catch {
+        var result = false;
+      }
     }
     if (result) {
       res.send('ok');
