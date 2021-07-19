@@ -13,20 +13,14 @@
     <script type='text/javascript'>
         window.onload = function() {
             var data = <%- JSON.stringify(lecture_graph_val) %>;
-            var stage = document.getElementById('stage');
-            var chart = new CanvasJS.Chart(stage, {
-            title: { text: "" },
-            theme: "light1",
-            data: [{ type: 'line', dataPoints: data }]
-            });
-            chart.render();
-            var stage2 = document.getElementById('stage2');
-            var chart2 = new CanvasJS.Chart(stage2, {
-            title: { text: "" },
-            theme: "light2",
-            data: [{ type: 'column', dataPoints: data }]
-            });
-            chart2.render();
+            console.log(data);
+            // var stage = document.getElementById('stage');
+            // var chart = new CanvasJS.Chart(stage, {
+            // title: { text: "週ごとの出席数" },
+            // theme: "light1",
+            // data: [{ type: 'line', dataPoints: data }]
+            // });
+            // chart.render();
         }
     </script>
     <%- include( './_top_bar.ejs' ); %>
@@ -36,7 +30,7 @@
         <div id="lecture_table">
             <p>講義の出席数比較</p>
             <div id="stage"></div>
-            <div id="stage2"></div>
+            <!-- <div id="stage2"></div> -->
         </div>
         </div>
     </div>

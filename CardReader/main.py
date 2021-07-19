@@ -124,7 +124,7 @@ class Sub():
         self.fps = 60 # update frame rate
         # network
         self.nc_check = 3 # network check interval (s)
-        self.db_check = 6 # database check interval (s)
+        self.db_check = 180 # database check interval (s)
         self.nc = Network()
         self.nws = '-' # network status
         # timer
@@ -389,34 +389,38 @@ class IC():
             self.gen_val = gen.gen(lecture_id) # データが無いときは、データ生成
 
         row_val = self.gen_val[0] #  [lecture_id, student_id, week, result(null), datetime, idm]
-        lecture_no = row_val[2] # 講義の第何回目か
-        # user_name = self.attendance.get_username(self.idm) # 出席した人の名前
-        user_idm = row_val[5]
-        student_id = row_val[1] # 出席した人の名前
-        # user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
-        dt = datetime.datetime.strptime(row_val[4], '%Y-%m-%d %H:%M:%S')
-        result = self.attendance.check_attend(dt, str(self.gen_lec)) # 出席/遅刻/欠席
-        # now_date = now_date # 現在の時刻
-        self.gen_val.pop(0) # 消す
+        if self.attendance.check_taking_lecture(lecture_id, row_val[5]): # 履修者の判定
+            lecture_no = row_val[2] # 講義の第何回目か
+            # user_name = self.attendance.get_username(self.idm) # 出席した人の名前
+            user_idm = row_val[5]
+            student_id = row_val[1] # 出席した人の名前
+            # user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
+            dt = datetime.datetime.strptime(row_val[4], '%Y-%m-%d %H:%M:%S')
+            result = self.attendance.check_attend(dt, str(self.gen_lec)) # 出席/遅刻/欠席
+            # now_date = now_date # 現在の時刻
+            self.gen_val.pop(0) # 消す
 
-        # データベース処理は、ネットワーク側で処理するように変更
-        # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
-        # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, row_val[4]) # add data to sqlite
+            # データベース処理は、ネットワーク側で処理するように変更
+            # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
+            # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, row_val[4]) # add data to sqlite
 
-        send_data = {
-            "lecture_id": lecture_id,
-            "week": lecture_no,
-            # "user_name": user_name,
-            "student_id": student_id,
-            "result": result,
-            # "date": now_date,
-            "date": row_val[4],
-            "user_idm": user_idm,
-        }
-        asyncio.run(self.net.send(send_data)) # データの送信
-        # self.sound()
-        self.cs.update_main(result, "IDm : "+str(user_idm)) # 表示
-        self.debug_flag = True
+            send_data = {
+                "lecture_id": lecture_id,
+                "week": lecture_no,
+                # "user_name": user_name,
+                "student_id": student_id,
+                "result": result,
+                # "date": now_date,
+                "date": row_val[4],
+                "user_idm": user_idm,
+            }
+            asyncio.run(self.net.send(send_data)) # データの送信
+            # self.sound()
+            self.cs.update_main(result, "IDm : "+str(user_idm)) # 表示
+            self.debug_flag = True
+        else: # 履修者ではない場合
+            self.cs.update_main("履修者ではありません", "IDカードをタッチ") # 表示
+            self.debug_flag = True
 
     def rand_hex_gen(self, length:int):
         ''' ランダムな16進数の生成 (デバッグ用) '''
@@ -448,17 +452,12 @@ class IC():
             time.sleep(1.5)
             if self.debug_flag:
                 time.sleep(1.5)
-                if len(self.now_lec) > 0:
-                    self.cs.update_main(self.now_lec[0]+'('+self.now_lec[1]+')', "ICカードをタッチ") # 講義がある時間帯
-                else:
-                    self.cs.ready() # 初期状態に戻す (講義時間外)
-
+                if len(self.now_lec) > 0: self.cs.update_main(self.now_lec[0]+'('+self.now_lec[1]+')', "ICカードをタッチ") # 講義がある時間帯
+                else: self.cs.ready() # 初期状態に戻す (講義時間外)
                 self.debug_flag = False
             else:
-                if len(self.now_lec) > 0:
-                    self.cs.update_main(self.now_lec[0]+'('+self.now_lec[1]+')', "ICカードをタッチ") # 講義がある時間帯
-                else:
-                    self.cs.ready() # 初期状態に戻す (講義時間外)
+                if len(self.now_lec) > 0: self.cs.update_main(self.now_lec[0]+'('+self.now_lec[1]+')', "ICカードをタッチ") # 講義がある時間帯
+                else: self.cs.ready() # 初期状態に戻す (講義時間外)
 
 
 # ----- Database -----

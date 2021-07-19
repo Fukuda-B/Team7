@@ -176,11 +176,12 @@ router
 						}
 						break;
 					case 'stat': // /main?p=stat
+						var res_list = await database.get_graph_val(req.user);
+						console.log(res_list);
 						res.render('stat', {
 							title: 'Team7 - 統計',
-							lecture_table: await database.create_teacher_table(req.user, ''),
-							lecture_graph_val: get_graph_val(req.user),
-							user_id: database.get_user_id(req.user),
+							lecture_graph_val: await database.get_graph_val(req.user),
+							user_id: await database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
@@ -422,21 +423,6 @@ function isAuthenticated(req, res, next) {
 // ----- 認証済みか確認する関数 戻り値はbool -----
 function isAuthenticated_bool(req, res) {
 	return req.isAuthenticated();
-}
-
-// ----- グラフ出力に必要なデータ生成 -----
-function get_graph_val(user) {
-	var jsonFile = './routes/user_json.json';
-	var lecture_json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
-	var json = lecture_json[user];
-	var data = new Array();
-	for (var i = 0; i < json.lecture.length; i++) {
-		data[i] = {
-			"label": json.lecture[i].lecture_name,
-			"y": json.lecture[i].lecture_cnt
-		}
-	}
-	return data;
 }
 
 // -----
