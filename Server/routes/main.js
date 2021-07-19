@@ -186,6 +186,17 @@ router
 							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
 						});
 						break;
+					case 'edit_date': // /main?p=edit_date
+						res.render('home', {
+							title: 'Team7 - 講義日程変更',
+							lecture_table: await database.create_teacher_table(req.user, ''),
+							lecture_graph_val: get_graph_val(req.user),
+							user_id: database.get_user_id(req.user),
+							top_bar_link: '/main/logout',
+							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
+						});
+						break;
 					case 'dev': // /main?p=dev
 						res.render('dev', {
 							title: 'Team7 - 開発者向け',
@@ -244,10 +255,10 @@ router
             } else { // 通常
               var tx = 'home';
               var out_table = await database.create_teacher_table(req.user, tx) +
-                '</td><td>一括保存</td><td></td><td></td><td></td><td></td><td></td><td></td>' +
-                '<td id="td_dl">' +
-                '<a href="/main?dl=fasle&format=csv" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-download"></i>csv</a>' +
-                '<a href="/main?dl=false&format=xlsx" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-download"></i>xlsx</a>' +
+                // '</td><td>一括保存</td><td></td><td></td><td></td><td></td><td></td><td></td>' +
+                // '<td id="td_dl">' +
+                // '<a href="/main?dl=fasle&format=csv" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-download"></i>csv</a>' +
+                // '<a href="/main?dl=false&format=xlsx" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-download"></i>xlsx</a>' +
                 '</td></tr>';
               res.render('home', {
                 title: 'Team7 - マイページ',
@@ -325,7 +336,8 @@ router
 	)
 
 	// POST req
-	.post('/update', isAuthenticated, async function(req, res) { // パスワードの更新
+	// ----- パスワードの更新 -----
+	.post('/update', isAuthenticated, async function(req, res) {
 		if (req.body.old_pass && req.body.new_pass) {
       var tmp_p = bank; // 処理中に更新されても大丈夫なように
 			var op = decodeURIComponent(req.body.old_pass);
@@ -342,13 +354,14 @@ router
 			res.send('error');
 		}
 	})
-  .post('/edit', isAuthenticated, async function(req, res) { // 講義情報の更新
+	// ----- 講義情報の更新 -----
+  .post('/edit', isAuthenticated, async function(req, res) {
     if (req.body.data && req.body.l) {
         var check_lecture = await database.check_lecture(req.user, req.body.l); // 講義の担当か確認
         var data = JSON.parse(req.body.data);
         var result = await database.update_lecture(req.body.l, data);
         if (result && check_lecture) {
-          res.send('ok')
+          res.send('ok');
         } else {
           res.send('error');
         }
@@ -356,6 +369,21 @@ router
         res.send('error');
       }
     })
+	// ----- 講義日時更新用 -----
+	.post('/edit_date', isAuthenticated, async function(req, res) {
+		if (req.body.data && req.body.l) {
+				var check_lecture = await database.check_lecture(req.user, req.body.l); // 講義の担当か確認
+				var data = JSON.parse(req.body.data);
+				var result = await database.update_lecture_date(req.body.l, data);
+				if (result && check_lecture) {
+					res.send('ok');
+				} else {
+					res.send('error');
+				}
+			} else {
+				res.send('error');
+			}
+		})
 	.post('/main/u', function (req, res) { // 認証用 iv
 		res.send(bank.iv);
 	})

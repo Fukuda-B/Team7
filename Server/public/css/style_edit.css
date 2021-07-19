@@ -52,10 +52,11 @@
 }
 
 #lecture_table i {
-    padding-left: 10px;
+    padding-left: 5px;
     padding-right: 3px;
 }
 #lecture_table #td_dl {
+    padding: 2px 10px;
     border-left: 1px solid #ddd;
 }
 #td_dl a {

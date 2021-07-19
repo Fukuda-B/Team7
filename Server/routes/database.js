@@ -73,11 +73,15 @@ async function create_teacher_table(user, page) {
           tx = '<a href="/main?p=course&l='+row.lecture_id+'">詳細<i class="fas fa-file-alt"></i></a>';
           break;
         case 'edit':
-          tx = '<a href="/main?p=edit&l='+row.lecture_id+'">編集<i class="fas fa-pencil-alt"></i></a>';
+          tx = '<a href="/main?p=edit&l='+row.lecture_id+'"><i class="fas fa-pencil-alt"></i>情報修正</a>&emsp;' +
+          '<a href="/main?p=edit_date&l='+row.lecture_id+'"><i class="fas fa-calendar-week"></i>日程</a>';
           break;
         case 'home':
           tx = '<a href="/main?dl='+row.lecture_id+'&format=csv" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-csv"></i>csv</a>' +
           '<a href="/main?dl='+row.lecture_id+'&format=xlsx" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-excel"></i>xlsx</a>';
+          break;
+        case 'edit_date':
+          tx = '<a href="/main?p=course&l='+row.lecture_id+'">詳細<i class="fas fa-file-alt"></i></a>';
           break;
       }
 
@@ -396,7 +400,7 @@ async function get_lecture_table(lecture_id) {
     }
     return table;
   } catch {
-    return false;    
+    return false;
   }
 }
 
@@ -522,6 +526,17 @@ async function add_attendance_api(req_body) {
   }
 }
 
+// ----- update lecture_date -----
+async function update_lecuture_date(lecture_id, data) {
+  try {
+    var pack = [data.date, lecture_id, data.week];
+    await db_query('UPDATE team7.lecture_date SET date = ? WHERE lecture_id = ? AND `week` = ?', pack);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // ----- テスト -----
 // (async () => {
 //   var ans = await check_user('S001', '$argon2id$v=19$m=10240,t=5,p=2$NGU3ZTc3ZmY0YWIzMGEyZWYyNjNjNjNlOTAzY2U0MDc2YTNiMWZlYjJhZmQ2MDI2NjgyMWM5MjhlNDdkODA4ZDIyNGM1YTMxYjFiOWExZmI0YzM5ZWFjMGFhMTRkMTIwMzFkZGY4MGIxMGU0NDhiODI5NmRlNzVlMjJiMmMxY2UwNDFkNzc4NDQ5ZjJhMWI2MGJiODQyOWVmN2ZkNDBkNDEzOTc1YTZlZGFjNTcwYzA2NThkZmZjMmIzYjU3ZDZlNjI5ODg2MmI1OTk3Y2M5MTdhMWZhZDQ5MGJiMjBhYzg1MzMxYWNjOWQxMDRiOTdmYTQzMmVkZTRjZDM1NTJmY2M2YjFmYjI1OWEzZmQ1NTg4OWVlNGViOGM0NmMyNjJhYTYzNzMzYmUyMmRhZGExMjg5OTUxNGVhY2RlOTk2ZTI1MzUwYTMzNTIyMWU4NGE0Mzg0OTJiMDQ1ZTU0NTMyZDA1YWE5OThiNzliMjkwOTc2OGNkYzAzMTVlMjkzMzA5OWY3NmRkODE1OGUzMzNhN2I3M2Q5YWI0ODE4NDRkZDhlMWEzOTFiYTRiMTdkMjc5NjlkNjNlZGIwMTY1NWRjNDEyNDhmOWUzMTNiNTJhNmNjN2JiOTkyYjc4ZmYxMmE1MGQ2ZjNlNGMyNzM2M2I3ZDkzOWQzNDlhYTQ0YjA4ZDA$MnDSRROuc5IhqMydpw5wwxY8SPG4OKdnsDncgzhqKPqNfnz9OIHOmXR3Vee8+/ijwixH3wmjNTyD1rmCusIUAoJYi9SW9XmRNPGcAi9oDCVz1IHEoBbzT4NdYGcf2qzUVALeXyEYHQysWIq+uc5Yr79lhXbFoN2a/bO0rOvG5G0');
@@ -548,3 +563,4 @@ exports.create_lecture_rules_api = create_lecture_rules_api;
 exports.create_student_timetable_api = create_student_timetable_api;
 exports.create_lecture_date_api = create_lecture_date_api;
 exports.add_attendance_api = add_attendance_api;
+exports.update_lecture_date = update_lecuture_date;
