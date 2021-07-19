@@ -100,7 +100,12 @@ router
     val.x = '*****';
     send_test.push(val);
     console.log(send_test);
-    var result = await database.add_attendance_api(req.body);
+    if (req.body.multiple == "False") {
+      var result = await database.add_attendance_api(req.body);
+    } else {
+      var datas = req.body.datas;
+      console.log(datas);
+    }
     if (result) {
       res.send('ok');
     } else {

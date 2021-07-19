@@ -36,6 +36,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 import datetime
 import csv
+import json
 import sqlite3
 import binascii
 import nfc
@@ -328,8 +329,9 @@ class IC():
                     lecture_id = lecture_id[1] # 置き換え
                     break
             if len(lecture_id) > 1: lecture_id = lecture_id[0] # 置き換えられてない = lecture_id[0]
-        if len(lecture_id[0]) > 0:
+        if lecture_id and len(lecture_id[0]) > 0:
             self.now_lec = [str(lecture_id[0][1]), str(lecture_id[0][0])]
+        else: self.now_lec = []
 
     def on_connect(self, tag):
         ''' タッチされたときの動作 '''
@@ -396,8 +398,10 @@ class IC():
         result = self.attendance.check_attend(dt, str(self.gen_lec)) # 出席/遅刻/欠席
         # now_date = now_date # 現在の時刻
         self.gen_val.pop(0) # 消す
+
+        # データベース処理は、ネットワーク側で処理するように変更
         # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
-        self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, row_val[4]) # add data to sqlite
+        # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, row_val[4]) # add data to sqlite
 
         send_data = {
             "lecture_id": lecture_id,
@@ -481,13 +485,28 @@ class Database():
         print(q) # クエリの表示
         cur.execute(q)
         # print(cur.fetchall())
+        val = cur.fetchall()
         cur.close()
         connection.commit()
         connection.close()
+        return val
 
     def add_at(self, lecture_id, lecture_no, user_name, user_idm, result, datetime): # add attendance
-        self.sql('INSERT INTO '+ str(self.tname) + ' VALUES ("'+lecture_id+'",'+lecture_no+',"'+user_name+'","'+user_idm+'","'+result+'","'+datetime+'")'\
-        )
+        try:
+            self.sql('INSERT INTO '+ str(self.tname) + ' VALUES ("'+lecture_id+'",'+lecture_no+',"'+user_name+'","'+user_idm+'","'+result+'","'+datetime+'")')
+            return True
+        except: return False
+
+    def get_all(self):
+        try:
+            return self.sql('SELECT * FROM '+ str(self.tname))
+        except: return False
+
+    def del_all(self):
+        try:
+            self.sql('DELETE FROM'+ str(self.tname))
+            return True
+        except: return False
 
 # ----- Network -----
 # ネットワーク接続状況やサーバへのデータ送信処理
@@ -500,6 +519,7 @@ class Network():
         self.apiKey = API_KEY
         self.apiuri = WebAPI_URI
         self.stat = False
+        self.db = Database()
 
     async def netstat(self):
         ''' ネットワークの接続確認 '''
@@ -507,6 +527,8 @@ class Network():
             async with aiohttp.ClientSession() as session:
                 async with session.get(self.netCheck, compress=True):
                     self.stat = True
+                    db_data = self.db.get_all() # 一時的なデータベースに存在するか確認
+                    if len(db_data) > 0: await self.send_multi(db_data)
                     return True
         except:
             self.stat = False
@@ -518,6 +540,32 @@ class Network():
         #     return False
 
     async def send(self, data):
+        data["multiple"] = "False"
+        data["x"] = self.apiKey # 送信データにAPIの暗号鍵追加
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(self.server, data=data) as resp:
+                    # print(resp)
+                    # res = resp.text()
+                    # return True
+                    if (resp.text() == 'ok' and resp.status == 200): # 正常終了
+                        return True
+                    else: # エラー時
+                        self.db.add_at(
+                            data.lecture_id,
+                            data.week,
+                            data.student_id,
+                            data.result,
+                            data.date,
+                            data.user_idm) # データベースに追加
+                        return False
+        except:
+            return False
+
+    async def send_multi(self, datas):
+        data = {}
+        data["datas"] = datas
+        data["multiple"] = "True"
         data["x"] = self.apiKey # 送信データにAPIの暗号鍵追加
         try:
             async with aiohttp.ClientSession() as session:
