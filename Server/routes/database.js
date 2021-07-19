@@ -542,12 +542,15 @@ async function create_lecture_date_table(lecture_id) {
   try { // orderでweek順で並び替え
     var res_list = await db_query('SELECT * FROM team7.lecture_date WHERE lecture_id = ? ORDER BY `week`;', lecture_id);
     if (res_list) {
-      var table = '<tr><th>講義回</th> <th>日時</th></tr>';
+      var table = '<tr><th>講義回</th> <th>日時</th> <th>適用</th></tr>';
       var dt_tmp, dt_val;
       for (row of res_list) {
         dt_tmp = new Date(Date.parse(row.date));
-        dt_val = dt_tmp.getFullYear() + '-' + dt_tmp.getMonth() + '-' + dt_tmp.getDate();
-        table += '</tr></td><td>' + row.week + '</td><td>' + dt_val + '</td></tr>';
+        dt_val = dt_tmp.getFullYear() + '-' + ('0' + (dt_tmp.getMonth()+1)).slice(-2) + '-' + ('0' + dt_tmp.getDate()).slice(-2);
+        table += '</tr></td><td>' + row.week +
+        '</td><td><input type="date" id="date_'+row.week+'" value="' + dt_val + '">'+
+        '</td><td><button id="date_change" onclick="ajax('+row.week+');">適用</button>'+
+        '</td></tr>';
       }
       return table;
     } else {
