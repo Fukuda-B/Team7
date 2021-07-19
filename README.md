@@ -25,7 +25,7 @@ cd Server
 現在 MySQLのデータベースは、プライベートレポジトリで管理しています。
 
 \-\-\-    
-\[ [Team7/CardReader](./CardRader) \]  
+\[ [Team7/CardReader](./CardReader) \]  
 初めて実行する場合は、`pip install -r requirements.txt`で実行に必要なライブラリをインストールしてください。  
 実行方法は、以下の通りです。
 ```cmd
