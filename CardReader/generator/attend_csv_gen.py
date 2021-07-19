@@ -5,7 +5,7 @@ import csv
 from operator import itemgetter, attrgetter
 
 # 欠席率 (ランダム)
-oyasumi = 0.95
+oyasumi = 0.05
 
 lecture = ["M1","M2","M3","M4","T2","T3_1","T3_2","T4","T5","W12","W3_1","W3_2","W4","W5_1","W5_2","Th2","Th34","Th5_1","Th5_2","F1","F2","F3","F4_1","F4_2"]
 # ランダムな時間と秒を発生させる関数
