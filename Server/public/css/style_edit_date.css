@@ -79,6 +79,7 @@
     display: none;
     margin: 0;
     margin-top: 20px;
+    padding-bottom: 5px;
 }
 #success {
     color: green;
@@ -87,6 +88,15 @@
     display: none;
     margin: 0;
     margin-top: 20px;
+    padding-bottom: 5px;
+}
+#span_p {
+    font-size: 0.8em;
+    font-weight: 900;
+    margin: 0;
+    margin-top: 20px;
+    padding-bottom: 5px;
+    visibility: hidden;
 }
   
 

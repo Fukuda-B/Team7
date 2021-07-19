@@ -530,6 +530,7 @@ async function add_attendance_api(req_body) {
 async function update_lecuture_date(lecture_id, data) {
   try {
     var pack = [data.date, lecture_id, data.week];
+    // console.log(pack);
     await db_query('UPDATE team7.lecture_date SET date = ? WHERE lecture_id = ? AND `week` = ?', pack);
     return true;
   } catch {
