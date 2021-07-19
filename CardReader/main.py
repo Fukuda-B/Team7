@@ -573,7 +573,10 @@ class Network():
                     # print(resp)
                     # res = resp.text()
                     # return True
-                    return resp.text() == 'ok'
+                    if (resp.text() == 'ok' and resp.status == 200): # 正常終了
+                        self.db.del_all() # 正常に送信したら、一時的なデータベースを更新
+                        return True
+                    else: return False
         except:
             return False
 
