@@ -7,14 +7,15 @@
 - 講義情報の変更も ブラウザ / クライアントアプリ で簡単にできる  
 - .csv / .xlsx フォーマットで出力可能  
 - WebAPI鍵の認証により不正な出席情報の追加を防ぐ  
-
-### 使い方
+  
+使い方  
+---
 最新版のPythonとNode.JS、nginxをダウンロードし、インストールしてください  
 -> [Python - Download](https://www.python.org/downloads/)  
 -> [Node.js - Download](https://nodejs.org/ja/download/)  
 -> [nginx - Download](https://nginx.org/en/download.html)
-
-\-\-\-  
+  
+---  
 \[ [Team7/Server](./Server) \]  
 `npm install`でnodejs-moduleをインストールし、`node app.js`でServer/app.jsを実行します。  
 Windows向けですが、起動までの処理を一括で行うバッチファイル Server/server_start.batがあります。  
@@ -28,7 +29,7 @@ cd Server
 nginxのnginx.confファイルを編集または、nginx/nginx.confで置き換えてください。  
 nodeは[localhost:3000](http://localhost:3000)、nginxは[localhost:8080](http://localhost:8080)からnodeへリバースプロキシを行っています。
 
-\-\-\-    
+---    
 \[ [Team7/CardReader](./CardReader) \]  
 初めて実行する場合は、`pip install -r requirements.txt`で実行に必要なライブラリをインストールしてください。  
 実行方法は、以下の通りです。
@@ -39,7 +40,7 @@ python main.py
 WebAPI_Key.txtには、管理者に与えられたWebAPI_Keyの値をコピーして貼り付けてください。  
 現在 カードリーダ内部のデータは、プライベートレポジトリで管理しています。  
 
-\-\-\-    
+---    
 \[ [Team7/Electron](./Electron) \]  
 `npm install`でnodejs-moduleをインストールし、`npm start`でElectron/main.jsを実行します。  
 
@@ -56,8 +57,10 @@ Windows, Linux, MacOS向けにアプリケーション化するバッチファ�
 cd Electron
 ./electron_build.bat
 ```
-
-### ディレクトリ構造 (簡易)  
+  
+---
+ディレクトリ構造 (簡易)  
+---
 ```
 Team7  
 　├ CardReader (カードリーダ)  
