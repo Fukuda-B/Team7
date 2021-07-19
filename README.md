@@ -8,7 +8,7 @@
 - .csv / .xlsx フォーマットで出力可能  
 
 ## 使い方
-PythonとNode.JSをダウンロードし、インストールしてください  
+最新版のPythonとNode.JSをダウンロードし、インストールしてください  
 -> [Python - Download](https://www.python.org/downloads/)  
 -> [Node.js - Download](https://nodejs.org/ja/download/)  
 
