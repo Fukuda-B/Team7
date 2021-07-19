@@ -513,7 +513,7 @@ async function add_attendance_api(req_body) {
     var pre_pack = [rb.lecture_id, rb.week, rb.user_idm];
     var ck = await db_query('SELECT * FROM team7.attendance WHERE lecture_id = ? AND `week` = ? AND idm = ?', pre_pack);
     if (ck.length == 0) { // 重複して追加しないように..
-      var pack = [rb.lecture_id, rb.student_id, rb.week, rb.result, rb.date, rb.user_idm, rb.lecture_id, rb.weekm, rb.idm];
+      var pack = [rb.lecture_id, rb.student_id, rb.week, rb.result, rb.date, rb.user_idm, rb.lecture_id, rb.week, rb.idm];
       await db_query('INSERT INTO team7.attendance (lecture_id, student_id, `week`, result, `datetime`, idm) SELECT ?, ?, ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS(SELECT "x" FROM team7.attendance WHERE lecture_id=? AND `week`=? AND idm=?);', pack);
     }
     return true;

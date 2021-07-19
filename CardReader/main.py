@@ -5,8 +5,11 @@
 -----
     スレッディング構成
         Main --> Sub
-        Sub  -/> IC (Deamon)
-        Sub  -/> Network
+        Sub  -/> IC (Deamonとして別スレッドで常時監視)
+        Sub  -/> Network (別スレッドでイベント発生時実行)
+
+    別スレッドのため、
+    ICカード読み取り, ランダムなデータでテストの両方を行うことができる。
 -----
     memo:
         https://passlib.readthedocs.io/en/stable/lib/passlib.hash.argon2.html
@@ -52,6 +55,7 @@ from cryptography.hazmat.primitives import padding
 
 # モジュールの読み込み
 import main_window # メインウィンドウを表示するモジュール
+import gen # 出席ジェネレータ
 
 # ----- 定数宣言 -----
 SERVER_URI = 'http://localhost:3000/api/v1/team7'
@@ -67,7 +71,7 @@ try:
     f.close()
 except:
     # API_KEY = 'ee038e2b7542dcfa599e96aefccd33cdc199adf5f061274689aa0b9341f5cef890884b03c9641338f7dd7bd2e791e43f5a26b7639a828f54a49738b751163a08a8e7f74ba21f90de8ca1de10edd91bf67169839c10bc0359cad86b70887aa887b046f0c63582f6f63612d12033ca856fe28db812ab1cb8e2b00c1b40c6a72b350f93f4691f0b3c008c174cb8465fccd6c75989047965804ec8d283ea71144e935ec35b2e40a59819c6a55b0d504549b7685dfaabb06bc19a3a8ba1964f34258be47569686ce26cabef94cd0c0dc318253c28ac4785fdd0b05f2b27345f74ed0a9e710ed5312f1a072e4b1397145877bf1e272104449ba76531208462e9bd525891b10169bfbaf63108728e9b133c7bba4cfdaa891cd593c5d1348ae3f4111372a8efb48dec8c2b19e9216ca5563a92142a14e12d49e9e8456860f9c4589f2b7cca4bbc48c76f2b16e679ba0a8a30636af08ac3041cb40ba1bfd9e15f751adf31ddee18397604730eb5de5c187c492385c4d030358ca5ad6ed8ef710dacd209b92159abd87790a4f4a34b12d419feea50cc664900f5d2a40c72596fe4d1a897636d74d89ffb0017adde134d086041312181ca5de8ddee8b3b7d0bc73c2a68c9562b16820665cc1633122a55f88024e8f6e4e07c9c430d589ca23c435391cd7bf61e3fc7edc1ecc177110edbe0a02c0116d1e4902e36d762b35875691fcba3694eaee8376030f57b9aeb31d7470021bd1985cc16a2e084aae867aa7664dab724687782f88d1afff9c7940b154f18ccaecfcdb50af38284d60156d649c9e48a5b6602fa0590e830d07168f923e09d125fd04aaa8a8925bffbac472a4b0a1729c9b8d27ebd5ce9337901d68449e7e7930e70e70726a9bbf99a8bf95c8e6220592edb6d120a51f8ee7386412a6f8976e14cdd6b67ff19c13021d51f22c402d5430d5c7d15ee68719ccddeb5daebe62768205e8f430d314094e9e107e704b3fed730238c25151e1c02fb5be9cb66462f0475aadab607a199a7f9cb1294046e7cdfb186735f4df67317e2aa4d11b12bfbe81ac49352267397851161cef30418c5051eb51e80c35a819f38b79e340dc7ff8c2945aad4b86bc5ad9186467dc9dfd9ab32875a67aca78d0c55f2a6fcb5bc2cb03a11b7253adc17a7fcf54c24ddb5c99262ac425268c4ee5efcff09f835368ecd038ae704b6c6af163e88ae6a168f2c0b367b471a10692330df5c5d8dd8ee337965ea7812ec2d647c20680a8c0ef26262e4881341155678ca74aa77aa80ebc795ad59'
-    print('WebAPI_Key.txt が存在しません。\n管理者 - 開発者向けページからコピーしてWebAPI_Key.txtを作成してください。')
+    print('WebAPI_Key.txt が存在しません。\n管理者 - 開発者向けページから値をコピーしてWebAPI_Key.txtを作成してください。')
 
 DATABASE = 'attendance.db' # 出席を保存するデータベース
 DB_TABLE = 'attendance' # 出席を保存するテーブル
@@ -167,7 +171,8 @@ class Attendance():
     def __init__(self):
         self.lecture_rules = "./lecture_rules.csv" # サーバから受け取った科目ルールのcsv (utf-8)
         self.student_timetable = "./student_timetable.csv" # 履修状況のcsv (utf-8)
-        self.before_time = 10 # 開始時間前の許容範囲 (分)
+        self.lecture_date = "./lecture_date.csv" # 何回目の講義か
+        self.before_time = 15 # 開始時間前の許容範囲 (分)
 
     def check_taking_lecture(self, lecture_id, idm):
         ''' 履修しているか確認する '''
@@ -304,12 +309,33 @@ class IC():
         self.min_doubled = 10 # 重複するidmの一定時間読み込み禁止時間 (s)
         self.cs.ui.pushButton.clicked.connect(self.on_connect_dummy) # デバッグ用ボタンをクリックした時のイベント
         self.attendance = Attendance() # class Attendance
+        self.gen_lec = '' # attendance generator (lecture_id)
+        self.gen_val = '' # attendance generator (tmp)
+        self.debug_flag = False
+        self.now_lec = '' # now lecture
+
+    def ck_lecture(self):
+        ''' 現在の講義を確認 '''
+        now_dt = datetime.datetime.now()
+        youbi = datetime.datetime.strftime(now_dt, '%a')
+        lecture_id = self.attendance.check_lecture(youbi, now_dt) # 講義のID
+        if len(lecture_id) > 1:
+            f = open('Subjects_Priority.txt', 'r', encoding='utf-8')
+            sp = f.read()
+            sp_l = sp.split('\n')
+            for i in range(len(sp_l)):
+                if sp_l[i] == lecture_id[1]:
+                    lecture_id = lecture_id[1] # 置き換え
+                    break
+            if len(lecture_id) > 1: lecture_id = lecture_id[0] # 置き換えられてない = lecture_id[0]
+        if len(lecture_id[0]) > 0:
+            self.now_lec = [str(lecture_id[0][1]), str(lecture_id[0][0])]
 
     def on_connect(self, tag):
         ''' タッチされたときの動作 '''
         self.idm = binascii.hexlify(tag.idm).decode().upper()
         if (time.monotonic() - self.flag) > self.min_doubled or self.idm != self.last:
-            self.cs.update_main("出席", "IDm : "+str(self.idm))
+            # self.cs.update_main("出席", "IDm : "+str(self.idm))
 
             now_date = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
             asyncio.run(self.net.send({"idm":self.idm, "date":now_date})) # データの送信
@@ -333,6 +359,7 @@ class IC():
             user_idm = self.idm # 出席した人のidm
             result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席
             # now_date = now_date # 現在の時刻
+            self.cs.update_main(result, "IDm : "+str(user_idm))
             self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
 
             # if self.net.stat:
@@ -347,17 +374,30 @@ class IC():
 
     def on_connect_dummy(self):
         ''' デバッグ用 '''
-        now_date = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
+        # now_date = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
 
-        lecture_id = 'M2' # 講義のID
-        lecture_no = '1' # 講義の第何回目か
-        # user_name = self.rand_hex_gen(10) # 出席した人の名前
-        user_idm = '012E44A7A5187429'
-        student_id = 'S001' # 出席した人の名前
+        if len(self.now_lec) > 0:
+            lecture_id = self.now_lec[1]
+        else:
+            lecture_id = 'M2'
+        # lecture_id = 'M2' # 講義のID
+
+        if len(self.gen_val) < 1 or len(self.gen_lec) < 1:
+            self.gen_lec = lecture_id
+            self.gen_val = gen.gen(lecture_id) # データが無いときは、データ生成
+
+        row_val = self.gen_val[0] #  [lecture_id, student_id, week, result(null), datetime, idm]
+        lecture_no = row_val[2] # 講義の第何回目か
+        # user_name = self.attendance.get_username(self.idm) # 出席した人の名前
+        user_idm = row_val[5]
+        student_id = row_val[1] # 出席した人の名前
         # user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
-        result = '出席' # 出席/遅刻/欠席
+        dt = datetime.datetime.strptime(row_val[4], '%Y-%m-%d %H:%M:%S')
+        result = self.attendance.check_attend(dt, str(self.gen_lec)) # 出席/遅刻/欠席
         # now_date = now_date # 現在の時刻
-        self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
+        self.gen_val.pop(0) # 消す
+        # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
+        self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, row_val[4]) # add data to sqlite
 
         send_data = {
             "lecture_id": lecture_id,
@@ -365,11 +405,14 @@ class IC():
             # "user_name": user_name,
             "student_id": student_id,
             "result": result,
-            "date": now_date,
+            # "date": now_date,
+            "date": row_val[4],
             "user_idm": user_idm,
         }
         asyncio.run(self.net.send(send_data)) # データの送信
         # self.sound()
+        self.cs.update_main(result, "IDm : "+str(user_idm)) # 表示
+        self.debug_flag = True
 
     def rand_hex_gen(self, length:int):
         ''' ランダムな16進数の生成 (デバッグ用) '''
@@ -396,12 +439,26 @@ class IC():
     def start(self):
         ''' タッチ待ち '''
         while True:
+            self.ck_lecture() # 現在の講義を確認
             self.read_id() # idm読み込み待ち
-            time.sleep(1)
-            self.cs.ready() # 初期状態に戻す
+            time.sleep(1.5)
+            if self.debug_flag:
+                time.sleep(1.5)
+                if len(self.now_lec) > 0:
+                    self.cs.update_main(self.now_lec[0]+'('+self.now_lec[1]+')', "ICカードをタッチ") # 講義がある時間帯
+                else:
+                    self.cs.ready() # 初期状態に戻す (講義時間外)
+
+                self.debug_flag = False
+            else:
+                if len(self.now_lec) > 0:
+                    self.cs.update_main(self.now_lec[0]+'('+self.now_lec[1]+')', "ICカードをタッチ") # 講義がある時間帯
+                else:
+                    self.cs.ready() # 初期状態に戻す (講義時間外)
+
 
 # ----- Database -----
-# データベースの読み書き
+# ローカルデータベースの読み書き
 class Database():
     def __init__(self):
         self.fname = DATABASE

@@ -120,7 +120,8 @@ router
     } else {
       res.send('error');
     }
-  })  .post('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
+  })
+  .post('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_lecture_rules_api();
     if (val) {
       var fname = 'lecture_rules.csv';
