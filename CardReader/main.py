@@ -504,7 +504,7 @@ class Database():
 
     def del_all(self):
         try:
-            self.sql('DELETE FROM'+ str(self.tname))
+            self.sql('DELETE FROM '+ str(self.tname))
             return True
         except: return False
 
@@ -548,7 +548,7 @@ class Network():
                     # print(resp)
                     # res = resp.text()
                     # return True
-                    if (resp.text() == 'ok' and resp.status == 200): # 正常終了
+                    if (resp.headers['Content-Length']=='2' and resp.status==200): # 正常終了
                         return True
                     else: # エラー時
                         self.db.add_at(
@@ -569,13 +569,13 @@ class Network():
         data["x"] = self.apiKey # 送信データにAPIの暗号鍵追加
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.post(self.server, data=data) as resp:
-                    # print(resp)
+                async with session.post(self.server, data=data, timeout=600) as resp:
+                    # print(resp.status == 200)
                     # res = resp.text()
                     # return True
-                    print(resp.text())
-                    print(resp.status)
-                    if (resp.text() == 'ok' and resp.status == 200): # 正常終了
+                    # print(resp.text)
+                    # print(resp.status)
+                    if (resp.headers['Content-Length']=='2' and resp.status==200): # 正常終了
                         self.db.del_all() # 正常に送信したら、内部データベースを更新
                         return True
                     else: return False
