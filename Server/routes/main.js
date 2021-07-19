@@ -303,8 +303,8 @@ router
                 user_id: database.get_user_id(req.user),
                 top_bar_link: '/main/logout',
                 top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-                dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
-            });
+								dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
+							});
           } else {
               res.send('履修していない講義です。');
             }
