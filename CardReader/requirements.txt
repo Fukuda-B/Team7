@@ -8,5 +8,6 @@ playsound
 passlib
 argon2_cffi
 aiohttp
+aiofiles
 pathlib
 cryptography

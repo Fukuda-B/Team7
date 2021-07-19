@@ -2,7 +2,12 @@
     メイン処理部分
     author: Team7
 
-
+-----
+    スレッディング構成
+        Main --> Sub
+        Sub  -/> IC (Deamon)
+        Sub  -/> Network
+-----
     memo:
         https://passlib.readthedocs.io/en/stable/lib/passlib.hash.argon2.html
         https://www.finddevguides.com/Pyqt-qstatusbar-widget
@@ -33,6 +38,7 @@ import binascii
 import nfc
 import asyncio
 import aiohttp
+import aiofiles
 # import requests
 import threading
 from gtts import gTTS
@@ -366,7 +372,7 @@ class IC():
         # self.sound()
 
     def rand_hex_gen(self, length:int):
-        ''' ランダムな16進数の生成 '''
+        ''' ランダムな16進数の生成 (デバッグ用) '''
         mlist = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F']
         res = ''
         for _ in range(length):
@@ -471,10 +477,17 @@ class Network():
         data["x"] = self.apiKey # 送信データにAPIの暗号鍵追加
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.post(self.apiurl[opt], data=data) as resp:
-                    async with open('lecture_rules_.csv', mode='w') as f:
-                        f.write(resp)
-                    return
+                async with session.post(self.apiuri[opt], data=data) as resp: # タイムアウトは長め
+                    print(resp)
+                    if resp.status == 200:
+                        if opt == 1: fname = 'lecture_rules_.csv'
+                        elif opt == 2: fname = 'student_timetable_.csv'
+                        else : fname = 'lecture_date_.csv'
+                        f = await aiofiles.open(fname, mode='wb')
+                        await f.write(await resp.read())
+                        await f.close()
+                        print('end')
+                        return
         except:
             return False
 
