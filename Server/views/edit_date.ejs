@@ -1,0 +1,25 @@
+<%#
+  Team7 client ejs - edit_date | Update: 2021/07/19
+%>
+
+<%- include( './_header.ejs' ); %>
+<head>
+  <link rel="preload" href="/public/css/style_edit_date.css" as="style">
+  <link rel="stylesheet" href="/public/css/style_edit_date.css"">
+  <title><%- title %></title>
+</head>
+<body>
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="wrap">
+    <%- include( './_dashboard.ejs' ); %>
+  <div id="main">
+    <div id="lecture_table">
+      <h3><a id="prev_link" href="/main?p=edit">編集</a> > <%- title %> 日程修正</h3>
+      <table id="lecture_table_val">
+      <%- lecture_table %>
+      </table>
+    </div>
+    </div>
+  </div>
+</body>
+</html>

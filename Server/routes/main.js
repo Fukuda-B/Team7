@@ -187,15 +187,24 @@ router
 						});
 						break;
 					case 'edit_date': // /main?p=edit_date
-						res.render('home', {
-							title: 'Team7 - 講義日程変更',
-							lecture_table: await database.create_teacher_table(req.user, ''),
-							lecture_graph_val: get_graph_val(req.user),
-							user_id: database.get_user_id(req.user),
-							top_bar_link: '/main/logout',
-							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li"]
-						});
+						if (req.query.l) { // 講義ごとの詳細表示
+							var check_lecture = await database.check_lecture(req.user, req.query.l); // 
+							if (check_lecture) {
+								var lecture_table = await database.create_lecture_date_table(req.query.l);
+								res.render('edit_date', {
+									title: await database.get_lecture_name(req.query.l),
+									lecture_table: lecture_table,
+									user_id: database.get_user_id(req.user),
+									top_bar_link: '/main/logout',
+									top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+									dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+								});
+							} else {
+								res.send('担当していない講義です。');
+							}
+						} else { // リダイレクト
+							res.redirect('/main?p=edit');
+						}
 						break;
 					case 'dev': // /main?p=dev
 						res.render('dev', {
@@ -208,7 +217,7 @@ router
 							webapi_key: await get_key(req.user),
 						});
 						break;
-						case 'setting': // /main?p=setting
+					case 'setting': // /main?p=setting
 						res.render('setting', {
 							title: 'Team7 - 個人設定',
 							user_id: database.get_user_id(req.user),

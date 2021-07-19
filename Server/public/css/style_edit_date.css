@@ -1,0 +1,78 @@
+/*
+    Team7 client css | Update: 2021/05/25
+
+    The main color is defined by a global css variable in the pseudo-class:root.
+    The other colors can be defined by the members.
+*/
+
+@charset "utf-8";
+
+#wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#main {
+    margin-top: 40px;
+    margin-left: calc(5% + 160px);
+    /* margin-left: calc(50% - 28.5%); */
+    width: 70%;
+    text-align: center;
+}
+#lecture_table {
+    margin-top: 60px;
+    padding-bottom: 50px;
+}
+#lecture_table h3 {
+    font-weight: 300;
+}
+#lecture_table_val {
+    margin: 0 auto;
+    border-collapse: collapse;
+    font-family: 游ゴシック体, 'Yu Gothic', YuGothic, 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+    font-size: 0.9em;
+}
+#lecture_table_val th {
+    background-color: var(--main-color);
+    color: #fff;
+    font-weight: 500;
+}
+#lecture_table_val td {
+    border: none;
+    background: #fff;
+}
+#lecture_table_val tr:nth-child(odd) td {
+    background: #eee;
+}
+#lecture_table_val td, th {
+    padding: 5px 20px;
+}
+#lecture_table_val tr {
+    border: solid 1px var(--sub-color);
+}
+
+#lecture_table i {
+    padding-left: 5px;
+    padding-right: 3px;
+}
+#lecture_table #td_dl {
+    padding: 2px 10px;
+    border-left: 1px solid #ddd;
+}
+#td_dl a {
+    text-decoration: none;
+    color: #666;
+}
+#td_dl a:hover {
+    text-decoration: underline;
+    color: #222;
+}
+
+
+/* 画面の幅が1000px以上 */
+@media screen and (min-width:1400px) {
+    #wrap {
+        width: 1400px;
+        margin-left: calc(50% - 700px);
+    }
+}

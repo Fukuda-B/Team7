@@ -537,6 +537,27 @@ async function update_lecuture_date(lecture_id, data) {
   }
 }
 
+// ----- create_lecture_date_table -----
+async function create_lecture_date_table(lecture_id) {
+  try { // orderでweek順で並び替え
+    var res_list = await db_query('SELECT * FROM team7.lecture_date WHERE lecture_id = ? ORDER BY `week`;', lecture_id);
+    if (res_list) {
+      var table = '<tr><th>講義回</th> <th>日時</th></tr>';
+      var dt_tmp, dt_val;
+      for (row of res_list) {
+        dt_tmp = new Date(Date.parse(row.date));
+        dt_val = dt_tmp.getFullYear() + '-' + dt_tmp.getMonth() + '-' + dt_tmp.getDate();
+        table += '</tr></td><td>' + row.week + '</td><td>' + dt_val + '</td></tr>';
+      }
+      return table;
+    } else {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+}
+
 // ----- テスト -----
 // (async () => {
 //   var ans = await check_user('S001', '$argon2id$v=19$m=10240,t=5,p=2$NGU3ZTc3ZmY0YWIzMGEyZWYyNjNjNjNlOTAzY2U0MDc2YTNiMWZlYjJhZmQ2MDI2NjgyMWM5MjhlNDdkODA4ZDIyNGM1YTMxYjFiOWExZmI0YzM5ZWFjMGFhMTRkMTIwMzFkZGY4MGIxMGU0NDhiODI5NmRlNzVlMjJiMmMxY2UwNDFkNzc4NDQ5ZjJhMWI2MGJiODQyOWVmN2ZkNDBkNDEzOTc1YTZlZGFjNTcwYzA2NThkZmZjMmIzYjU3ZDZlNjI5ODg2MmI1OTk3Y2M5MTdhMWZhZDQ5MGJiMjBhYzg1MzMxYWNjOWQxMDRiOTdmYTQzMmVkZTRjZDM1NTJmY2M2YjFmYjI1OWEzZmQ1NTg4OWVlNGViOGM0NmMyNjJhYTYzNzMzYmUyMmRhZGExMjg5OTUxNGVhY2RlOTk2ZTI1MzUwYTMzNTIyMWU4NGE0Mzg0OTJiMDQ1ZTU0NTMyZDA1YWE5OThiNzliMjkwOTc2OGNkYzAzMTVlMjkzMzA5OWY3NmRkODE1OGUzMzNhN2I3M2Q5YWI0ODE4NDRkZDhlMWEzOTFiYTRiMTdkMjc5NjlkNjNlZGIwMTY1NWRjNDEyNDhmOWUzMTNiNTJhNmNjN2JiOTkyYjc4ZmYxMmE1MGQ2ZjNlNGMyNzM2M2I3ZDkzOWQzNDlhYTQ0YjA4ZDA$MnDSRROuc5IhqMydpw5wwxY8SPG4OKdnsDncgzhqKPqNfnz9OIHOmXR3Vee8+/ijwixH3wmjNTyD1rmCusIUAoJYi9SW9XmRNPGcAi9oDCVz1IHEoBbzT4NdYGcf2qzUVALeXyEYHQysWIq+uc5Yr79lhXbFoN2a/bO0rOvG5G0');
@@ -564,3 +585,4 @@ exports.create_student_timetable_api = create_student_timetable_api;
 exports.create_lecture_date_api = create_lecture_date_api;
 exports.add_attendance_api = add_attendance_api;
 exports.update_lecture_date = update_lecuture_date;
+exports.create_lecture_date_table = create_lecture_date_table;
