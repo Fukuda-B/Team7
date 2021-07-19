@@ -8,7 +8,7 @@
 - .csv / .xlsx フォーマットで出力可能  
 - WebAPI鍵の認証により不正な出席情報の追加を防ぐ  
 
-## 使い方
+### 使い方
 最新版のPythonとNode.JS、nginxをダウンロードし、インストールしてください  
 -> [Python - Download](https://www.python.org/downloads/)  
 -> [Node.js - Download](https://nodejs.org/ja/download/)  
@@ -57,7 +57,7 @@ cd Electron
 ./electron_build.bat
 ```
 
-## ディレクトリ構造 (簡易)  
+### ディレクトリ構造 (簡易)  
 ```
 Team7  
 　├ CardReader (カードリーダ)  
