@@ -355,18 +355,33 @@ class IC():
                         lecture_id = lecture_id[1] # 置き換え
                         break
                 if len(lecture_id) > 1: lecture_id = lecture_id[0] # 置き換えられてない = lecture_id[0]
+    
+            if self.attendance.check_taking_lecture(lecture_id, self.idm): # 履修者の判定
+                lecture_no = self.attendance.get_weeks(dt, lecture_id) # 講義の第何回目か
+                user_name =  self.attendance.get_username(self.idm) # 出席した人の名前
+                user_idm = self.idm # 出席した人のidm
+                result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席
+                # now_date = now_date # 現在の時刻
+                # self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
 
-            lecture_no = self.attendance.get_weeks(dt, lecture_id) # 講義の第何回目か
-            user_name =  self.attendance.get_username(self.idm) # 出席した人の名前
-            user_idm = self.idm # 出席した人のidm
-            result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席
-            # now_date = now_date # 現在の時刻
-            self.cs.update_main(result, "IDm : "+str(user_idm))
-            self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
+                # if self.net.stat:
+                #     asyncio.run(self.net.send({"idm":user_idm, "date":now_date})) # データの送信
+                # self.sound()
+                send_data = {
+                    "lecture_id": self.now_lec,
+                    # "lecture_id": lecture_id,
+                    "week": lecture_no,
+                    # "user_name": user_name,
+                    "student_id": student_id,
+                    "result": result,
+                    "date": now_date,
+                    "user_idm": user_idm,
+                }
+                asyncio.run(self.net.send(send_data)) # データの送信
+                self.cs.update_main(result, "IDm : "+str(user_idm))
+            else: # 履修者ではない場合
+                self.cs.update_main("履修者ではありません", "IDカードをタッチ") # 表示
 
-            # if self.net.stat:
-            #     asyncio.run(self.net.send({"idm":user_idm, "date":now_date})) # データの送信
-            # self.sound()
 
         else:
             self.flag = time.monotonic()
