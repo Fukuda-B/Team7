@@ -183,7 +183,13 @@ async function create_lec_student_table(lecture_id, limit_absence, limit_latenes
     var std_list_arr = {}; // 出欠状況を連想配列として入れておく
     for (var row of std_list) {
       if (!std_list_arr[row.student_id]) std_list_arr[row.student_id] = {};
-      std_list_arr[row.student_id][row.week] = 1;
+      if (row.result == '出席') {
+        std_list_arr[row.student_id][row.week] = 1; // 出席
+      } else if (row.result == '遅刻') {
+        std_list_arr[row.student_id][row.week] = 2; // 遅刻
+      } else {
+        std_list_arr[row.student_id][row.week] = 0; // 欠席
+      }
       if (row.week > weeks) weeks = row.week; // 最終週の更新
     }
 
@@ -196,19 +202,25 @@ async function create_lec_student_table(lecture_id, limit_absence, limit_latenes
 
     // テーブルのデータ部分
     var sum = 0; // 合計出席回数を計算するために使う一時的な変数
+    var sum_late = 0 // 合計遅刻回数の判定のための変数
     for (var row of res_list) {
       table += '<tr><td>' + row.student_id;
       table += '</td><td>' + row.student_name;
-      sum = 0;
+      sum = 0; // リセット
+      sum_late = 0; // リセット
       for (var i = 0; i < weeks; i++) {
-        if (std_list_arr[row.student_id][i+1] == 1) {
+        if (std_list_arr[row.student_id][i+1] == 1) { // 1 = 出席
           sum++;
           table += '</td><td id="td_1">' + '〇';
-        } else {
+        } else if (std_list_arr[row.student_id][i+1] == 2) { // 2 = 遅刻
+          sum_late++;
+          sum++;
+          table += '</td><td id="td_2">' + '△';
+        } else { // 0 = 欠席
           table += '</td><td id="td_0">' + '×';
         }
       }
-      if (weeks - sum >= limit_absence) { // 欠席が多い場合
+      if (weeks - sum >= limit_absence || sum_late >= limit_lateness) { // 欠席, 遅刻が多い場合
         table += '</td><td id="td_many">' + sum;
       } else {
         table += '</td><td>' + sum;

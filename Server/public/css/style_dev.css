@@ -22,8 +22,12 @@
 #lecture_table {
     margin-top: 60px;
 }
+#lecture_table h3 {
+    font-weight: 300;
+}
 #webapi_key {
     padding: 10px;
+    margin-bottom: 40px;
 }
 
 /* 画面の幅が1000px以上 */

@@ -360,25 +360,26 @@ class IC():
                 lecture_no = self.attendance.get_weeks(dt, lecture_id) # 講義の第何回目か
                 user_name =  self.attendance.get_username(self.idm) # 出席した人の名前
                 user_idm = self.idm # 出席した人のidm
-                result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席
-                # now_date = now_date # 現在の時刻
-                # self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
+                result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席/時間外です
+                if result != '時間外です': # 時間外以外
+                    # now_date = now_date # 現在の時刻
+                    # self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
 
-                # if self.net.stat:
-                #     asyncio.run(self.net.send({"idm":user_idm, "date":now_date})) # データの送信
-                # self.sound()
-                send_data = {
-                    "lecture_id": self.now_lec,
-                    # "lecture_id": lecture_id,
-                    "week": lecture_no,
-                    # "user_name": user_name,
-                    "student_id": student_id,
-                    "result": result,
-                    "date": now_date,
-                    "user_idm": user_idm,
-                }
-                asyncio.run(self.net.send(send_data)) # データの送信
-                self.cs.update_main(result, "IDm : "+str(user_idm))
+                    # if self.net.stat:
+                    #     asyncio.run(self.net.send({"idm":user_idm, "date":now_date})) # データの送信
+                    # self.sound()
+                    send_data = {
+                        "lecture_id": self.now_lec,
+                        # "lecture_id": lecture_id,
+                        "week": lecture_no,
+                        # "user_name": user_name,
+                        "student_id": student_id,
+                        "result": result,
+                        "date": now_date,
+                        "user_idm": user_idm,
+                    }
+                    asyncio.run(self.net.send(send_data)) # データの送信
+                    self.cs.update_main(result, "IDm : "+str(user_idm))
             else: # 履修者ではない場合
                 self.cs.update_main("履修者ではありません", "IDカードをタッチ") # 表示
 
@@ -411,28 +412,29 @@ class IC():
             student_id = row_val[1] # 出席した人の名前
             # user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
             dt = datetime.datetime.strptime(row_val[4], '%Y-%m-%d %H:%M:%S')
-            result = self.attendance.check_attend(dt, str(self.gen_lec)) # 出席/遅刻/欠席
-            # now_date = now_date # 現在の時刻
-            self.gen_val.pop(0) # 消す
+            result = self.attendance.check_attend(dt, str(self.gen_lec)) # 出席/遅刻/欠席/時間外です
+            if result != '時間外です': # 時間外以外
+                # now_date = now_date # 現在の時刻
+                self.gen_val.pop(0) # 消す
 
-            # データベース処理は、ネットワーク側で処理するように変更
-            # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
-            # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, row_val[4]) # add data to sqlite
+                # データベース処理は、ネットワーク側で処理するように変更
+                # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, now_date) # add data to sqlite
+                # self.db.add_at(lecture_id, lecture_no, student_id, user_idm, result, row_val[4]) # add data to sqlite
 
-            send_data = {
-                "lecture_id": lecture_id,
-                "week": lecture_no,
-                # "user_name": user_name,
-                "student_id": student_id,
-                "result": result,
-                # "date": now_date,
-                "date": row_val[4],
-                "user_idm": user_idm,
-            }
-            asyncio.run(self.net.send(send_data)) # データの送信
-            # self.sound()
-            self.cs.update_main(result, "IDm : "+str(user_idm)) # 表示
-            self.debug_flag = True
+                send_data = {
+                    "lecture_id": lecture_id,
+                    "week": lecture_no,
+                    # "user_name": user_name,
+                    "student_id": student_id,
+                    "result": result,
+                    # "date": now_date,
+                    "date": row_val[4],
+                    "user_idm": user_idm,
+                }
+                asyncio.run(self.net.send(send_data)) # データの送信
+                # self.sound()
+                self.cs.update_main(result, "IDm : "+str(user_idm)) # 表示
+                self.debug_flag = True
         else: # 履修者ではない場合
             self.cs.update_main("履修者ではありません", "IDカードをタッチ") # 表示
             self.debug_flag = True

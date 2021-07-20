@@ -117,7 +117,7 @@ router
 							if (check_lecture) {
                 var absence = req.query.absence;
                 var lateness = req.query.lateness;
-                if (!req.query.absence) absence = 3; // 強調表示の初期値(欠席)
+                if (!req.query.absence) absence = 4; // 強調表示の初期値(欠席)
                 if (!req.query.lateness) lateness = 5; // 強調表示の初期値(遅刻)
 								var lecture_student = await database.create_lec_student_table(req.query.l, absence, lateness);
 								res.render('course_more', {

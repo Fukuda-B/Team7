@@ -11,6 +11,9 @@
     --sub-color: rgb(167, 191, 205);
     --hover-color: rgb(208, 214, 231);
     --prev_link-color: #2449a8; /* 前のリンクに戻る文字色 */
+    --late-color: rgb(255, 239, 209); /* 遅刻 */
+    --rest-color: rgb(255, 222, 162); /* 欠席 */
+    --many_rset-color: orange; /* 欠席の警告 */
 }
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";

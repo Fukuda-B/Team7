@@ -70,11 +70,14 @@
 #td_1 {
     /* background: rgb(231, 255, 195) !important; */
 }
+#td_2 {
+    background: var(--late-color) !important;
+}
 #td_0 {
-    background: rgb(255, 222, 162) !important;
+    background: var(--rest-color) !important;
 }
 #td_many {
-    background: orange !important;
+    background: var(--many_rset-color) !important;
 }
 #prev_link {
     color: var(--prev_link-color);

@@ -13,18 +13,21 @@
 }
 
 #main {
-    margin-top: 60px;
+    margin-top: 40px;
     margin-left: calc(5% + 160px);
     /* margin-left: calc(50% - 28.5%); */
     width: 70%;
     text-align: center;
+}
+#lecture_table {
+    margin-top: 60px;
 }
 #lecture_table h3 {
     font-weight: 300;
 }
 
 #stage {
-    margin-top: 40px;
+    margin-top: 20px;
     width: 500px;
     height: 300px;
     margin-left: calc(50% - 250px);
