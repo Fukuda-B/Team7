@@ -177,7 +177,7 @@ router
 						break;
 					case 'stat': // /main?p=stat
 						var res_list = await database.get_graph_val(req.user);
-						console.log(res_list);
+						// console.log(res_list);
 						res.render('stat', {
 							title: 'Team7 - 統計',
 							lecture_graph_val: await database.get_graph_val(req.user),
@@ -297,10 +297,10 @@ router
           if (req.query.l) { // 講義ごとの詳細表示
             var check_lecture = await database.check_lecture_major(req.user, req.query.l);
             if (check_lecture) {
-              var lecture_student = await database.create_lec_lecture_table(req.user, req.query.l);
+              var lecture_table = await database.create_lec_lecture_table(req.user, req.query.l);
               res.render('course_more_s', {
                 title: await database.get_lecture_name(req.query.l),
-                lecture_table: lecture_student,
+                lecture_table: lecture_table,
                 user_id: database.get_user_id(req.user),
                 top_bar_link: '/main/logout',
                 top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',

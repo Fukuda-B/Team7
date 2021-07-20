@@ -7,28 +7,48 @@
     <link rel="preload" href="/public/css/style_stat.css" as="style">
     <link rel="stylesheet" href="/public/css/style_stat.css"">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js" integrity="sha512-FJ2OYvUIXUqCcPf1stu+oTBlhn54W0UisZB/TNrZaVMHHhYvLBV9jMbvJYtvDe5x/WVaoXZ6KB+Uqe5hT2vlyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script> -->
     <title><%- title %></title>
+    <script type='text/javascript'>
+    var data = <%- JSON.stringify(lecture_graph_val[0]) %>;
+    var lec_list = <%- JSON.stringify(lecture_graph_val[1]) %>;
+    var table_d = [];
+    for (var i = 0; i < lec_list.length; i++) {
+        table_d.push({
+            type:"line",
+            showInLegend: true,
+            name: lec_list[i],
+            dataPoints: data[lec_list[i]],
+        });
+    }
+    console.log(table_d);
+    window.onload = function () {
+        var chart = new CanvasJS.Chart("stage", {
+            axisX: { title: "週数", suffix: "(週)" },
+            axisY: { title: "出席者数", suffix: " 人" },
+            // toolTip: { shared: true },
+            // includeZero: true,
+            legend:{
+                cursor: "pointer",
+                fontSize: 16,
+            },
+            // exportEnabled: true,
+            animationEnabled: true,
+            theme: "light2",
+            title: { text: "週ごとの出席者数" },
+            data: table_d,
+        });
+        chart.render();
+    }
+    </script>
 </head>
 <body>
-    <script type='text/javascript'>
-        window.onload = function() {
-            var data = <%- JSON.stringify(lecture_graph_val) %>;
-            console.log(data);
-            // var stage = document.getElementById('stage');
-            // var chart = new CanvasJS.Chart(stage, {
-            // title: { text: "週ごとの出席数" },
-            // theme: "light1",
-            // data: [{ type: 'line', dataPoints: data }]
-            // });
-            // chart.render();
-        }
-    </script>
     <%- include( './_top_bar.ejs' ); %>
     <div id="wrap">
         <%- include( './_dashboard.ejs' ); %>
     <div id="main">
         <div id="lecture_table">
-            <p>講義の出席数比較</p>
+            <h3>統計情報</h3>
             <div id="stage"></div>
             <!-- <div id="stage2"></div> -->
         </div>

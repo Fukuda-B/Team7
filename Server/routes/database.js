@@ -566,21 +566,28 @@ async function create_lecture_date_table(lecture_id) {
 async function get_graph_val(user) {
   try {
     var res_list = await db_query('SELECT * FROM team7.lecture_rules WHERE teacher_id = ?', user);
-    console.log(user);
-    cosnole.log(res_list);
     if (res_list) {
       var dic_list = {};
-      var rr_list;
+      var rec_list = [];
+      var ttmp, rr_list;
       for (var row of res_list) {
+        ttmp = [];
+        var rr_list = await db_query('SELECT lecture_id, `week`, COUNT(*) FROM team7.attendance WHERE lecture_id = ? GROUP BY `week` ORDER BY `week`;',row.lecture_id);
         for (var i = 0; i < row.weeks; i++) {
-          rr_list = await db_query('SELECT COUNT(*) FROM team7.attendance WHERE lecture_id = ? AND `week` = ?;',[row.lecture_id, (i+1)]);
-          dic_list[rec_list.lecture_id][i] = {
-            "label": row.weeks,
-            "y": rr_list
-          }
+          // console.log(row.lecture_id+' '+row.weeks+' '+(i+1)+' '+rr_list[0]["COUNT(*)"]);
+          ttmp.push({
+            // "label": row.weeks,
+            "x": (i+1),
+            "y": rr_list[i]["COUNT(*)"],
+          });
         }
+        // console.log(ttmp);
+        dic_list[row.lecture_id] = ttmp;
+        rec_list.push(row.lecture_id);
       }
-      return [dic_list, res_list];
+      // console.log(dic_list);
+      // console.log(rec_list);
+      return [dic_list, rec_list];
     } else {
       return false;
     }
