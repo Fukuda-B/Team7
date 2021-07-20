@@ -1,0 +1,121 @@
+<%#
+  Team7 client ejs - edit | Update: 2021/06/21
+%>
+
+<%- include( './_header.ejs' ); %>
+<head>
+  <link rel="preload" href="/public/css/style_edit_major.css" as="style">
+  <link rel="stylesheet" href="/public/css/style_edit_major.css"">
+  <title><%- title %></title>
+</head>
+<body>
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="wrap">
+    <%- include( './_dashboard.ejs' ); %>
+  <div id="main">
+    <div id="lecture_table">
+      <h3><a id="prev_link" href="/main?p=edit">編集</a> > <%- title %> 履修者編集</h3>
+      <div id="change_major">
+        <p>個別修正&emsp;
+        <input type="text" name="" list="" id="change_major_input">
+        <datalist>
+        </datalist>
+        <select name="change_major_bool" id="change_major_bool">
+          <option value="1">&emsp;追加&emsp;</option>
+          <option value="0">&emsp;削除&emsp;</option>
+        </select>&emsp;
+        <button id="apply_major">適用</button>
+        </p>
+      </div>
+      <div id="drop_fie">
+        <p>履修者CSVをドラッグ＆ドロップもしくは</p>
+        <input type="file" id="file_input"><br><br>
+      </div>
+      <button id="apply" onclick="ajax();">適用</button>
+      <p id="error"><i class="fas fa-times"></i> エラーが発生しました</p>
+      <p id="success"><i class="far fa-check-circle"></i> 正しく処理されました</p>
+    </div>
+    </div>
+  </div>
+</body>
+<script>
+  var data = false; // 一時的にデータを置いておく
+  var drop_zone = document.getElementById('drop_fie');
+  var file_input = document.getElementById('file_input');
+  drop_zone.addEventListener('dragover', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        this.style.background = '#e1e7f0';
+    }, false);
+
+  drop_zone.addEventListener('dragleave', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.style.background = '#ffffff';
+  }, false);
+
+  file_input.addEventListener('change', function () {
+      previewFile(this.files[0]);
+  });
+
+  drop_zone.addEventListener('drop', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.style.background = '#ffffff'; //背景色を戻す
+      var files = e.dataTransfer.files; //ファイルを取得
+      if (files.length > 1) return alert('アップロードできるファイルは1つだけです。');
+      file_input.files = files; //inputのvalueをドラッグしたファイルに置き換える。
+      previewFile(files[0]);
+  }, false);
+
+  function previewFile(file) {
+        /* FileReaderで読み込み、プレビュー画像を表示。 */
+        var fr = new FileReader();
+        // fr.readAsText(file);
+        fr.onload = function(evt) {
+          // console.log(evt.target.result);
+          // ajax(evt.target.result);
+          data = evt.target.result;
+        };
+        fr.readAsText(file);
+  }
+
+  function getParam(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+  function ajax() { // xhrで送信
+    var req = new XMLHttpRequest();
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('success').style.display = 'none';
+    if (!data) {
+      document.getElementById('error').style.display = 'block';
+      return;
+    }
+    req.onreadystatechange = function () {
+      if (req.readyState == 4) {
+        if (req.status == 200) {
+          if (req.responseText == 'error') {
+            document.getElementById('error').style.display = 'block';
+            console.log('error');
+          } else {
+            console.log('ok');
+            document.getElementById('success').style.display = 'block';
+          }
+        }
+      }
+    }
+    req.open('POST', '/edit_major', true); // 非同期
+    req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+    var s_tx = 'csv='+encodeURIComponent(data)+'&l='+getParam('l', location.href);
+    // console.log(s_tx);
+    req.send(s_tx);
+  }
+
+</script>
+</html>

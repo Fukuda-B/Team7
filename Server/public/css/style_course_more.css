@@ -79,14 +79,14 @@
 #td_many {
     background: var(--many_rset-color) !important;
 }
-#prev_link {
+/* #prev_link {
     color: var(--prev_link-color);
     text-decoration: none;
 }
 #prev_link:hover {
     color: #000;
     text-decoration: underline;
-}
+} */
 #edit_fie {
     max-width: 720px;
     margin-left: calc(50% - 360px);

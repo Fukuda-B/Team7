@@ -35,6 +35,8 @@ const get_key = require('./cryp.js').get_key;
 const database = require('./database.js');
 const output = require('./output.js');
 const { response } = require('express');
+const iconv = require('iconv-lite');
+const parse = require('csv-parse/lib/sync');
 
 var key_timeout = 7777; // ms
 
@@ -193,6 +195,26 @@ router
 							if (check_lecture) {
 								var lecture_table = await database.create_lecture_date_table(req.query.l);
 								res.render('edit_date', {
+									title: await database.get_lecture_name(req.query.l),
+									lecture_table: lecture_table,
+									user_id: await database.get_user_id(req.user),
+									top_bar_link: '/main/logout',
+									top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+									dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+								});
+							} else {
+								res.send('担当していない講義です。');
+							}
+						} else { // リダイレクト
+							res.redirect('/main?p=edit');
+						}
+						break;
+					case 'edit_major': // /main?p=edit_major
+						if (req.query.l) { // 講義ごとの詳細表示
+							var check_lecture = await database.check_lecture(req.user, req.query.l); // 
+							if (check_lecture) {
+								var lecture_table = await database.create_lecture_date_table(req.query.l);
+								res.render('edit_major', {
 									title: await database.get_lecture_name(req.query.l),
 									lecture_table: lecture_table,
 									user_id: await database.get_user_id(req.user),
@@ -394,6 +416,28 @@ router
 				res.send('error');
 			}
 		})
+	// ----- 履修者更新用 -----
+	.post('/edit_major', isAuthenticated, async function(req, res) {
+		if (req.body.csv && req.body.l) {
+			var check_lecture = await database.check_lecture(req.user, req.body.l); // 講義の担当か確認
+			var data = decodeURIComponent(req.body.csv);
+			try {
+				var data_conv = iconv.encode(data, "utf-8");
+				var data_parsed = parse(data_conv, { columns: true, });
+				// console.log(data_parsed);
+			} catch {
+				res.send('error');
+			}
+			var result = await database.update_lecture_major(req.body.l, data_parsed);
+			if (result && check_lecture) {
+				res.send('ok');
+			} else {
+				res.send('error');
+			}
+		} else {
+			res.send('error');
+		}
+	})
 	.post('/main/u', function (req, res) { // 認証用 iv
 		res.send(bank.iv);
 	})

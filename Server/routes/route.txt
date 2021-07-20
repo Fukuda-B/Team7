@@ -1,0 +1,18 @@
+----- GET -----
+
+/            : トップページ
+/main        : メインルート
+/main/login  : ログイン処理
+/main/logout : ログアウト処理
+
+
+----- POST -----
+
+/main/u      : 認証用 iv
+/main/logout : ログアウト処理
+/main/login  : ログイン処理 (認証処理)
+/edit        : 講義情報の更新
+/edit_date   : 講義日時更新
+/edit_major  : 履修者編集
+/update      : パスワードの更新
+
