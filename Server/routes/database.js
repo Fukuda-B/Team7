@@ -588,12 +588,20 @@ async function get_graph_val(user) {
         ttmp = [];
         var rr_list = await db_query('SELECT lecture_id, `week`, COUNT(*) FROM team7.attendance WHERE lecture_id = ? GROUP BY `week` ORDER BY `week`;',row.lecture_id);
         var ntmp = await db_query('SELECT COUNT(*) FROM team7.student_timetable WHERE lecture_id = ?;', row.lecture_id);
-        for (var i = 0; i < row.weeks; i++) {
+        // console.log(rr_list);
+        for (var i = 0; i < rr_list.length; i++) {
           // console.log(row.lecture_id+' '+row.weeks+' '+(i+1)+' '+rr_list[0]["COUNT(*)"]);
+          // if (!rr_list[i]) rr_list[i]["COUNT(*)"] = 0;
           ttmp.push({
             // "label": row.weeks,
             "x": (i+1),
             "y": rr_list[i]["COUNT(*)"],
+          });
+        }
+        for (var i = 0; i < (row.weeks - rr_list.length); i++) {
+          ttmp.push({
+            "x": (rr_list.length+i),
+            "y": 0,
           });
         }
         dic_list[row.lecture_id] = ttmp;
@@ -617,14 +625,20 @@ async function update_lecture_major(lecture_id, data) {
   try {
     var sql = 'INSERT INTO team7.student_timetable (student_id, lecture_id) VALUES ';
     var pack = [];
+    var uid;
     for (var i = 0; i < data.length; i++) {
       row = data[i];
-      if (i+1 < data.length) {
-        sql += ' ("'+row["学籍番号"]+'", "'+lecture_id+'"),';
+      if (row["学籍番号"]) {
+        uid = row["学籍番号"];
       } else {
-        sql += ' ("'+row["学籍番号"]+'", "'+lecture_id+'")';
+        uid = row["履修者ID"];
       }
-      pack.push(row["学籍番号"], lecture_id);
+      if (i+1 < data.length) {
+        sql += ' ("'+uid+'", "'+lecture_id+'"),';
+      } else {
+        sql += ' ("'+uid+'", "'+lecture_id+'")';
+      }
+      pack.push(uid, lecture_id);
     }
     // delete all
     await db_query('DELETE FROM team7.student_timetable WHERE lecture_id = ?', lecture_id);
