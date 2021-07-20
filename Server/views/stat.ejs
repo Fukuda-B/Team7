@@ -12,20 +12,38 @@
     <script type='text/javascript'>
     var data = <%- JSON.stringify(lecture_graph_val[0]) %>;
     var lec_list = <%- JSON.stringify(lecture_graph_val[1]) %>;
+    var nom_list = <%- JSON.stringify(lecture_graph_val[2]) %>;
     var table_d = [];
+    var table_par = [];
     for (var i = 0; i < lec_list.length; i++) {
         table_d.push({
-            type:"line",
+            type: "line",
             showInLegend: true,
             name: lec_list[i],
             dataPoints: data[lec_list[i]],
         });
     }
-    console.log(table_d);
+    var data_p = {};
+    for (var i = 0; i < Object.keys(nom_list).length; i++) {
+        data_p[lec_list[i]] = [];
+        for (var row of data[lec_list[i]]) {
+            data_p[lec_list[i]].push({ "x":row.x, "y":(row.y*100/nom_list[lec_list[i]])});
+        }
+    }
+    console.log(data_p);
+    for (var i = 0; i < Object.keys(nom_list).length; i++) {
+        table_par.push({
+            type: "line",
+            showInLegend: true,
+            name: lec_list[i],
+            dataPoints: data_p[lec_list[i]],
+        });
+    }
+    // console.log(table_d);
     window.onload = function () {
         var chart = new CanvasJS.Chart("stage", {
             axisX: { title: "週数", suffix: "(週)" },
-            axisY: { title: "出席者数", suffix: " 人" },
+            axisY: { title: "出席者数", suffix: "人" },
             // toolTip: { shared: true },
             // includeZero: true,
             legend:{
@@ -39,6 +57,22 @@
             data: table_d,
         });
         chart.render();
+        var chart2 = new CanvasJS.Chart("stage2", {
+            axisX: { title: "週数", suffix: "(週)" },
+            axisY: { title: "出席割合", suffix: "%" },
+            // toolTip: { shared: true },
+            // includeZero: true,
+            legend:{
+                cursor: "pointer",
+                fontSize: 16,
+            },
+            // exportEnabled: true,
+            animationEnabled: true,
+            theme: "light2",
+            title: { text: "週ごとの出席割合" },
+            data: table_par,
+        });
+        chart2.render();
     }
     </script>
 </head>
@@ -50,6 +84,7 @@
         <div id="lecture_table">
             <h3>統計情報</h3>
             <div id="stage"></div>
+            <div id="stage2"></div>
             <!-- <div id="stage2"></div> -->
         </div>
         </div>

@@ -568,11 +568,13 @@ async function get_graph_val(user) {
     var res_list = await db_query('SELECT * FROM team7.lecture_rules WHERE teacher_id = ?', user);
     if (res_list) {
       var dic_list = {};
-      var rec_list = [];
-      var ttmp, rr_list;
+      var lec_list = [];
+      var ttmp, rr_list; // 週ごとのカウント
+      var ntmp, nom_list = {}; // 履修者数
       for (var row of res_list) {
         ttmp = [];
         var rr_list = await db_query('SELECT lecture_id, `week`, COUNT(*) FROM team7.attendance WHERE lecture_id = ? GROUP BY `week` ORDER BY `week`;',row.lecture_id);
+        var ntmp = await db_query('SELECT COUNT(*) FROM team7.student_timetable WHERE lecture_id = ?;', row.lecture_id);
         for (var i = 0; i < row.weeks; i++) {
           // console.log(row.lecture_id+' '+row.weeks+' '+(i+1)+' '+rr_list[0]["COUNT(*)"]);
           ttmp.push({
@@ -581,13 +583,14 @@ async function get_graph_val(user) {
             "y": rr_list[i]["COUNT(*)"],
           });
         }
-        // console.log(ttmp);
         dic_list[row.lecture_id] = ttmp;
-        rec_list.push(row.lecture_id);
+        lec_list.push(row.lecture_id);
+        // console.log(ntmp[0]["COUNT(*)"]);
+        nom_list[row.lecture_id] = ntmp[0]["COUNT(*)"];
       }
       // console.log(dic_list);
-      // console.log(rec_list);
-      return [dic_list, rec_list];
+      // console.log(lec_list);
+      return [dic_list, lec_list, nom_list]; // 週ごとの連想配列, 科目リスト, 履修者数リスト
     } else {
       return false;
     }

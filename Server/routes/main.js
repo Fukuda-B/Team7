@@ -180,7 +180,7 @@ router
 						// console.log(res_list);
 						res.render('stat', {
 							title: 'Team7 - 統計',
-							lecture_graph_val: await database.get_graph_val(req.user),
+							lecture_graph_val: res_list,
 							user_id: await database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
@@ -195,7 +195,7 @@ router
 								res.render('edit_date', {
 									title: await database.get_lecture_name(req.query.l),
 									lecture_table: lecture_table,
-									user_id: database.get_user_id(req.user),
+									user_id: await database.get_user_id(req.user),
 									top_bar_link: '/main/logout',
 									top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 									dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
