@@ -5,6 +5,7 @@
 const fs = require('fs');
 const xlsx = require('xlsx');
 const csv = require('csv');
+const iconv = require('iconv-lite');
 
 // ----- xlsxファイル生成 -----
 async function xlsx_gen(data, fname, callback) {
@@ -26,8 +27,11 @@ async function xlsx_gen(data, fname, callback) {
 }
 
 // ----- csvファイル生成 -----
-async function csv_gen(data, fname, callback) {
+async function csv_gen(data, fname, encode, callback) {
+	// var data_conv = iconv.encode(data, encode);
 	csv.stringify(data, (error, output) => {
+		output = iconv.encode(output, encode);
+		console.log(output);
 		fs.writeFile(fname, output, (error) => {
 			if (error) {
 				console.log(error);

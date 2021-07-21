@@ -78,7 +78,8 @@ async function create_teacher_table(user, page) {
           '<a href="/main?p=edit_major&l='+row.lecture_id+'"><i class="fas fa-user-edit"></i>履修者</a>';
           break;
         case 'home':
-          tx = '<a href="/main?dl='+row.lecture_id+'&format=csv" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-csv"></i>csv</a>' +
+          tx = '<a href="/main?dl='+row.lecture_id+'&format=csv&encode=utf_8" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-csv"></i>csv <span>(utf-8)</span></a>' +
+          '<a href="/main?dl='+row.lecture_id+'&format=csv&encode=shift_jis" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-csv"></i>csv <span>(shift-jis)</span></a>' +
           '<a href="/main?dl='+row.lecture_id+'&format=xlsx" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-excel"></i>xlsx</a>';
           break;
         case 'edit_date':
@@ -191,7 +192,7 @@ async function create_lec_student_table(lecture_id, limit_absence, limit_latenes
       } else {
         std_list_arr[row.student_id][row.week] = 0; // 欠席
       }
-      if (row.week > weeks) weeks = row.week; // 最終週の更新
+      // if (row.week > weeks) weeks = row.week; // 最終週の更新
     }
 
     // テーブルのヘッダ部分
@@ -555,15 +556,25 @@ async function update_lecuture_date(lecture_id, data) {
 async function create_lecture_date_table(lecture_id) {
   try { // orderでweek順で並び替え
     var res_list = await db_query('SELECT * FROM team7.lecture_date WHERE lecture_id = ? ORDER BY `week`;', lecture_id);
-    if (res_list) {
+    var rec_list = await db_query('SELECT * FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id);
+    if (res_list && rec_list) {
       var table = '<tr><th>講義回</th> <th>日時</th> <th>適用</th></tr>';
       var dt_tmp, dt_val;
+      var week_cnt = 0;
       for (row of res_list) {
+        if (week_cnt >= rec_list.weeks) break; // データより講義回が少ない
+        week_cnt++;
         dt_tmp = new Date(Date.parse(row.date));
         dt_val = dt_tmp.getFullYear() + '-' + ('0' + (dt_tmp.getMonth()+1)).slice(-2) + '-' + ('0' + dt_tmp.getDate()).slice(-2);
         table += '</tr></td><td>' + row.week +
         '</td><td><input type="date" id="date_'+row.week+'" value="' + dt_val + '">'+
         '</td><td><button id="date_change" onclick="ajax('+row.week+');">適用</button>'+
+        '</td></tr>';
+      }
+      for (var i = 0; i < rec_list.weeks - res_list.length; i++) { // データより講義回が多い場合追加
+        table += '</tr></td><td>' + row.week +
+        '</td><td><input type="date" id="date_'+(res_list+i)+'" value="">'+
+        '</td><td><button id="date_change" onclick="ajax('+(res_list+i)+');">適用</button>'+
         '</td></tr>';
       }
       return table;
@@ -586,10 +597,12 @@ async function get_graph_val(user) {
       var ntmp, nom_list = {}; // 履修者数
       for (var row of res_list) {
         ttmp = [];
-        var rr_list = await db_query('SELECT lecture_id, `week`, COUNT(*) FROM team7.attendance WHERE lecture_id = ? GROUP BY `week` ORDER BY `week`;',row.lecture_id);
+        // var rr_list = await db_query('SELECT lecture_id, `week`, COUNT(*) FROM team7.attendance WHERE lecture_id = ? GROUP BY `week` ORDER BY `week`;',row.lecture_id);
+        var rr_list = await db_query('SELECT team7.attendance.lecture_id, `week`, COUNT(*) FROM team7.attendance INNER JOIN team7.student_timetable ON team7.attendance.lecture_id = team7.student_timetable.lecture_id AND team7.attendance.student_id = team7.student_timetable.student_id WHERE team7.attendance.lecture_id = ? AND result IN ("出席", "遅刻") GROUP BY `week` ORDER BY `week`;', row.lecture_id);
         var ntmp = await db_query('SELECT COUNT(*) FROM team7.student_timetable WHERE lecture_id = ?;', row.lecture_id);
         // console.log(rr_list);
         for (var i = 0; i < rr_list.length; i++) {
+          if (i >= row.weeks) break;
           // console.log(row.lecture_id+' '+row.weeks+' '+(i+1)+' '+rr_list[0]["COUNT(*)"]);
           // if (!rr_list[i]) rr_list[i]["COUNT(*)"] = 0;
           ttmp.push({

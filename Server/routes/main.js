@@ -122,12 +122,13 @@ router
                 if (!req.query.absence) absence = 4; // 強調表示の初期値(欠席)
                 if (!req.query.lateness) lateness = 5; // 強調表示の初期値(遅刻)
 								var lecture_student = await database.create_lec_student_table(req.query.l, absence, lateness);
+								var title_n = await database.get_lecture_name(req.query.l);
 								res.render('course_more', {
                   absence_v: absence,
                   lateness_v: lateness,
-									title: await database.get_lecture_name(req.query.l),
+									title: title_n + '('+req.query.l+')',
 									lecture_table: lecture_student,
-									user_id: database.get_user_id(req.user),
+									user_id: await database.get_user_id(req.user),
 									top_bar_link: '/main/logout',
 									top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 									dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
@@ -140,7 +141,7 @@ router
 							res.render('course', {
 								title: 'Team7 - コース',
 								lecture_table: out_table,
-								user_id: database.get_user_id(req.user),
+								user_id: await database.get_user_id(req.user),
 								top_bar_link: '/main/logout',
 								top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 								dashboard_menu_class: ["dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li"]
@@ -153,11 +154,12 @@ router
 							if (check_lecture) {
 								var lecture_student = await database.create_lec_student_table(req.query.l, 15, 15);
                 var res_list = await database.get_lecture_edit_info(req.query.l);
+								var title_n = await database.get_lecture_name(req.query.l)
 								res.render('edit_more', {
                   res_list: res_list,
-									title: await database.get_lecture_name(req.query.l),
+									title: title_n + '('+req.query.l+')',
 									lecture_table: lecture_student,
-									user_id: database.get_user_id(req.user),
+									user_id: await database.get_user_id(req.user),
 									top_bar_link: '/main/logout',
 									top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 									dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
@@ -170,7 +172,7 @@ router
 							res.render('edit', {
 								title: 'Team7 - 編集',
 								lecture_table: out_table,
-								user_id: database.get_user_id(req.user),
+								user_id: await database.get_user_id(req.user),
 								top_bar_link: '/main/logout',
 								top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 								dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
@@ -194,8 +196,9 @@ router
 							var check_lecture = await database.check_lecture(req.user, req.query.l); // 
 							if (check_lecture) {
 								var lecture_table = await database.create_lecture_date_table(req.query.l);
+								var title_n = await database.get_lecture_name(req.query.l);
 								res.render('edit_date', {
-									title: await database.get_lecture_name(req.query.l),
+									title: title_n + '('+req.query.l+')',
 									lecture_table: lecture_table,
 									user_id: await database.get_user_id(req.user),
 									top_bar_link: '/main/logout',
@@ -214,8 +217,9 @@ router
 							var check_lecture = await database.check_lecture(req.user, req.query.l); // 
 							if (check_lecture) {
 								var lecture_table = await database.create_lecture_date_table(req.query.l);
+								var title_n = await database.get_lecture_name(req.query.l);
 								res.render('edit_major', {
-									title: await database.get_lecture_name(req.query.l),
+									title: title_n + '('+req.query.l+')',
 									lecture_table: lecture_table,
 									user_id: await database.get_user_id(req.user),
 									top_bar_link: '/main/logout',
@@ -233,7 +237,7 @@ router
 						res.render('dev', {
 							title: 'Team7 - 開発者向け',
 							lecture_table: await database.create_teacher_table(req.user, ''),
-							user_id: database.get_user_id(req.user),
+							user_id: await database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main", "dash_li"],
@@ -243,7 +247,7 @@ router
 					case 'setting': // /main?p=setting
 						res.render('setting', {
 							title: 'Team7 - 個人設定',
-							user_id: database.get_user_id(req.user),
+							user_id: await database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 							dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
@@ -266,7 +270,11 @@ router
                         res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
                         raw.pipe(res);
                       }
-                      output.csv_gen(lecture_table, fname, send_callback);
+											if (req.query.encode == "utf_8") {
+												output.csv_gen(lecture_table, fname, "utf-8", send_callback);
+											} else {
+												output.csv_gen(lecture_table, fname, "shift-jis", send_callback);
+											}
                     } else {
                       var fname = req.query.dl+'_xlsx.xlsx';
                       var send_callback = function() {
@@ -295,7 +303,7 @@ router
               res.render('home', {
                 title: 'Team7 - マイページ',
                 lecture_table: out_table,
-                user_id: database.get_user_id(req.user),
+                user_id: await database.get_user_id(req.user),
                 top_bar_link: '/main/logout',
                 top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
                 dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
@@ -308,7 +316,7 @@ router
 					case 'setting': // /main?p=setting
 					res.render('setting_s', {
 						title: 'Team7 - 個人設定',
-						user_id: database.get_user_id(req.user),
+						user_id: await database.get_user_id(req.user),
 						top_bar_link: '/main/logout',
 						top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 						dashboard_menu_class: ["dash_li", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li dash_li_main"],
@@ -320,10 +328,11 @@ router
             var check_lecture = await database.check_lecture_major(req.user, req.query.l);
             if (check_lecture) {
               var lecture_table = await database.create_lec_lecture_table(req.user, req.query.l);
+							var title_n = await database.get_lecture_name(req.query.l);
               res.render('course_more_s', {
-                title: await database.get_lecture_name(req.query.l),
+                title: title_n + '('+req.query.l+')',
                 lecture_table: lecture_table,
-                user_id: database.get_user_id(req.user),
+                user_id: await database.get_user_id(req.user),
                 top_bar_link: '/main/logout',
                 top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
 								dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
@@ -336,7 +345,7 @@ router
             res.render('home_s', {
               title: 'Team7 - マイページ',
               lecture_table: out_table,
-              user_id: database.get_user_id(req.user),
+              user_id: await database.get_user_id(req.user),
               top_bar_link: '/main/logout',
               top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
               dashboard_menu_class: ["dash_li dash_li_main", "dash_li", "dash_li", "dash_li", "dash_li", "dash_li"]
