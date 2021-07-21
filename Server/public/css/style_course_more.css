@@ -28,7 +28,7 @@
 }
 #lecture_table_val {
     margin: 0 auto;
-    margin-top: 30px;
+    margin-top: 5px;
     border-collapse: collapse;
     font-family: 游ゴシック体, 'Yu Gothic', YuGothic, 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
     font-size: 0.9em;
@@ -108,6 +108,10 @@
 #apply {
     margin-top: 20px;
     padding: 5px 30px;
+}
+#att_info {
+    margin-top: 30px;
+    margin-bottom: 0;
 }
 
 /* 画面の幅が1000px以上 */
