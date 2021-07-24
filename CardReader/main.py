@@ -458,8 +458,8 @@ class IC():
         # lecture_id = 'T4' # 講義のID
         # lecture_id = 'M2' # 講義のID
         if DEBUG_LECTURE_ID == 'AUTO' and self.now_lec:
-            lecture_id = self.now_lec[1]
-        elif DEBUG_LECTURE_ID: lecture_id = DEBUG_LECTURE_ID
+            lecture_id = self.now_lec
+        elif DEBUG_LECTURE_ID != 'AUTO' : lecture_id = DEBUG_LECTURE_ID
         else: lecture_id = 'T4'
 
         if len(self.gen_val) < 1 or len(self.gen_lec) < 1:
