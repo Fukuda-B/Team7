@@ -79,7 +79,7 @@ DATABASE = 'attendance.db' # 出席を保存するデータベース
 DB_TABLE = 'attendance' # 出席を保存するテーブル
 
 DEBUG_LECTURE_ID = 'T4' # デバッグ時の科目. ここを変更すると入力される科目が変わる
-ENCRYPT_OPTION = True # 内部データの暗号化 (True = 暗号化する / False = 暗号化しない)
+ENCRYPT_OPTION = True # 内部データの暗号化 (True = 暗号化する / False = 暗号化しない) | 値の変更後は、内部データの更新のために2度再起動が必要
 
 
 # ----- Main -----
