@@ -78,7 +78,8 @@ except:
 DATABASE = 'attendance.db' # 出席を保存するデータベース
 DB_TABLE = 'attendance' # 出席を保存するテーブル
 
-DEBUG_LECTURE_ID = 'T4' # デバッグ時の科目. ここを変更すると入力される科目が変わる
+DEBUG_LECTURE_ID = 'AUTO' # 'AUTO' は時間に合わせて自動でデバッグする講義を選択
+# DEBUG_LECTURE_ID = 'T4' #  講義IDを指定するとボタンを押したときに入力される科目が変わる
 ENCRYPT_OPTION = True # 内部データの暗号化 (True = 暗号化する / False = 暗号化しない) | 値の変更後は、内部データの更新のために2度再起動が必要
 
 
@@ -221,8 +222,9 @@ class Attendance():
             arr.append(row)
             idm_list.append(row[3])
             if str(row[3]) == str(idm): break
-        student_index = idm_list.index(str(idm)) # idmのインデックス取得
-        try: result_val = arr[student_index][lecture_index] # 履修状況の値を取得してみる
+        try:
+            student_index = idm_list.index(str(idm)) # idmのインデックス取得
+            result_val = arr[student_index][lecture_index] # 履修状況の値を取得してみる
         except ValueError: return False # 値が存在しない場合
         if result_val == "履修": return True # 履修者
         else: return False
@@ -306,17 +308,28 @@ class Attendance():
         return False
 
     def get_username(self, idm):
-        ''' idmからユーザ名取得 '''
+        ''' idmからユーザ名を取得 '''
         # csv_file = open(self.student_timetable, "r", encoding="utf-8", errors="", newline="" )
         # f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         # next(f) # header
-        json_load = self.open_tm7_file(self.lecture_timetable)
+        json_load = self.open_tm7_file(self.student_timetable)
         json_load.pop(0)
         arr = []
         for row in json_load:
             arr.append(row)
         for i in range(len(arr)):
             if arr[i][3] == idm: return arr[i][1]
+        return False # リストに存在しない
+
+    def get_userid(self, idm):
+        ''' idmから学籍番号を取得 '''
+        json_load = self.open_tm7_file(self.student_timetable)
+        json_load.pop(0)
+        arr = []
+        for row in json_load:
+            arr.append(row)
+        for i in range(len(arr)):
+            if arr[i][3] == idm: return arr[i][0]
         return False # リストに存在しない
 
     def get_weeks(self, dt, lecture_id):
@@ -360,16 +373,19 @@ class IC():
         now_dt = datetime.datetime.now()
         youbi = datetime.datetime.strftime(now_dt, '%a')
         lecture_id = self.attendance.check_lecture(youbi, now_dt) # 講義のID
+        change_flag = False 
         if len(lecture_id) > 1:
             f = open('Subjects_Priority.txt', 'r', encoding='utf-8')
             sp = f.read()
             sp_l = sp.split('\n')
-            for i in range(len(sp_l)):
-                if sp_l[i] == lecture_id[1]:
-                    lecture_id = lecture_id[1] # 置き換え
+            for i in range(len(lecture_id)):
+                if lecture_id[i][0] in sp_l:
+                    lecture_id = lecture_id[i] # 置き換え
+                    change_flag = True
                     break
-            if len(lecture_id) > 1: lecture_id = lecture_id[0] # 置き換えられてない = lecture_id[0]
-        if lecture_id and len(lecture_id[0]) > 0:
+            if change_flag == False: lecture_id = lecture_id[0] # 置き換えられてない = lecture_id[0]
+            self.now_lec = [str(lecture_id[1]), str(lecture_id[0])]
+        elif lecture_id:
             self.now_lec = [str(lecture_id[0][1]), str(lecture_id[0][0])]
         else: self.now_lec = []
 
@@ -398,7 +414,7 @@ class IC():
 
             if self.attendance.check_taking_lecture(lecture_id, self.idm): # 履修者の判定
                 lecture_no = self.attendance.get_weeks(dt, lecture_id) # 講義の第何回目か
-                user_name =  self.attendance.get_username(self.idm) # 出席した人の名前
+                student_id =  self.attendance.get_userid(self.idm) # 出席した人の名前
                 user_idm = self.idm # 出席した人のidm
                 result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席/時間外です
                 if result != '時間外です': # 時間外以外
@@ -441,7 +457,9 @@ class IC():
             # lecture_id = 'T4'
         # lecture_id = 'T4' # 講義のID
         # lecture_id = 'M2' # 講義のID
-        if DEBUG_LECTURE_ID: lecture_id = DEBUG_LECTURE_ID
+        if DEBUG_LECTURE_ID == 'AUTO' and self.now_lec:
+            lecture_id = self.now_lec[1]
+        elif DEBUG_LECTURE_ID: lecture_id = DEBUG_LECTURE_ID
         else: lecture_id = 'T4'
 
         if len(self.gen_val) < 1 or len(self.gen_lec) < 1:
@@ -453,8 +471,9 @@ class IC():
         if self.attendance.check_taking_lecture(lecture_id, row_val[5]): # 履修者の判定
             lecture_no = row_val[2] # 講義の第何回目か
             # user_name = self.attendance.get_username(self.idm) # 出席した人の名前
-            user_idm = row_val[5]
-            student_id = row_val[1] # 出席した人の名前
+            user_idm = row_val[5] # idm
+            # student_id = row_val[1] # 出席した人の学籍番号
+            student_id = self.attendance.get_userid(user_idm) # 出席した人の名前
             # user_idm = '012E44A7A51'+self.rand_hex_gen(5) # 出席した人のidm
             dt = datetime.datetime.strptime(row_val[4], '%Y-%m-%d %H:%M:%S')
             result = self.attendance.check_attend(dt, str(self.gen_lec)) # 出席/遅刻/欠席/時間外です
@@ -515,10 +534,11 @@ class IC():
                 self.read_que = True
                 self.read_id() # idm読み込み待ち
                 self.read_que = False
-            time.sleep(3)
-            self.cs.ready()
+                time.sleep(2)
+                if self.debug_flag == False:
+                    self.cs.ready()
             if self.debug_flag:
-                time.sleep(3)
+                time.sleep(2)
                 if len(self.now_lec) > 0: self.cs.update_main(self.now_lec[0]+'('+self.now_lec[1]+')', "ICカードをタッチ", "") # 講義がある時間帯
                 else: self.cs.ready() # 初期状態に戻す (講義時間外)
                 self.debug_flag = False
