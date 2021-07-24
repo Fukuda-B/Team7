@@ -124,12 +124,12 @@ class Main(QtWidgets.QWidget):
         self.ui.label_2.setText(stext) # 1番下
         self.ui.label_3.setText(sstext) # label_2の上
 
-
 # ----- Sub -----
 # 表示以外の内部処理
 class Sub():
     def __init__(self, cs):
         self.cs = cs # main ui
+        self.cs.ui.action_8.triggered.connect(lambda : self.cnt_reset()) # 内部データの更新
         self.cnt = 0 # exec count
         self.fps = 60 # update frame rate
         # network
@@ -149,6 +149,9 @@ class Sub():
 
         # ec = Encryption()
         # print(ec.aes_d(ec.aes_e("test")))
+
+    def cnt_reset(self):
+        self.cnt = 0
 
     def interval(self):
         ''' 定期実行 '''
@@ -185,19 +188,28 @@ class Attendance():
         self.student_timetable = "./student_timetable.tm7" # 暗号化された履修状況データ (shift-jis)
         self.lecture_date = "./lecture_date.tm7" # 暗号化された講義日データ
         self.before_time = 15 # 開始時間前の許容範囲 (分)
-        Path(self.lecture_rules).touch(exist_ok=True)
-        Path(self.student_timetable).touch(exist_ok=True)
-        Path(self.lecture_date).touch(exist_ok=True)
+        # Path(self.lecture_rules).touch(exist_ok=True)
+        # Path(self.student_timetable).touch(exist_ok=True)
+        # Path(self.lecture_date).touch(exist_ok=True)
         self.enc = Encryption() # 暗号化/複合クラス
+
+    def open_tm7_file(self, fname):
+        ''' ".tm7"ファイルを開く '''
+        try:
+            json_open = open(fname, 'r')
+            json_val = json_open.read()
+            json_load = json.loads(self.enc.fernet_d(json_val)) # データの復号
+            return json_load
+        except:
+            print('内部データファイルが存在しません。')
+            return False
 
     def check_taking_lecture(self, lecture_id, idm):
         ''' 履修しているか確認する '''
         # csv_file = open(self.student_timetable, "r", encoding="utf-8", errors="", newline="" )
         # f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         # head_list = next(f) # header
-        json_open = open(self.student_timetable, 'r') # 暗号化されている状態
-        json_val = json_open.read()
-        json_load = json.loads(self.enc.fernet_d(json_val)) # データの復号
+        json_load = self.open_tm7_file(self.student_timetable)
         head_list = json_load.pop(0)
         try: lecture_index = head_list.index(lecture_id) # 指定された科目の列
         except ValueError: return False # lecture_id の 講義がない場合
@@ -221,9 +233,7 @@ class Attendance():
         # csv_file = open(self.lecture_rules, "r", encoding="utf-8", errors="", newline="" )
         # f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         # next(f) # header
-        json_open = open(self.lecture_rules, 'r') # 暗号化されている状態
-        json_val = json_open.read()
-        json_load = json.loads(self.enc.fernet_d(json_val)) # データの復号
+        json_load = self.open_tm7_file(self.lecture_rules)
         json_load.pop(0)
         arr = []
         for row in json_load:
@@ -258,9 +268,7 @@ class Attendance():
         # csv_file = open(self.lecture_rules, "r", encoding="utf-8", errors="", newline="" )
         # f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         # next(f) # header
-        json_open = open(self.lecture_rules, 'r') # 暗号化されている状態
-        json_val = json_open.read()
-        json_load = json.loads(self.enc.fernet_d(json_val)) # データの復号
+        json_load = self.open_tm7_file(self.lecture_rules)
         json_load.pop(0)
         arr = []
         lecture_index_list = []
@@ -302,9 +310,7 @@ class Attendance():
         # csv_file = open(self.student_timetable, "r", encoding="utf-8", errors="", newline="" )
         # f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         # next(f) # header
-        json_open = open(self.lecture_timetable, 'r') # 暗号化されている状態
-        json_val = json_open.read()
-        json_load = json.loads(self.enc.fernet_d(json_val)) # データの復号
+        json_load = self.open_tm7_file(self.lecture_timetable)
         json_load.pop(0)
         arr = []
         for row in json_load:
@@ -319,8 +325,7 @@ class Attendance():
         # csv_file = open(self.lecture_date, "r", encoding="utf-8", errors="", newline="" )
         # f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         # next(f) # header
-        json_open = open(self.lecture_date, 'r')
-        json_load = json.load(json_open)
+        json_load = self.open_tm7_file(self.lecture_date)
         json_load.pop(0)
         arr = []
         for row in json_load:
