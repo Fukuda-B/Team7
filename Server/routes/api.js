@@ -13,8 +13,8 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 
-var res_json = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
-var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+// var res_json = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
+// var user_list = JSON.parse(fs.readFileSync('./routes/user_data.json', 'utf8'));
 const bank_api = require('./cryp.js').bank_api;
 const CRYP = require('./cryp.js').CRYP;
 const get_key = require('./cryp.js').get_key;
@@ -64,16 +64,18 @@ router
       res.send('error');
     }
   })
+  // カードリーダの更新用API (utf-8)
   .get('/v1/lecture_date', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_lecture_date_api();
     if (val) {
-      var fname = 'lecture_date.csv';
-      var send_callback = function() {
-        var raw = fs.createReadStream(fname);
-        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
-        raw.pipe(res);
-      }
-      output.csv_gen(val, fname, send_callback);
+      // var fname = 'lecture_date.csv';
+      // var send_callback = function() {
+      //   var raw = fs.createReadStream(fname);
+      //   res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+      //   raw.pipe(res);
+      // }
+      // output.csv_gen(val, fname, send_callback);
+      res.send(JSON.stringify(val));
     } else {
       res.send('error');
     }
@@ -81,13 +83,14 @@ router
   .get('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_student_list_api();
     if (val) {
-      var fname = 'lecture_rules.csv';
-      var send_callback = function() {
-        var raw = fs.createReadStream(fname);
-        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
-        raw.pipe(res);
-      }
-      output.csv_gen(val, fname, send_callback);
+      // var fname = 'lecture_rules.csv';
+      // var send_callback = function() {
+      //   var raw = fs.createReadStream(fname);
+      //   res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+      //   raw.pipe(res);
+      // }
+      // output.csv_gen(val, fname, send_callback);
+      res.send(JSON.stringify(val));
     } else {
       res.send('error');
     }
@@ -95,13 +98,14 @@ router
   .get('/v1/student_timetable', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_student_timetable_api();
     if (val) {
-      var fname = 'studnet_timetable.csv';
-      var send_callback = function() {
-        var raw = fs.createReadStream(fname);
-        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
-        raw.pipe(res);
-      }
-      output.csv_gen(val, fname, send_callback);
+      // var fname = 'studnet_timetable.csv';
+      // var send_callback = function() {
+      //   var raw = fs.createReadStream(fname);
+      //   res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+      //   raw.pipe(res);
+      // }
+      // output.csv_gen(val, fname, send_callback);
+      res.send(JSON.stringify(val));
     } else {
       res.send('error');
     }
@@ -154,13 +158,14 @@ router
   .post('/v1/lecture_date', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_lecture_date_api();
     if (val) {
-      var fname = 'lecture_date.csv';
-      var send_callback = function() {
-        var raw = fs.createReadStream(fname);
-        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
-        raw.pipe(res);
-      }
-      output.csv_gen(val, fname, send_callback);
+      // var fname = 'lecture_date.csv';
+      // var send_callback = function() {
+      //   var raw = fs.createReadStream(fname);
+      //   res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+      //   raw.pipe(res);
+      // }
+      // output.csv_gen(val, fname, send_callback);
+      res.send(JSON.stringify(val));
     } else {
       res.send('error');
     }
@@ -168,13 +173,14 @@ router
   .post('/v1/lecture_rules', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_lecture_rules_api();
     if (val) {
-      var fname = 'lecture_rules.csv';
-      var send_callback = function() {
-        var raw = fs.createReadStream(fname);
-        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
-        raw.pipe(res);
-      }
-      output.csv_gen(val, fname, send_callback);
+      // var fname = 'lecture_rules.csv';
+      // var send_callback = function() {
+      //   var raw = fs.createReadStream(fname);
+      //   res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+      //   raw.pipe(res);
+      // }
+      // output.csv_gen(val, fname, send_callback);
+      res.send(JSON.stringify(val));
     } else {
       res.send('error');
     }
@@ -182,13 +188,14 @@ router
   .post('/v1/student_timetable', isAuthenticated_nos, async function (req, res) {
     var val = await database.create_student_timetable_api();
     if (val) {
-      var fname = 'studnet_timetable.csv';
-      var send_callback = function() {
-        var raw = fs.createReadStream(fname);
-        res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
-        raw.pipe(res);
-      }
-      output.csv_gen(val, fname, send_callback);
+      // var fname = 'studnet_timetable.csv';
+      // var send_callback = function() {
+      //   var raw = fs.createReadStream(fname);
+      //   res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
+      //   raw.pipe(res);
+      // }
+      // output.csv_gen(val, fname, send_callback);
+      res.send(JSON.stringify(val));
     } else {
       res.send('error');
     }

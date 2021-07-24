@@ -5,8 +5,14 @@ IDm-M1.csv
 M1/
 test/
 Studenttable.csv
-lecture_rules.csv
-student_timetable.csv
 old2/gM1.py
 old2/IDm-M1.csv
+lecture_rules.csv
+student_timetable.csv
 lecture_date.csv
+lecture_rules.json
+student_timetable.json
+lecture_date.json
+lecture_rules.tm7
+student_timetable.tm7
+lecture_date.tm7
