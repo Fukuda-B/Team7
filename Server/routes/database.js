@@ -598,8 +598,9 @@ async function get_graph_val(user) {
       for (var row of res_list) {
         ttmp = [];
         // var rr_list = await db_query('SELECT lecture_id, `week`, COUNT(*) FROM team7.attendance WHERE lecture_id = ? GROUP BY `week` ORDER BY `week`;',row.lecture_id);
-        var rr_list = await db_query('SELECT team7.attendance.lecture_id, `week`, COUNT(*) FROM team7.attendance INNER JOIN team7.student_timetable ON team7.attendance.lecture_id = team7.student_timetable.lecture_id AND team7.attendance.student_id = team7.student_timetable.student_id WHERE team7.attendance.lecture_id = ? AND result IN ("出席", "遅刻") GROUP BY `week` ORDER BY `week`;', row.lecture_id);
-        var ntmp = await db_query('SELECT COUNT(*) FROM team7.student_timetable WHERE lecture_id = ?;', row.lecture_id);
+        var rr_list = await db_query('SELECT team7.attendance.lecture_id, `week`, COUNT(team7.attendance.lecture_id) FROM team7.attendance INNER JOIN team7.student_timetable ON team7.attendance.lecture_id = team7.student_timetable.lecture_id AND team7.attendance.student_id = team7.student_timetable.student_id WHERE team7.attendance.lecture_id = ? AND result IN ("出席", "遅刻") GROUP BY `week` ORDER BY `week`;', row.lecture_id);
+        var ntmp = await db_query('SELECT COUNT(student_id) FROM team7.student_timetable WHERE lecture_id = ?;', row.lecture_id);
+        // console.log(ntmp);
         // console.log(rr_list);
         for (var i = 0; i < rr_list.length; i++) {
           if (i >= row.weeks) break;
@@ -608,7 +609,7 @@ async function get_graph_val(user) {
           ttmp.push({
             // "label": row.weeks,
             "x": (i+1),
-            "y": rr_list[i]["COUNT(*)"],
+            "y": rr_list[i]["COUNT(team7.attendance.lecture_id)"],
           });
         }
         for (var i = 0; i < (row.weeks - rr_list.length); i++) {
@@ -620,7 +621,7 @@ async function get_graph_val(user) {
         dic_list[row.lecture_id] = ttmp;
         lec_list.push(row.lecture_id);
         // console.log(ntmp[0]["COUNT(*)"]);
-        nom_list[row.lecture_id] = ntmp[0]["COUNT(*)"];
+        nom_list[row.lecture_id] = ntmp[0]["COUNT(student_id)"];
       }
       // console.log(dic_list);
       // console.log(lec_list);
