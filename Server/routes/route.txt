@@ -14,5 +14,5 @@
 /edit        : 講義情報の更新
 /edit_date   : 講義日時更新
 /edit_major  : 履修者編集
+/edit_attend : 出席情報の変更
 /update      : パスワードの更新
-

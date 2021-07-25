@@ -121,7 +121,7 @@ router
                 var lateness = req.query.lateness;
                 if (!req.query.absence) absence = 4; // 強調表示の初期値(欠席)
                 if (!req.query.lateness) lateness = 5; // 強調表示の初期値(遅刻)
-								var lecture_student = await database.create_lec_student_table(req.query.l, absence, lateness);
+								var lecture_student = await database.create_lec_student_table(req.query.l, absence, lateness, 'course_more');
 								var title_n = await database.get_lecture_name(req.query.l);
 								res.render('course_more', {
                   absence_v: absence,
@@ -152,18 +152,35 @@ router
 						if (req.query.l) { // 講義ごとの詳細表示
 							var check_lecture = await database.check_lecture(req.user, req.query.l);
 							if (check_lecture) {
-								var lecture_student = await database.create_lec_student_table(req.query.l, 15, 15);
-                var res_list = await database.get_lecture_edit_info(req.query.l);
-								var title_n = await database.get_lecture_name(req.query.l)
-								res.render('edit_more', {
-                  res_list: res_list,
-									title: title_n + '('+req.query.l+')',
-									lecture_table: lecture_student,
-									user_id: await database.get_user_id(req.user),
-									top_bar_link: '/main/logout',
-									top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
-									dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
-								});
+								if (req.query.sid) { // 履修者ごとの情報修正
+									var lecture_student = await database.get_student_attend_table(req.query.l, req.query.sid);
+									var res_list = await database.get_lecture_edit_info(req.query.l);
+									var title_n = await database.get_lecture_name(req.query.l)
+									res.render('edit_student', {
+										res_list: res_list,
+										title: title_n + '('+req.query.l+')',
+										lecture_table: lecture_student,
+										user_id: await database.get_user_id(req.user),
+										lecture_id: req.query.l,
+										student_id: req.query.sid,
+										top_bar_link: '/main/logout',
+										top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+										dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+									});
+								} else { // 通常の情報修正
+									var lecture_student = await database.create_lec_student_table(req.query.l, 9999, 9999, 'edit');
+									var res_list = await database.get_lecture_edit_info(req.query.l);
+									var title_n = await database.get_lecture_name(req.query.l)
+									res.render('edit_more', {
+										res_list: res_list,
+										title: title_n + '('+req.query.l+')',
+										lecture_table: lecture_student,
+										user_id: await database.get_user_id(req.user),
+										top_bar_link: '/main/logout',
+										top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+										dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+									});
+								}
 							} else {
 								res.send('担当していない講義です。');
 							}
@@ -447,6 +464,19 @@ router
 			res.send('error');
 		}
 	})
+	// ----- 出席状況編集 -----
+	.post('/edit_attend', isAuthenticated, async function(req, res) {
+		if (req.body.sid && req.body.l && req.body.week && req.body.result) {
+				var result = await database.update_student_attend(req.body.l, req.body.sid, req.body.week, req.body.result);
+				if (result) {
+					res.send('ok');
+				} else {
+					res.send('error');
+				}
+			} else {
+				res.send('error');
+			}
+		})
 	.post('/main/u', function (req, res) { // 認証用 iv
 		res.send(bank.iv);
 	})

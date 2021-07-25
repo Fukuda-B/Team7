@@ -1,0 +1,64 @@
+<%#
+  Team7 client ejs - course_student | Update: 2021/07/11
+%>
+
+<%- include( './_header.ejs' ); %>
+<head>
+  <link rel="preload" href="/public/css/style_edit_more.css" as="style">
+  <link rel="stylesheet" href="/public/css/style_edit_more.css"">
+  <title><%- title %></title>
+</head>
+<body>
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="wrap">
+    <%- include( './_dashboard.ejs' ); %>
+  <div id="main">
+    <div id="lecture_table">
+      <h3><a id="prev_link" href="/main?p=edit">編集</a> > <a id="prev_link" href="/main?p=edit&l=<%- lecture_id %>"><%- title %></a> > <%- student_id %></h3>
+      <table id="lecture_table_val">
+        <%- lecture_table %>
+      </table>
+      <p id="success"><i class="far fa-check-circle"></i> 正常に処理が完了しました</p>
+      <p id="error"><i class="fas fa-times"></i> エラーが発生しました</p>
+    </div>
+    </div>
+  </div>
+</body>
+<script>
+  function getParam(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+  function ajax(week) {
+    var result = document.getElementById('val_'+week).value;
+    document.getElementById('success').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    var l = getParam('l', location.href); // 科目を表すクエリ
+    var sid = getParam('sid', location.href); // 科目を表すクエリ
+    if (week && result && l && sid) {
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+          if (req.status == 200) {
+            if (req.responseText == 'error') { // エラー
+              document.getElementById('error').style.display = 'block';
+            } else { // 正常終了
+              document.getElementById('success').style.display = 'block';
+            }
+          } else {
+            document.getElementById('error').style.display = 'block';
+          }
+        }
+      }
+      req.open('POST', '/edit_attend', true);
+      req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+      req.send('sid='+sid+'&l='+l+'&week='+week+'&result='+result);
+    }
+  }
+</script>
+</html>

@@ -174,7 +174,7 @@ async function update_pass(user, old_pass, new_pass) {
 }
 
 // ----- 履修者の出欠リスト取得 ----- (lecture_id, 強調表示する条件(休み), 強調表示する条件(遅刻))
-async function create_lec_student_table(lecture_id, limit_absence, limit_lateness) {
+async function create_lec_student_table(lecture_id, limit_absence, limit_lateness, page) {
   try {
     var week_val = await db_query('SELECT weeks FROM team7.lecture_rules WHERE lecture_id = ? LIMIT 1', lecture_id); // 何週目までか
     var weeks = week_val[0].weeks;
@@ -206,7 +206,12 @@ async function create_lec_student_table(lecture_id, limit_absence, limit_latenes
     var sum = 0; // 合計出席回数を計算するために使う一時的な変数
     var sum_late = 0 // 合計遅刻回数の判定のための変数
     for (var row of res_list) {
-      table += '<tr><td>' + row.student_id;
+
+      if (page == 'edit') {
+        table += '<tr><td><a href=?p=edit&l='+lecture_id+'&sid='+row.student_id+'>'+row.student_id+'</a>';
+      } else {
+        table += '<tr><td>' + row.student_id;
+      }
       table += '</td><td>' + row.student_name;
       sum = 0; // リセット
       sum_late = 0; // リセット
@@ -665,6 +670,51 @@ async function update_lecture_major(lecture_id, data) {
   }
 }
 
+// ----- 履修者の出席管理テーブルの取得 -----
+async function get_student_attend_table(lecture_id, student_id) {
+  try {
+    var weeks_val = await db_query('SELECT weeks FROM team7.lecture_rules WHERE lecture_id = ?;', lecture_id);
+    var weeks = weeks_val[0].weeks;
+    var result_val = await db_query('SELECT `week`, `result` FROM team7.attendance WHERE lecture_id = ? AND student_id = ?;', [lecture_id, student_id]);
+    var tmp = {};
+    for (var row of result_val) {
+      tmp[row["week"]] = row["result"];
+    }
+    table = '<tr><th>&emsp;週&emsp;</th> <th>出席状況</th> <th>&emsp;適用</th></tr>';
+    var sel_val = [];
+    for (var i = 1; i <= weeks; i++) {
+      table += '<tr><td>'+(i);
+      table += '</td><td><select id="val_'+(i)+'">';
+      sel_val = ['', '', ''];
+      if (tmp[i] && tmp[i] == "出席") sel_val[0] = 'selected';
+      else if (tmp[i] && tmp[i] == "遅刻") sel_val[1] = 'selected';
+      else sel_val[2] = 'selected';
+      table += '<option value="出席" '+sel_val[0]+'>出席</option>';
+      table += '<option value="遅刻" '+sel_val[1]+'>遅刻</option>';
+      table += '<option value="欠席" '+sel_val[2]+'>欠席</option>';
+      table += '</select>';
+      table += '</td><td>&emsp;<button id="attend_change" onclick="ajax('+(i)+');">適用</button>';
+      table += '</td></tr>';
+    }
+    return table;
+  } catch {
+    return false;
+  }
+}
+
+// ----- 履修者の出席情報の更新 -----
+async function update_student_attend(lecture_id, student_id, week, result) {
+  try {
+    // 最初に削除
+    await db_query('DELETE FROM team7.attendance WHERE lecture_id = ? AND student_id = ? AND `week` = ?',[lecture_id, student_id, week]);
+    // 追加
+    await db_query('INSERT INTO team7.attendance (lecture_id, student_id, `week`, result) VALUES (?, ?, ?, ?);',[lecture_id, student_id, week, result]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // ----- テスト -----
 // (async () => {
 //   var ans = await check_user('S001', '$argon2id$v=19$m=10240,t=5,p=2$NGU3ZTc3ZmY0YWIzMGEyZWYyNjNjNjNlOTAzY2U0MDc2YTNiMWZlYjJhZmQ2MDI2NjgyMWM5MjhlNDdkODA4ZDIyNGM1YTMxYjFiOWExZmI0YzM5ZWFjMGFhMTRkMTIwMzFkZGY4MGIxMGU0NDhiODI5NmRlNzVlMjJiMmMxY2UwNDFkNzc4NDQ5ZjJhMWI2MGJiODQyOWVmN2ZkNDBkNDEzOTc1YTZlZGFjNTcwYzA2NThkZmZjMmIzYjU3ZDZlNjI5ODg2MmI1OTk3Y2M5MTdhMWZhZDQ5MGJiMjBhYzg1MzMxYWNjOWQxMDRiOTdmYTQzMmVkZTRjZDM1NTJmY2M2YjFmYjI1OWEzZmQ1NTg4OWVlNGViOGM0NmMyNjJhYTYzNzMzYmUyMmRhZGExMjg5OTUxNGVhY2RlOTk2ZTI1MzUwYTMzNTIyMWU4NGE0Mzg0OTJiMDQ1ZTU0NTMyZDA1YWE5OThiNzliMjkwOTc2OGNkYzAzMTVlMjkzMzA5OWY3NmRkODE1OGUzMzNhN2I3M2Q5YWI0ODE4NDRkZDhlMWEzOTFiYTRiMTdkMjc5NjlkNjNlZGIwMTY1NWRjNDEyNDhmOWUzMTNiNTJhNmNjN2JiOTkyYjc4ZmYxMmE1MGQ2ZjNlNGMyNzM2M2I3ZDkzOWQzNDlhYTQ0YjA4ZDA$MnDSRROuc5IhqMydpw5wwxY8SPG4OKdnsDncgzhqKPqNfnz9OIHOmXR3Vee8+/ijwixH3wmjNTyD1rmCusIUAoJYi9SW9XmRNPGcAi9oDCVz1IHEoBbzT4NdYGcf2qzUVALeXyEYHQysWIq+uc5Yr79lhXbFoN2a/bO0rOvG5G0');
@@ -695,3 +745,5 @@ exports.update_lecture_date = update_lecuture_date;
 exports.create_lecture_date_table = create_lecture_date_table;
 exports.get_graph_val = get_graph_val;
 exports.update_lecture_major = update_lecture_major;
+exports.get_student_attend_table = get_student_attend_table;
+exports.update_student_attend = update_student_attend;

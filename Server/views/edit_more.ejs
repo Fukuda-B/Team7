@@ -14,7 +14,7 @@
     <%- include( './_dashboard.ejs' ); %>
   <div id="main">
     <div id="lecture_table">
-      <h3><a id="prev_link" href="/main?p=edit">編集</a> > <%- title %> 情報修正</h3>
+      <h3><a id="prev_link" href="/main?p=edit">編集</a> > <%- title %></h3>
       <div id="edit_fie">
         <p>開始時間 <input type="time" name="example" value="<%- res_list['start_time'] %>" id="start_time"> &emsp; &emsp; 終了時間 <input type="time" name="example" value="<%- res_list['end_time'] %>" id="end_time"> &emsp;</p>
         <p>出席限度 <input type="number" name="sample" id="attend_time" value="<%- res_list['attend_limit']%>"/> 分 &emsp; 遅刻限度 <input type="number" name="sample" id="late_time" value="<%- res_list['late_limit'] %>"/> 分</p>
