@@ -60,6 +60,11 @@ import main_window # メインウィンドウを表示するモジュール
 import gen # 出席ジェネレータ
 
 # ----- 定数宣言 -----
+DEBUG_LECTURE_ID = 'AUTO' # 'AUTO' は時間に合わせて自動でデバッグする講義を選択
+# DEBUG_LECTURE_ID = 'T4' #  講義IDを指定するとボタンを押したときに入力される科目が変わる
+ENCRYPT_OPTION = True # 内部データの暗号化 (True = 暗号化する / False = 暗号化しない) | 値の変更後は、内部データの更新のために2度再起動が必要
+DATE_DEBUG = True # 講義がない日でも、指定の曜日になったら講義を開始する (デバッグ用)
+
 SERVER_URI = 'http://localhost:3000/api/v1/team7'
 # SERVER_URI = 'http://172.28.92.72:8080/api/v1/team7' # 実習用PC Team7-sub IP
 WebAPI_URI = [
@@ -75,13 +80,6 @@ except:
     # API_KEY = '2722d1e002fc3ec912b02aaa02e0cf8f03f673472dfd0e3cafa0a6e83dd547efb71950afd26087ebf816a926b9fb2a783c3d7d7da5cd33da7ff7606b18566edddc64760534d71aa836aa3f6febaa7117e8aa4061129ffab472c05a104e59d7276b98dd179581ed0cf8a20a9f1b2a956d3982f294a8a6f7c638c580b3216b10ca9d297b45cc497fef9c7fb2bf9aa9b2c3ed669f158127fe77e771e4b7e608f6ae857d53914c2f4f6b7e375d2a3c0634b01372a1cfeecbc195031267d53a777d5892b8f7bc7ed5651d1d031852db8dec9aea9e134b78b1043f4e23d678c77a1380d85f991d7a12d2c2fc6545f41d7a15ffe7a9ebe95a033bb0591e3c0188a454d3df02991d9dc3af61ccb830e26b51f49ff489796002b146a3d8803b1a6e9c5c742ffe98566c806ea2e4f45b9c4318eeb211aa5d6be872890381899b932d0d9eae370eb1bc0e2231ae703515eece06546d9b6aa14a35d33292764fd12321e1f6669ce523713a85eb77c083222bc93d1829a6ade75d19a550d75927f1ec853760e6ab993067c97f4c6e101952410ae7272613b0657dace3c8690fea17c149c887433acc3a4e83cc45cdfe7915ec75b59f8e9df042f17c44f9e312089c5eefdc55f647ccb19cd6bd449829225f9593af0a3b38c06981134cb3ead05d7e71dd6ee23c77a015bf7600d393789ee004fedbc2282ae963be255011a9bc8e1811b79217c455babd8dd35ea90f24fa086ab127c258afe65a131ccd7f3954b2c145571c88e7cecc363c9caaf0285c366b7ccd2225f72a1c68bf50f186a402a03ad3e6b64c6fe779de361823e2746d71f818d684ede9b307b5fd18fa5e8d212e50c26604c5ebd77fbca34419334e621181533bc3fbdc9fda801c7e8c04e87c8f694d4da4c2b32959cd163e73381593bdb4a1984317ae28f611b16bc34d5e239267899cefa7a00495d9a3df3a2e4f30ed2b61448dde9eab2c0dec07d2aba86a42f779770b7e43a608e450a3921db5dff220e057667a6bbda5238649506090006aa2eebb244794b82d372b8d3e73037753a73d5548dba4d840490f5d33585efd8afd2ac8465e998a42c584b5412805e48f15b217aaee09b9f183fbf7ea46a3c908ccb9285863d117c5b10baeb37f54dd10de2f957e8936912f98325b73035f313de5998cc44fe279f85d9a70ea3462fdd78f80007f62f56fc91ecfd744741277fd68f15b7b82fca779644f451c84f8d32580c448a21dec4078398cb41c175e0dc8fce38ba52c585b09e2f45dbbd2b6fb91845fb570f4dd'
     print('WebAPI_Key.txt が存在しません。\n管理者 - 開発者向けページから値をコピーしてWebAPI_Key.txtを作成してください。\nTeam7/CardReader ディレクトリで実行されていることを確認してください。')
 
-DATABASE = 'attendance.db' # 出席を保存するデータベース
-DB_TABLE = 'attendance' # 出席を保存するテーブル
-
-DEBUG_LECTURE_ID = 'AUTO' # 'AUTO' は時間に合わせて自動でデバッグする講義を選択
-# DEBUG_LECTURE_ID = 'T4' #  講義IDを指定するとボタンを押したときに入力される科目が変わる
-ENCRYPT_OPTION = True # 内部データの暗号化 (True = 暗号化する / False = 暗号化しない) | 値の変更後は、内部データの更新のために2度再起動が必要
-DATE_DEBUG = True # 講義がない日でも、指定の曜日になったら講義を開始する (デバッグ用)
 
 # ----- Main -----
 # 画面の表示処理を行う
@@ -265,7 +263,7 @@ class Attendance():
 
         if DATE_DEBUG and len(td_lecture) < 1: # デバッグ用
             for i in range(len(arr)):
-                if str(arr[i][10] == str(youbi)):
+                if str(arr[i][10]) == str(youbi):
                     td_lecture.append(arr[i][0])
 
         for i in range(len(arr)):
@@ -418,46 +416,37 @@ class IC():
             now_date = str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
             asyncio.run(self.net.send({"idm":self.idm, "date":now_date})) # データの送信
 
-            dt = datetime.datetime.now() # 現在時刻
-            youbi = datetime.datetime.strftime(dt, '%a')
+            self.ck_lecture() # 現在の講義更新
+            if len(self.now_lec) < 1:
+                self.cs.update_main("講義時間外です", "IDカードをタッチ", "") # 表示
+            else:
+                lecture_id = self.now_lec[1] # 講義IDを代入
+                if self.attendance.check_taking_lecture(lecture_id, self.idm): # 履修者の判定
+                    lecture_no = self.attendance.get_weeks(dt, lecture_id) # 講義の第何回目か
+                    student_id =  self.attendance.get_userid(self.idm) # 出席した人の名前
+                    user_idm = self.idm # 出席した人のidm
+                    result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席/時間外です
+                    if result != '時間外です': # 時間外以外
+                        # now_date = now_date # 現在の時刻
+                        # self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
 
-            lecture_id = self.attendance.check_lecture(dt) # 講義のID
-            if len(lecture_id) > 1:
-                f = open('Subjects_Priority.txt', 'r', encoding='utf-8')
-                sp = f.read()
-                sp_l = sp.split('\n')
-                for i in range(len(sp_l)):
-                    if sp_l[i] == lecture_id[1]:
-                        lecture_id = lecture_id[1] # 置き換え
-                        break
-                if len(lecture_id) > 1: lecture_id = lecture_id[0] # 置き換えられてない = lecture_id[0]
-
-            if self.attendance.check_taking_lecture(lecture_id, self.idm): # 履修者の判定
-                lecture_no = self.attendance.get_weeks(dt, lecture_id) # 講義の第何回目か
-                student_id =  self.attendance.get_userid(self.idm) # 出席した人の名前
-                user_idm = self.idm # 出席した人のidm
-                result = self.attendance.check_attend(dt, lecture_id) # 出席/遅刻/欠席/時間外です
-                if result != '時間外です': # 時間外以外
-                    # now_date = now_date # 現在の時刻
-                    # self.db.add_at(lecture_id, lecture_no, user_name, user_idm, result, now_date) # add data to sqlite
-
-                    # if self.net.stat:
-                    #     asyncio.run(self.net.send({"idm":user_idm, "date":now_date})) # データの送信
-                    # self.sound()
-                    send_data = {
-                        "lecture_id": self.now_lec,
-                        # "lecture_id": lecture_id,
-                        "week": lecture_no,
-                        # "user_name": user_name,
-                        "student_id": student_id,
-                        "result": result,
-                        "date": now_date,
-                        "user_idm": user_idm,
-                    }
-                    asyncio.run(self.net.send(send_data)) # データの送信
-                    self.cs.update_main(result, "IDm : "+str(user_idm), str(self.now_lec)+" 第"+lecture_no+"回目 - 学籍番号："+student_id)
-            else: # 履修者ではない場合
-                self.cs.update_main("履修者ではありません", "IDカードをタッチ", "") # 表示
+                        # if self.net.stat:
+                        #     asyncio.run(self.net.send({"idm":user_idm, "date":now_date})) # データの送信
+                        # self.sound()
+                        send_data = {
+                            "lecture_id": lecture_id,
+                            # "lecture_id": lecture_id,
+                            "week": lecture_no,
+                            # "user_name": user_name,
+                            "student_id": student_id,
+                            "result": result,
+                            "date": now_date,
+                            "user_idm": user_idm,
+                        }
+                        asyncio.run(self.net.send(send_data)) # データの送信
+                        self.cs.update_main(result, "IDm : "+str(user_idm), str(self.now_lec)+" 第"+lecture_no+"回目 - 学籍番号："+student_id)
+                else: # 履修者ではない場合
+                    self.cs.update_main("履修者ではありません", "IDカードをタッチ", "") # 表示
 
 
         else:
@@ -478,9 +467,9 @@ class IC():
         # lecture_id = 'T4' # 講義のID
         # lecture_id = 'M2' # 講義のID
         if DEBUG_LECTURE_ID == 'AUTO' and self.now_lec:
-            lecture_id = self.now_lec
+            lecture_id = self.now_lec[1]
         elif DEBUG_LECTURE_ID != 'AUTO' : lecture_id = DEBUG_LECTURE_ID
-        else: lecture_id = 'T4'
+        else: lecture_id = 'T4' # AUTO && self.now_lecがない場合、他
 
         if len(self.gen_val) < 1 or len(self.gen_lec) < 1:
             self.gen_lec = lecture_id
@@ -571,8 +560,8 @@ class IC():
 # ローカルデータベースの読み書き
 class Database():
     def __init__(self):
-        self.fname = DATABASE
-        self.tname = DB_TABLE
+        self.fname = 'attendance.db' # 出席を保存するデータベース
+        self.tname = 'attendance' # 出席を保存するテーブル
         # create database if not exists
         # | No. | Lecture ID | Lecture No. | User Name | User ID | Result | Datetime | 
         Path(self.fname).touch(exist_ok=True)
@@ -618,8 +607,8 @@ class Database():
 # ネットワーク接続状況やサーバへの非同期データ送信処理
 class Network():
     def __init__(self):
-        self.netCheck = 'https://www.google.com/'
-        # self.netCheck = SERVER_URI
+        # self.netCheck = 'https://www.google.com/'
+        self.netCheck = SERVER_URI
         self.netCheckT = 3 # connection timeout
         self.server = SERVER_URI
         self.apiKey = API_KEY
@@ -785,10 +774,6 @@ if __name__ == "__main__":
     application = Main()
     application.ready()
     sub_proc = Sub(application)
+
     print('Welcome to Team7!')
-
-    # nn = Network()
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(nn.send({"idm":"b"}))
-
     sys.exit(application.app.exec_())
