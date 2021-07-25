@@ -689,9 +689,9 @@ async function get_student_attend_table(lecture_id, student_id) {
       if (tmp[i] && tmp[i] == "出席") sel_val[0] = 'selected';
       else if (tmp[i] && tmp[i] == "遅刻") sel_val[1] = 'selected';
       else sel_val[2] = 'selected';
-      table += '<option value="出席" '+sel_val[0]+'>出席</option>';
-      table += '<option value="遅刻" '+sel_val[1]+'>遅刻</option>';
-      table += '<option value="欠席" '+sel_val[2]+'>欠席</option>';
+      table += '<option value="出席" '+sel_val[0]+'>〇 出席</option>';
+      table += '<option value="遅刻" '+sel_val[1]+'>△ 遅刻</option>';
+      table += '<option value="欠席" '+sel_val[2]+'>×&nbsp; 欠席</option>';
       table += '</select>';
       table += '</td><td>&emsp;<button id="attend_change" onclick="ajax('+(i)+');">適用</button>';
       table += '</td></tr>';
