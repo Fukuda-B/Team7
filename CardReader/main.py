@@ -81,7 +81,7 @@ DB_TABLE = 'attendance' # 出席を保存するテーブル
 DEBUG_LECTURE_ID = 'AUTO' # 'AUTO' は時間に合わせて自動でデバッグする講義を選択
 # DEBUG_LECTURE_ID = 'T4' #  講義IDを指定するとボタンを押したときに入力される科目が変わる
 ENCRYPT_OPTION = True # 内部データの暗号化 (True = 暗号化する / False = 暗号化しない) | 値の変更後は、内部データの更新のために2度再起動が必要
-
+DATE_DEBUG = True # 講義がない日でも、指定の曜日になったら講義を開始する (デバッグ用)
 
 # ----- Main -----
 # 画面の表示処理を行う
@@ -229,28 +229,48 @@ class Attendance():
         if result_val == "履修": return True # 履修者
         else: return False
 
-    def check_lecture(self, youbi, dt):
+    def check_lecture(self, dt):
         # dtはdatetime型であることに注意
-        ''' 指定された曜日,時間の科目を取得 '''
+        ''' 指定された日, 時間の科目を取得
+            DATE_DEBUG = True の場合、指定された日付に講義がない場合、曜日で判定
+        '''
         # csv_file = open(self.lecture_rules, "r", encoding="utf-8", errors="", newline="" )
         # f = csv.reader(csv_file, delimiter=",", doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
         # next(f) # header
         json_load = self.open_tm7_file(self.lecture_rules)
         json_load.pop(0)
+        json_load2 = self.open_tm7_file(self.lecture_date)
+        json_load2.pop(0)
         arr = []
-        for row in json_load:
-            arr.append(row)
+        arr2 = []
+        for row in json_load: arr.append(row)
+        for row in json_load2: arr2.append(row)
 
+        youbi = datetime.datetime.strftime(dt, '%a') # 曜日の取得
         dt_time = datetime.time( # 指定時刻
-            int(datetime.datetime.strftime(dt,'%H')),
+            int(datetime.datetime.strftime(dt, '%H')),
             int(datetime.datetime.strftime(dt, '%M')),
             int(datetime.datetime.strftime(dt, '%S'))
         )
         dt_time = datetime.datetime.combine(datetime.date.today(), dt_time)
 
         res = []
+        td_lecture = []
+        dt_date = datetime.datetime.strftime(dt, '%Y-%m-%d')
+        for i in range(len(arr2)): # 講義の日付から判定
+            for j in range(len(arr2[i])):
+                if str(dt_date) == str(arr2[i][j]):
+                    # td_lecture.append([arr2[i][0], j-1])
+                    td_lecture.append(arr2[i][0])
+
+        if DATE_DEBUG and len(td_lecture) < 1: # デバッグ用
+            for i in range(len(arr)):
+                if str(arr[i][10] == str(youbi)):
+                    td_lecture.append(arr[i][0])
+
         for i in range(len(arr)):
-            if str(arr[i][10]) != str(youbi): continue
+            # if str(arr[i][10]) != str(youbi): continue
+            if not str(arr[i][0]) in td_lecture: continue
             cp_stmp = list(map(int, arr[i][4].split(':'))) # 開始時刻の取り出し
             cp_stime_base = datetime.time(cp_stmp[0], cp_stmp[1], 0) # time型にする
             cp_stime_base = datetime.datetime.combine(datetime.date.today(), cp_stime_base) # time deltaはtime型では計算できないので今日の日付を加える
@@ -262,6 +282,7 @@ class Attendance():
 
             if dt_time >= cp_stime and dt_time < cp_etime:
                 res.append(arr[i])
+        # print(res)
         return res
 
     def check_attend(self, dt, lecture_id):
@@ -346,7 +367,7 @@ class Attendance():
         dt_date = str(datetime.datetime.strftime(dt, '%Y-%m-%d'))
         for i in range(len(arr)):
             if arr[i][0] == lecture_id:
-                for j in range(len(arr[i])): # とりあえず1000まで探索
+                for j in range(len(arr[i])):
                     if arr[i][j] == dt_date: return j
         return False
 
@@ -371,8 +392,7 @@ class IC():
     def ck_lecture(self):
         ''' 現在の講義を確認 '''
         now_dt = datetime.datetime.now()
-        youbi = datetime.datetime.strftime(now_dt, '%a')
-        lecture_id = self.attendance.check_lecture(youbi, now_dt) # 講義のID
+        lecture_id = self.attendance.check_lecture(now_dt) # 講義のID
         change_flag = False 
         if len(lecture_id) > 1:
             f = open('Subjects_Priority.txt', 'r', encoding='utf-8')
@@ -401,7 +421,7 @@ class IC():
             dt = datetime.datetime.now() # 現在時刻
             youbi = datetime.datetime.strftime(dt, '%a')
 
-            lecture_id = self.attendance.check_lecture(youbi, dt) # 講義のID
+            lecture_id = self.attendance.check_lecture(dt) # 講義のID
             if len(lecture_id) > 1:
                 f = open('Subjects_Priority.txt', 'r', encoding='utf-8')
                 sp = f.read()
@@ -765,6 +785,7 @@ if __name__ == "__main__":
     application = Main()
     application.ready()
     sub_proc = Sub(application)
+    print('Welcome to Team7!')
 
     # nn = Network()
     # loop = asyncio.get_event_loop()
