@@ -578,7 +578,7 @@ async function create_lecture_date_table(lecture_id) {
       var dt_tmp, dt_val;
       var week_cnt = 0;
       for (row of res_list) {
-        if (week_cnt >= rec_list.weeks) break; // データより講義回が少ない
+        if (week_cnt >= rec_list[0].weeks) break; // データより講義回が少ない
         week_cnt++;
         dt_tmp = new Date(Date.parse(row.date));
         dt_val = dt_tmp.getFullYear() + '-' + ('0' + (dt_tmp.getMonth()+1)).slice(-2) + '-' + ('0' + dt_tmp.getDate()).slice(-2);
@@ -587,10 +587,10 @@ async function create_lecture_date_table(lecture_id) {
         '</td><td><button id="date_change" onclick="ajax('+row.week+');">適用</button>'+
         '</td></tr>';
       }
-      for (var i = 0; i < rec_list.weeks - res_list.length; i++) { // データより講義回が多い場合追加
-        table += '</tr></td><td>' + row.week +
-        '</td><td><input type="date" id="date_'+(res_list+i)+'" value="">'+
-        '</td><td><button id="date_change" onclick="ajax('+(res_list+i)+');">適用</button>'+
+      for (var i = 0; i < rec_list[0].weeks - res_list.length; i++) { // データより講義回が多い場合追加
+        table += '</tr></td><td>' + (rec_list[0].weeks+i-1) +
+        '</td><td><input type="date" id="date_'+(rec_list[0].weeks+i-1)+'" value="">'+
+        '</td><td><button id="date_change" onclick="ajax('+(rec_list[0].weeks+i-1)+');">適用</button>'+
         '</td></tr>';
       }
       return table;
