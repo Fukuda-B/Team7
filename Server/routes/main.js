@@ -198,7 +198,7 @@ router
 						break;
 					case 'add_lecture': // main?p=add_lecture
 						res.render('add_lecture', {
-							title: '新しい講義の追加',
+							title: 'Team7 - 新しい講義の追加',
 							user_id: await database.get_user_id(req.user),
 							top_bar_link: '/main/logout',
 							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
@@ -489,7 +489,8 @@ router
 	// ----- 講義追加 -----
 	.post('/add_lecture', isAuthenticated, async function(req, res) {
 		if (req.body.data) {
-			var result = await database.add_lecture(req.user, req.body.data);
+			var data = JSON.parse(req.body.data);
+			var result = await database.add_lecture(req.user, data);
 			if (result) {
 				res.send('ok');
 			} else {

@@ -1,3 +1,8 @@
+/*
+  Team7 server - database module
+	Our project: https://github.com/Fukuda-B/Team7
+*/
+
 var mysql      = require('mysql');
 // 循環してしまうため、crypはインポート不可
 
@@ -720,9 +725,24 @@ async function add_lecture(teacher_id, data) {
   try {
     var teacher_name = await db_query('SELECT teacher_name FROM team7.teacher_list WHERE teacher_id = ? LIMIT 1;', teacher_id);
     if (teacher_name) {
-      await db_query('DELETE FROM team7.lecture_rules WHERE lecture_id = ?', data.lecture_id);
-      parsed = [data.lecture_id, data.lecture_name, teacher_id, teacher_name[0].teacher_name, data.start_time, data.end_time, data.attend_limit, data.late_limit, exam, 0, day_of_week, weeks];
+      // lecture_rulesの追加
+      var parsed = [data["lecture_id"], data["lecture_name"], teacher_id, teacher_name[0]["teacher_name"], data["start_time"], data["end_time"], data["attend_limit"], data["late_limit"], data["exam"], 0, data["day_of_week"], data["weeks"]];
+      await db_query('DELETE FROM team7.lecture_rules WHERE lecture_id = ?', data["lecture_id"]);
       await db_query('INSERT INTO team7.lecture_rules (lecture_id, lecture_name, teacher_id, teacher_name, start_time, end_time, attend_limit, late_limit, exam, number_of_students, day_of_week, weeks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', parsed);
+      // lecture_dateの追加
+      var insert_data = 'INSERT INTO team7.lecture_date (lecture_id, week, date) VALUES';
+      var dd_obj = new Date(Date.parse(data["start_date"]));
+      var ins_date;
+      for (var i = 0; i < data["weeks"]-1; i++) {
+        dd_obj.setDate(dd_obj.getDate() + 7);
+        ins_date = dd_obj.getFullYear()+'-'+('0'+(dd_obj.getMonth()+1)).slice(-2)+'-'+('0'+dd_obj.getDate()).slice(-2);
+        insert_data += ' ("'+data["lecture_id"]+'", '+(i+1)+', "'+ins_date+'"),';
+      }
+      dd_obj.setDate(dd_obj.getDate() + 7);
+      ins_date = dd_obj.getFullYear()+'-'+('0'+(dd_obj.getMonth()+1)).slice(-2)+'-'+('0'+dd_obj.getDate()).slice(-2);
+      insert_data += ' ("'+data["lecture_id"]+'", '+data["weeks"]+', "'+ins_date+'");';
+      await db_query('DELETE FROM team7.lecture_date WHERE lecture_id = ?', data["lecture_id"]);
+      await db_query(insert_data);
       return true;
     } else {
       return false;

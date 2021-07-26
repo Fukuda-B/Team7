@@ -1,5 +1,6 @@
 /*
-    Team7 server js - output module | Update: 2021/07/14
+	Team7 server js - output module | Update: 2021/07/14
+	Our project: https://github.com/Fukuda-B/Team7
 */
 
 const fs = require('fs');
