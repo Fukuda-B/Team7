@@ -715,6 +715,23 @@ async function update_student_attend(lecture_id, student_id, week, result) {
   }
 }
 
+// ----- 講義の追加 -----
+async function add_lecture(teacher_id, data) {
+  try {
+    var teacher_name = await db_query('SELECT teacher_name FROM team7.teacher_list WHERE teacher_id = ? LIMIT 1;', teacher_id);
+    if (teacher_name) {
+      await db_query('DELETE FROM team7.lecture_rules WHERE lecture_id = ?', data.lecture_id);
+      parsed = [data.lecture_id, data.lecture_name, teacher_id, teacher_name[0].teacher_name, data.start_time, data.end_time, data.attend_limit, data.late_limit, exam, 0, day_of_week, weeks];
+      await db_query('INSERT INTO team7.lecture_rules (lecture_id, lecture_name, teacher_id, teacher_name, start_time, end_time, attend_limit, late_limit, exam, number_of_students, day_of_week, weeks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', parsed);
+      return true;
+    } else {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+}
+
 // ----- テスト -----
 // (async () => {
 //   var ans = await check_user('S001', '$argon2id$v=19$m=10240,t=5,p=2$NGU3ZTc3ZmY0YWIzMGEyZWYyNjNjNjNlOTAzY2U0MDc2YTNiMWZlYjJhZmQ2MDI2NjgyMWM5MjhlNDdkODA4ZDIyNGM1YTMxYjFiOWExZmI0YzM5ZWFjMGFhMTRkMTIwMzFkZGY4MGIxMGU0NDhiODI5NmRlNzVlMjJiMmMxY2UwNDFkNzc4NDQ5ZjJhMWI2MGJiODQyOWVmN2ZkNDBkNDEzOTc1YTZlZGFjNTcwYzA2NThkZmZjMmIzYjU3ZDZlNjI5ODg2MmI1OTk3Y2M5MTdhMWZhZDQ5MGJiMjBhYzg1MzMxYWNjOWQxMDRiOTdmYTQzMmVkZTRjZDM1NTJmY2M2YjFmYjI1OWEzZmQ1NTg4OWVlNGViOGM0NmMyNjJhYTYzNzMzYmUyMmRhZGExMjg5OTUxNGVhY2RlOTk2ZTI1MzUwYTMzNTIyMWU4NGE0Mzg0OTJiMDQ1ZTU0NTMyZDA1YWE5OThiNzliMjkwOTc2OGNkYzAzMTVlMjkzMzA5OWY3NmRkODE1OGUzMzNhN2I3M2Q5YWI0ODE4NDRkZDhlMWEzOTFiYTRiMTdkMjc5NjlkNjNlZGIwMTY1NWRjNDEyNDhmOWUzMTNiNTJhNmNjN2JiOTkyYjc4ZmYxMmE1MGQ2ZjNlNGMyNzM2M2I3ZDkzOWQzNDlhYTQ0YjA4ZDA$MnDSRROuc5IhqMydpw5wwxY8SPG4OKdnsDncgzhqKPqNfnz9OIHOmXR3Vee8+/ijwixH3wmjNTyD1rmCusIUAoJYi9SW9XmRNPGcAi9oDCVz1IHEoBbzT4NdYGcf2qzUVALeXyEYHQysWIq+uc5Yr79lhXbFoN2a/bO0rOvG5G0');
@@ -747,3 +764,4 @@ exports.get_graph_val = get_graph_val;
 exports.update_lecture_major = update_lecture_major;
 exports.get_student_attend_table = get_student_attend_table;
 exports.update_student_attend = update_student_attend;
+exports.add_lecture = add_lecture;

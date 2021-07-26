@@ -1,0 +1,94 @@
+<%#
+  Team7 client ejs - add_lecture | Update: 2021/06/21
+%>
+
+<%- include( './_header.ejs' ); %>
+<head>
+  <link rel="preload" href="/public/css/style_add_lecture.css" as="style">
+  <link rel="stylesheet" href="/public/css/style_add_lecture.css"">
+  <title><%- title %></title>
+</head>
+<body>
+  <%- include( './_top_bar.ejs' ); %>
+  <div id="wrap">
+    <%- include( './_dashboard.ejs' ); %>
+  <div id="main">
+    <div id="lecture_table">
+      <h3>講義の追加</h3>
+      <div id="edit_fie">
+        <p>講義ID <input type="text" id="lecture_id">&emsp; &emsp; &emsp; 講義名 <input type="text" id="lecture_name"></p>
+        <p>開始時間 <input type="time" value="00:00" id="start_time"> &emsp; &emsp; 終了時間 <input type="time" value="00:00" id="end_time"> &emsp;</p>
+        <p>出席限度 <input type="number" id="attend_time" value="10"/> 分 &emsp; 遅刻限度 <input type="number" id="late_time" value="30"/> 分</p>
+        <p>試験
+          <select name="exam" id="exam">
+            <option value="0">&emsp;なし&emsp;</option>
+            <option value="1">&emsp;あり&emsp;</option>
+          </select>&emsp;
+          曜日
+          <select name="week" id="day_of_week">
+            <option value="Sun">&emsp;日&emsp;</option>
+            <option value="Mon">&emsp;月&ensp;</option>
+            <option value="Tue">&emsp;火&ensp;</option>
+            <option value="Wed">&emsp;水&ensp;</option>
+            <option value="Thu">&emsp;木&ensp;</option>
+            <option value="Fri">&emsp;金&ensp;</option>
+            <option value="Sat">&emsp;土&ensp;</option>
+          </select>&emsp; &emsp;
+          講義回数 <input type="number" name="sample" id="weeks" value="15"/> &emsp;</p>
+          <span id="start_date_span">開始日&emsp; <input type="date" id="start_date"></span><br>
+          <button id="apply" onclick="add_lecture();">追加</button>
+          <p id="success"><i class="far fa-check-circle"></i> 正常に処理が完了しました</p>
+          <p id="error"><i class="fas fa-times"></i> エラーが発生しました</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</body>
+<script>
+  function add_lecture() {
+    var lecture_name = document.getElementById('lecture_name').value;
+    var lecture_id = document.getElementById('lecture_id').value;
+    var start_time = document.getElementById('start_time').value;
+    var end_time = document.getElementById('end_time').value;
+    var attend_time = document.getElementById('attend_time').value;
+    var late_time = document.getElementById('late_time').value;
+    var exam = document.getElementById('exam').value;
+    var day_of_week = document.getElementById('day_of_week').value;
+    var weeks = document.getElementById('weeks').value;
+    var start_date = document.getElementById('start_date').value;
+    document.getElementById('success').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    if (start_time && end_time && attend_time && late_time && exam && day_of_week && weeks && start_date) {
+      var send_data = {
+        "lecture_name": lecture_name,
+        "lecture_id": lecture_id,
+        "start_time": start_time+':00',
+        "end_time": end_time+':00',
+        "attend_limit": attend_time,
+        "late_limit": late_time,
+        "exam": exam,
+        "day_of_week": day_of_week,
+        "weeks": weeks,
+        "start_date": start_date,
+      }
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+          if (req.status == 200) {
+            if (req.responseText == 'error') { // エラー
+              document.getElementById('error').style.display = 'block';
+            } else { // 正常終了
+              document.getElementById('success').style.display = 'block';
+            }
+          } else {
+            document.getElementById('error').style.display = 'block';
+          }
+        }
+      }
+      req.open('POST', '/add_lecture', true);
+      req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+      req.send('data='+JSON.stringify(send_data));
+    }
+  }
+</script>
+</html>

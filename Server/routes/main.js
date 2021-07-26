@@ -117,15 +117,15 @@ router
 						if (req.query.l) { // 講義ごとの詳細表示
 							var check_lecture = await database.check_lecture(req.user, req.query.l);
 							if (check_lecture) {
-                var absence = req.query.absence;
-                var lateness = req.query.lateness;
-                if (!req.query.absence) absence = 4; // 強調表示の初期値(欠席)
-                if (!req.query.lateness) lateness = 5; // 強調表示の初期値(遅刻)
+								var absence = req.query.absence;
+								var lateness = req.query.lateness;
+								if (!req.query.absence) absence = 4; // 強調表示の初期値(欠席)
+								if (!req.query.lateness) lateness = 5; // 強調表示の初期値(遅刻)
 								var lecture_student = await database.create_lec_student_table(req.query.l, absence, lateness, 'course_more');
 								var title_n = await database.get_lecture_name(req.query.l);
 								res.render('course_more', {
-                  absence_v: absence,
-                  lateness_v: lateness,
+									absence_v: absence,
+									lateness_v: lateness,
 									title: title_n + '('+req.query.l+')',
 									lecture_table: lecture_student,
 									user_id: await database.get_user_id(req.user),
@@ -195,6 +195,15 @@ router
 								dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
 							});
 						}
+						break;
+					case 'add_lecture': // main?p=add_lecture
+						res.render('add_lecture', {
+							title: '新しい講義の追加',
+							user_id: await database.get_user_id(req.user),
+							top_bar_link: '/main/logout',
+							top_bar_text: 'Sign out <i class="fas fa-sign-out-alt"></i>',
+							dashboard_menu_class: ["dash_li", "dash_li", "dash_li dash_li_main", "dash_li", "dash_li", "dash_li"]
+						});
 						break;
 					case 'stat': // /main?p=stat
 						var res_list = await database.get_graph_val(req.user);
@@ -287,11 +296,11 @@ router
                         res.writeHead(200, {'Content-Type': 'text/csv','Content-disposition': 'attachment; filename = '+fname});
                         raw.pipe(res);
                       }
-											if (req.query.encode == "utf_8") {
-												output.csv_gen(lecture_table, fname, "utf-8", send_callback);
-											} else {
-												output.csv_gen(lecture_table, fname, "shift-jis", send_callback);
-											}
+						if (req.query.encode == "utf_8") {
+							output.csv_gen(lecture_table, fname, "utf-8", send_callback);
+						} else {
+							output.csv_gen(lecture_table, fname, "shift-jis", send_callback);
+						}
                     } else {
                       var fname = req.query.dl+'_xlsx.xlsx';
                       var send_callback = function() {
@@ -430,18 +439,18 @@ router
 	// ----- 講義日時更新用 -----
 	.post('/edit_date', isAuthenticated, async function(req, res) {
 		if (req.body.data && req.body.l) {
-				var check_lecture = await database.check_lecture(req.user, req.body.l); // 講義の担当か確認
-				var data = JSON.parse(req.body.data);
-				var result = await database.update_lecture_date(req.body.l, data);
-				if (result && check_lecture) {
-					res.send('ok');
-				} else {
-					res.send('error');
-				}
+			var check_lecture = await database.check_lecture(req.user, req.body.l); // 講義の担当か確認
+			var data = JSON.parse(req.body.data);
+			var result = await database.update_lecture_date(req.body.l, data);
+			if (result && check_lecture) {
+				res.send('ok');
 			} else {
 				res.send('error');
 			}
-		})
+		} else {
+			res.send('error');
+		}
+	})
 	// ----- 履修者更新用 -----
 	.post('/edit_major', isAuthenticated, async function(req, res) {
 		if (req.body.csv && req.body.l) {
@@ -467,15 +476,28 @@ router
 	// ----- 出席状況編集 -----
 	.post('/edit_attend', isAuthenticated, async function(req, res) {
 		if (req.body.sid && req.body.l && req.body.week && req.body.result) {
-				var result = await database.update_student_attend(req.body.l, req.body.sid, req.body.week, req.body.result);
-				if (result) {
-					res.send('ok');
-				} else {
-					res.send('error');
-				}
+			var result = await database.update_student_attend(req.body.l, req.body.sid, req.body.week, req.body.result);
+			if (result) {
+				res.send('ok');
 			} else {
 				res.send('error');
 			}
+			} else {
+				res.send('error');
+			}
+		})
+	// ----- 講義追加 -----
+	.post('/add_lecture', isAuthenticated, async function(req, res) {
+		if (req.body.data) {
+			var result = await database.add_lecture(req.user, req.body.data);
+			if (result) {
+				res.send('ok');
+			} else {
+				res.send('error');
+			}
+		} else {
+			res.send('error');
+		}
 		})
 	.post('/main/u', function (req, res) { // 認証用 iv
 		res.send(bank.iv);
