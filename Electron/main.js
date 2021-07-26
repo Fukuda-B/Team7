@@ -24,9 +24,9 @@ app.disableHardwareAcceleration(); // disable gpu render and save memory
 
 app.setAboutPanelOptions({
   applicationName: 'Team7',
-  applicationVersion: 'Version: v0.2.7 (electron)\nElectron: ' + process.versions.electron + '\nChrome: ' + process.versions.chrome + '\nNode.js: ' + process.versions.node + '\nV8: ' + process.versions.v8,
+  applicationVersion: 'Version: v0.9.2 (electron)\nElectron: ' + process.versions.electron + '\nChrome: ' + process.versions.chrome + '\nNode.js: ' + process.versions.node + '\nV8: ' + process.versions.v8,
   // copyright: 'Copyright (C) 2021 Team7',
-  version: 'build20210608',
+  version: 'build20210727',
   // credits: '',
   authors: ['Team7'],
   website: 'https://github.com/Fukuda-B/Team7',

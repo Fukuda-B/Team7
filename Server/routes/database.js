@@ -503,35 +503,41 @@ async function create_student_timetable_api() {
 }
 
 // ----- WebAPI lecture_dateのcsv -----
+// バグの可能性あり
 async function create_lecture_date_api() {
-  var lecture_val = await db_query('SELECT lecture_id, weeks FROM team7.lecture_rules');
-  var lecture_list = []; // 講義リスト
-  var max_week = 0;
-  for (var row of lecture_val) {
-    if (max_week < row.weeks) max_week = row.weeks;
-    lecture_list.push(row.lecture_id);
+  try {
+    var lecture_val = await db_query('SELECT lecture_id, weeks FROM team7.lecture_rules');
+    var lecture_list = []; // 講義リスト
+    var max_week = 0;
+    for (var row of lecture_val) {
+      if (max_week < row.weeks) max_week = row.weeks;
+      lecture_list.push(row.lecture_id);
+    }
+    var ix;
+    var arr = [];
+    var lecture_date_val = await db_query('SELECT * FROM team7.lecture_date');
+    var week_arr = ["lecture_id"];
+    var week_arr_c = [];
+    for (var i = 0; i < max_week; i++) {
+      week_arr.push(i+1);
+      week_arr_c.push('');
+    }
+    for (var row of lecture_list) {
+      arr.push([row].concat(week_arr_c));
+    }
+    var date, tmp, year, month, day;
+    for (var row of lecture_date_val) {
+      ix = lecture_list.indexOf(row.lecture_id);
+      date = Date.parse(row.date); // パース
+      tmp = new Date(date); // date型に
+      date = tmp.toISOString();
+      arr[ix][row.week] = date.slice(0,10);
+    }
+    return [week_arr].concat(arr);
+  } catch {
+    return false;
   }
-  var ix;
-  var arr = [];
-  var lecture_date_val = await db_query('SELECT * FROM team7.lecture_date');
-  var week_arr = ["lecture_id"];
-  var week_arr_c = [];
-  for (var i = 0; i < max_week; i++) {
-    week_arr.push(i+1);
-    week_arr_c.push('');
-  }
-  for (var row of lecture_list) {
-    arr.push([row].concat(week_arr_c));
-  }
-  var date, tmp, year, month, day;
-  for (var row of lecture_date_val) {
-    ix = lecture_list.indexOf(row.lecture_id);
-    date = Date.parse(row.date); // パース
-    tmp = new Date(date); // date型に
-    date = tmp.toISOString();
-    arr[ix][row.week] = date.slice(0,10);
-  }
-  return [week_arr].concat(arr);
+
 }
 
 // ----- WebAPI lecture_dateのcsv -----

@@ -8,11 +8,11 @@ rem|   Place this .bat file in the same directory as Team7/Server/app.js.
 rem|____________________________________________________________
 
 rem| portable nodejs dir
-set "node_portable=D:\GitHub\node-v14.17.0-win-x64"
+rem| set "node_portable=D:\GitHub\node-v14.17.0-win-x64"
 
 rem| add path
-set PATH=%node_portable%;%PATH%
-set NODE_PATH=%node_portable%\node_modules\npm\node_modules;%node_portable%\node_modules\npm
+rem| set PATH=%node_portable%;%PATH%
+rem| set NODE_PATH=%node_portable%\node_modules\npm\node_modules;%node_portable%\node_modules\npm
 
 rem|____________________________________________________________
 rem| install node-module
