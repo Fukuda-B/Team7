@@ -1,7 +1,7 @@
 @echo off
 title Team7 - Server benchmark
 rem|____________________________________________________________
-rem|   Team7 Portable | Start server benchmark | Update: 2021/06/06
+rem|   Team7 Portable | Start server benchmark | Update: 2021/07/27
 rem
 rem|   Requirements: LTS Node.js, start server & nginx
 rem|   Place this .bat file in the same directory as Team7/Server/app.js.

@@ -1,7 +1,7 @@
 @echo off
 title Team7 - Electron
 rem|____________________________________________________________
-rem|   Team7 Portable | Build electron | Update: 2021/05/26
+rem|   Team7 Portable | Build electron | Update: 2021/07/27
 rem
 rem|   Requirements: LTS Node.js
 rem|   Place this .bat file in the same directory as Team7/Electron/main.js

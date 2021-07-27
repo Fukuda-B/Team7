@@ -1,7 +1,7 @@
 @echo off
 title Team7 - Server
 rem|____________________________________________________________
-rem|   Team7 Portable | Start server | Update: 2021/05/25
+rem|   Team7 Portable | Start server | Update: 2021/07/27
 rem
 rem|   Requirements: LTS Node.js
 rem|   Place this .bat file in the same directory as Team7/Server/app.js.
